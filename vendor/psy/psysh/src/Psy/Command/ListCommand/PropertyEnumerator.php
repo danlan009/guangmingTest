@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2015 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -39,9 +39,8 @@ class PropertyEnumerator extends Enumerator
             return;
         }
 
-        $showAll = $input->getOption('all');
-        $noInherit = $input->getOption('no-inherit');
-        $properties = $this->prepareProperties($this->getProperties($showAll, $reflector, $noInherit), $target);
+        $showAll    = $input->getOption('all');
+        $properties = $this->prepareProperties($this->getProperties($showAll, $reflector), $target);
 
         if (empty($properties)) {
             return;
@@ -56,22 +55,15 @@ class PropertyEnumerator extends Enumerator
     /**
      * Get defined properties for the given class or object Reflector.
      *
-     * @param bool       $showAll   Include private and protected properties
+     * @param bool       $showAll   Include private and protected properties.
      * @param \Reflector $reflector
-     * @param bool       $noInherit Exclude inherited properties
      *
      * @return array
      */
-    protected function getProperties($showAll, \Reflector $reflector, $noInherit = false)
+    protected function getProperties($showAll, \Reflector $reflector)
     {
-        $className = $reflector->getName();
-
         $properties = array();
         foreach ($reflector->getProperties() as $property) {
-            if ($noInherit && $property->getDeclaringClass()->getName() !== $className) {
-                continue;
-            }
-
             if ($showAll || $property->isPublic()) {
                 $properties[$property->getName()] = $property;
             }
