@@ -14,3 +14,14 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['middleware' => 'wxAuth'], function(){
+
+	Route::get('wx/vmlist', 'MallController@vmList');
+	Route::get('wx/list', 	'MallController@productsList');
+	Route::get('wx/detail', 'MallController@productDetail');
+	Route::get('wx/result', 'MallController@result');
+	Route::get('wx/orders', 'MallController@myorders');
+	Route::get('wx/cards', 	'MallController@wxCards');
+
+});
