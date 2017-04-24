@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('user/create_password','UserController@createPassword');
 Route::get('user/save_user','UserController@saveUser');
 Route::get('deliver/get_sender_list','SupplyController@getSenderList');
@@ -34,3 +35,15 @@ Route::get('isAbleToBook','OrderController@isAbleToBook');
 
 Route::get('qr/create','qrCodeController@create');
 Route::get('test','MallController@test');
+
+Route::group(['middleware' => 'wxAuth'], function(){
+
+	Route::get('wx/vmlist', 		'MallController@vmList');
+	Route::get('wx/list/{vmid}', 	'MallController@productsList');
+	Route::get('wx/detail/{pid}', 	'MallController@productDetail');
+	Route::get('wx/result', 		'MallController@result');
+	Route::get('wx/orders', 		'MallController@myorders');
+	Route::get('wx/cards', 			'MallController@wxCards');
+
+});
+
