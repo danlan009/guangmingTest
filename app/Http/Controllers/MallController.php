@@ -2,12 +2,7 @@
 namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
- 
-use App\Model\Orders;
-use App\Model\OrderLogs;
-use App\Model\OrderStops; 
-use App\Model\Skus; 
-use App\Lib\Bussiness;
+
 use DB; 
 use Cache; 
 use Log;
@@ -18,9 +13,7 @@ class MallController extends Controller
 
     // 售货机列表
     public function vmList(){
-        $vms = DB::table('vms')
-                    ->select('id','vm_name')
-                    ->get();
+
         return view('wx.vmList', array(
                 'vms' => 'test: vm list'
             ));
@@ -71,7 +64,7 @@ class MallController extends Controller
 
     public function test(Request $request){
         $mallService = new MallService();
-        $proList = $mallService->getProDetail(100001,1001);
+        $proList = $mallService->getVmList();
         dd($proList);
     } 
 
