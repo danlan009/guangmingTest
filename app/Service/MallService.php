@@ -29,17 +29,17 @@ class MallService{
         // 放入缓存
         foreach ($proLists as $k=>$pro) {
         	foreach ($tags as $tag) {
-        		if($pro['tag_id'] == $tag->id){
-        			$proLists[$k]['tag_name'] = $tag->tag_name;
+        		if($pro->tag_id == $tag->id){
+        			$proLists[$k]->tag_name = $tag->tag_name;
         		}
         	}
 
             foreach ($exps as $exp) { //拼接商品生存期
-                if($pro['product_id'] == $exp->id){
-                    $proLists[$k]['exp'] = $exp->exp;
+                if($pro->product_id == $exp->id){
+                    $proLists[$k]->exp = $exp->exp;
                 }
             }
-            Cache::put('PRO_DETAIL_'.$proLists[$k]['product_id'].'_'.$vmId,$proLists[$k],1440);
+            Cache::put('PRO_DETAIL_'.$proLists[$k]->product_id.'_'.$vmId,$proLists[$k],1440);
         }
         return $proLists;
     }
@@ -47,10 +47,10 @@ class MallService{
     // 获取某售货机下商品详情
     // 参数1.pid 商品id 2.vmId
     public function getProDetail($pid , $vmId){
-        if(empty($pid) || empty($vmId)){
+        if(empty($pid) || !isset($vmId)){
             return 'error';
         }
-        $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
+        // $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
         if(empty($proDetail)){ //需要重新拉取售货机商品列表,放入缓存
            $list = $this->showPros($vmId);
            $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
