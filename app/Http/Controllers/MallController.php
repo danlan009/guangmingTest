@@ -1,6 +1,4 @@
-
-<?php
-
+<?php 
 namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
@@ -10,28 +8,24 @@ use App\Model\OrderLogs;
 use App\Model\OrderStops; 
 use App\Model\Skus; 
 use App\Lib\Bussiness;
-use DB;
+use DB; 
 use Cache; 
 use Log;
 class MallController extends Controller
 {
-    public function listAllPros(Request $request){ //根据vmid 拉取所有商品
-        $vmId = $request->input('vmId');
-        // dd($vmId);
+    public function showPros($vmId){ //根据vmid 拉取所有商品
         $proLists = Skus::getAllPros($vmId);
+        $exps = DB::table('products')->get();
         // 放入缓存
-        foreach ($proLists as $pro) {
-            Cache::put('PRO_DETAIL_'.$pro['product_id'].'_'.$vmId,$pro,1440);
+        foreach ($proLists as $k=>$pro) {
+            foreach ($exps as $exp) { //拼接商品生存期
+                if($pro['product_id'] == $exp->id){
+                    $proLists[$k]['exp'] = $exp->exp;
+                }
+            }
+            Cache::put('PRO_DETAIL_'.$proLists[$k]['product_id'].'_'.$vmId,$proLists[$k],1440);
         }
         return json_encode($proLists);
-        // if(!empty($proLists['products'])){
-        //     $products = $list['products'];
-        //     foreach($products as $k=>$v){
-        //         Cache::put('PRO_DETAIL_'.$v['id'].'_'.$vmid,$v,1440);
-        //     }
-        //     return $products;
-        // }
-        // dd($proList);
     }
 
     public function getProDetail(Request $request){
@@ -40,10 +34,10 @@ class MallController extends Controller
         if(empty($pid) || empty($vmId)){
             return 'error';
         }
-        $proDetail = Cache::get('PRODUCT_DETAIL_'.$pid.'_'.$vmid);
+        $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
         if(empty($proDetail)){ //需要重新拉取售货机商品列表,放入缓存
-           $list = $this->listAllPros($vmId);
-           $proDetail = $list[$pid];
+           $list = $this->showPros($vmId);
+           $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
         }
         if(!empty($proDetail)){
             return $proDetail;
@@ -52,67 +46,90 @@ class MallController extends Controller
         }
     }
 
-    
+    // 即卖买码
+    public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmId){ // 预下单后买码
+        $blno = $this->createBlno();
+        $date = date('Y-m-d');
+        // 去重
+        $exists = OrderLogs::where('vmid',$vmId)->where('create_date',$date)->pluck('blno')->toArray();
+        // dd($exists);
+        while(in_array($blno,$exists)){
+            $blno = $this->createBlno();
+        }
+
+        $model = new OrderLogs();
+        $model->order_id = $order_id;
+        $model->order_detail_id = $order_detail_id;
+        $model->product_id = $product_id;
+        $model->create_date = $date;
+        $model->order_status = 201;
+        $model->is_reserved = 0;
+        $model->blno = $blno;
+        $model->vmid = $vmId;
+        $res = $model->save();
+        Log::info('single_buy_code successfully---returns::'.'order_id:'.$order_id.'order_detail_id:'.$order_detail_id.'product_id:'.$product_id.'blno:'.$blno);
+    }
+
+    //脚本自动批量买码
     public function dailyBuyCodes($vmId){
-    	// dd($ordersLogModel);
     	$dailyOrders = Bussiness::getDailyOrders($vmId);
     	// dd($dailyOrders['normalOrders'][0]->vmid);
     	$normalOrders = $dailyOrders['normalOrders'];
     	$reservedOrders = $dailyOrders['reservedOrders'];
     	//写入orders_log
     	$time = date('Y-m-d');
-    	$orderLogsModel = new OrderLogs();
-    	$expiresTime = '';//取货码有效期 暂定
-
-        foreach ($normalOrders as $normalOrder) { //正常订单创建orders_log
+        $expiresTime = '';//取货码有效期 暂定
+ 
+        $normalCount = count($normalOrders);
+        
+        $blnoArr = $this->createBlno($normalCount);
+        Log::info('script_buy_codes---get::'.json_encode($blnoArr));
+        foreach ($normalOrders as $k=>$normalOrder) { //正常订单创建orders_log
             //$price 从缓存中读取,$price 从session中读取
-
+            // dd($normalOrder);
             $product_id = $normalOrder->product_id;
-            $order_id = $normalOrder->orderId;
+            $order_id = $normalOrder->order_id;
+            // dd($order_id);
             $order_detail_id = $normalOrder->order_detail_id;
-    		$price = '';
-    		$userId = '';
-    		$res = $api->orderCode($vmid, $product_id, $price,$userId, $orderId,$expiresTime);
-    		if(!empty($r['head']['return_code']) && $r['head']['return_code'] == 200){
-    		    $blno = $r['body']['delivery_code'];
-    		    $tran_id = $r['body']['tran_id'];
-    		    $ordersLogModel->order_id = $order_id;
-    		    $ordersLogModel->order_detail_id = $order_detail_id;
-    		    $ordersLogModel->product_id = $product_id;
-    		    $ordersLogModel->create_date = $time;
-    		    $ordersLogModel->order_status = 201;
-    		    $ordersLogModel->isReserved = 0;
-    		    $ordersLogModel->blno = $blno;
-    		    $ordersLogModel->tran_id = $tran_id;
-    		    $ordersLogModel->vmid = $vmId;
-    		    $ordersLogModel->save();
+            if(count($blnoArr)>0){
+    	        $orderLogsModel = new OrderLogs;
+    		    $orderLogsModel->order_id = $order_id;
+    		    $orderLogsModel->order_detail_id = $order_detail_id;
+    		    $orderLogsModel->product_id = $product_id;
+    		    $orderLogsModel->create_date = $time;
+    		    $orderLogsModel->order_status = 201;
+    		    $orderLogsModel->is_reserved = 0;
+    		    $orderLogsModel->blno = $blnoArr[$k];
+    		    $orderLogsModel->vmid = $vmId;
+    		    $orderLogsModel->save();
     		}else{ //买码失败
-                
+                return 'buyCodeFail!';
             } 
     	}
 
-        foreach ($reservedOrders as $key => $reservedOrder) { //占道订单,重新生成取货码,修改状态
+        $reservedCount = count($reservedOrders);
+        $blnoResArr = $this->createBlno($reservedCount);
+        foreach ($reservedOrders as $k => $reservedOrder) { //占道订单,重新生成取货码,修改状态
             $product_id = $reservedOrder->product_id;
-            $order_id = $reservedOrder->orderId;
+            $order_id = $reservedOrder->order_id;
             $order_detail_id = $reservedOrder->order_detail_id;
-            $price = '';
-            $userId = '';
 
-            $res = $api->orderCode($vmid, $product_id, $price,$userId, $orderId,$expiresTime);
-            if(!empty($r['head']['return_code']) && $r['head']['return_code'] == 200){
-                $blno = $r['body']['delivery_code'];
-                $tran_id = $r['body']['tran_id'];
-                
-                $ordersLogModel->create_date = $time;
-                $ordersLogModel->order_status = 201;
-                $ordersLogModel->isReserved = 2;
-                $ordersLogModel->blno = $blno;
-               
-                $ordersLogModel->save();
+            if(count($blnoResArr)>0){
+                $res = OrderLogs::where('order_detail_id',$order_detail_id)->update([
+                                                            'create_date'=>$time,
+                                                            'order_status'=>201,
+                                                            'is_reserved'=>2,
+                                                            'blno'=>$blnoResArr[$k]
+                                                        ]);
+                if(!$res){
+                    return 'error';
+                }
             }else{ //买码失败
-
+                return 'buyCodeFail!';
             }
         }
+        return 1;
+        Log::info('daily_buy_codes---successful,resolved---dailyOrders::'.json_encode($dailyOrders));
     } 
     
     public function dailyCheckOrders(){ // 每日定时任务修改订单状态 是否改为配送完成/暂停配送/配送中
@@ -282,19 +299,35 @@ class MallController extends Controller
         }
     }
 
-    public function test(Request $request){
-        $count = $request->input('count');
-        $time = time();
-        for ($i=0; $i < count; $i++) { 
-            $blno = Bussiness::createBlno();
-            if(in_array($blno, haystack)){}
+    // 生成8位取货码
+    public function createBlno($count=1){
+        $timeStr = time();
+        if($count>1){ //批量生成
+            $blnoArr = [];
+            for ($i=0; $i < $count; $i++) { 
+                $str = str_shuffle(substr($timeStr,-8));
+                if(in_array($str, $blnoArr)){
+                    $i--;
+                    continue;
+                }
+                $blnoArr[] = $str;
+            }
+            return $blnoArr;
+        }else{ //生成单个
+            $str = str_shuffle(substr($timeStr,-8));
+            return $str;
         }
-    
+        
+    }
+    public function test(Request $request){
+        $this->singleBuyCode(5,11,100010,1001);
     } 
 
     // 售货机列表
     public function vmList(){
-
+        $vms = DB::table('vms')
+                    ->select('id','vm_name')
+                    ->get();
         return view('wx.vmList', array(
                 'vms' => 'test: vm list'
             ));
