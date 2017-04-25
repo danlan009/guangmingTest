@@ -13,8 +13,10 @@ class MallService{
 	// 拉取售货机列表 参数:无
 	public function getVmList(){
 		$vms = DB::table('vms')
-                    ->select('id','vmid','vm_name')
+					->join('nodes','vms.node_id','=','nodes.id')
+                    ->select('vms.id','vms.vmid','vms.vm_name','nodes.address')
                     ->get();
+
         return $vms;
 	}
 
@@ -23,8 +25,15 @@ class MallService{
     public function showPros($vmId){ 
         $proLists = Skus::getAllPros($vmId);
         $exps = DB::table('products')->get();
+        $tags = DB::table('tags')->get();
         // 放入缓存
         foreach ($proLists as $k=>$pro) {
+        	foreach ($tags as $tag) {
+        		if($pro['tag_id'] == $tag->id){
+        			$proLists[$k]['tag_name'] = $tag->tag_name;
+        		}
+        	}
+
             foreach ($exps as $exp) { //拼接商品生存期
                 if($pro['product_id'] == $exp->id){
                     $proLists[$k]['exp'] = $exp->exp;
