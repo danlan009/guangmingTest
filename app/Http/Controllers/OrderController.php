@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller; 
 
-use App\Model\OrdersLog;
+use App\Model\OrderLogs;
 use DB;
 class OrderController extends Controller
 {
-    public function getPickupRes($orderId){
-    	$status = OrdersLog::select('order_status')->where('order_id',$orderId);
+    // 正常每日预定/占道订单/即卖订单
+    public function getPickupRes($orderId){ 
+    	$status = OrderLogs::select('order_status')->where('order_id',$orderId);
     	return $status;
     }
 
     public function getCodeFailOrds($vmId){
-    	$list = OrdersLog::where('blno','')
+    	$list = OrderLogs::where('blno','')
     						->where('vmid',$vmId)
     						->get()
     						->toArray();
@@ -25,7 +26,7 @@ class OrderController extends Controller
     }
 
     public function getDeliverFailOrd($vmId){
-    	$list = OrdersLog::where('order_status',400)
+    	$list = OrderLogs::where('order_status',400)
     						->where('vmid',$vmId)
     						->get()
     						->toArray();
