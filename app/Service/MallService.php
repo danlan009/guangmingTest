@@ -13,7 +13,7 @@ class MallService{
 	// 拉取售货机列表 参数:无
 	public function getVmList(){
 		$vms = DB::table('vms')
-                    ->select('id','vm_name')
+                    ->select('id','vm_id','vm_name')
                     ->get();
         return $vms;
 	}
