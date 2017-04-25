@@ -10,7 +10,17 @@ use DB;
 use Cache; 
 use Log;
 class MallService{
-    public function showPros($vmId){ //根据vmid 拉取所有商品
+	// 拉取售货机列表 参数:无
+	public function getVmList(){
+		$vms = DB::table('vms')
+                    ->select('id','vm_name')
+                    ->get();
+        return $vms;
+	}
+
+	// 根据vmid 拉取所有商品
+	// 参数:vmId 售货机id
+    public function showPros($vmId){ 
         $proLists = Skus::getAllPros($vmId);
         $exps = DB::table('products')->get();
         // 放入缓存
@@ -25,6 +35,8 @@ class MallService{
         return $proLists;
     }
 
+    // 获取某售货机下商品详情
+    // 参数1.pid 商品id 2.vmId
     public function getProDetail($pid , $vmId){
         if(empty($pid) || empty($vmId)){
             return 'error';
@@ -41,7 +53,7 @@ class MallService{
         }
     }
 
-    // 即卖买码
+    // 即卖生成单个取货码(下单后操作)
     public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmId){ // 预下单后买码
         $blno = $this->createBlno();
         $date = date('Y-m-d');
