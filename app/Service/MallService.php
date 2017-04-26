@@ -7,7 +7,7 @@ use App\Model\OrderStops;
 use App\Model\Skus; 
 use App\Lib\Bussiness;
 use DB; 
-use Cache; 
+use Cache;  
 use Log;
 class MallService{
 	// 拉取售货机列表 参数:无
@@ -23,25 +23,27 @@ class MallService{
 	// 根据vmid 拉取所有商品
 	// 参数:vmId 售货机id
     public function showPros($vmId){ 
-        $proLists = Skus::getAllPros($vmId);
+        $proList = Skus::getAllPros($vmId);
+        Log::debug('MallService::getAllPros---'.json_encode($proList));
         $exps = DB::table('products')->get();
         $tags = DB::table('tags')->get();
         // 放入缓存
-        foreach ($proLists as $k=>$pro) {
+        foreach ($proList as $k=>$pro) {
         	foreach ($tags as $tag) {
         		if($pro->tag_id == $tag->id){
-        			$proLists[$k]->tag_name = $tag->tag_name;
+        			$proList[$k]->tag_name = $tag->tag_name;
         		}
         	}
 
             foreach ($exps as $exp) { //拼接商品生存期
                 if($pro->product_id == $exp->id){
-                    $proLists[$k]->exp = $exp->exp;
+                    $proList[$k]->exp = $exp->exp;
                 }
             }
-            Cache::put('PRO_DETAIL_'.$proLists[$k]->product_id.'_'.$vmId,$proLists[$k],1440);
+            Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmId,$proList[$k],1440);
         }
-        return $proLists;
+        Log::debug('MallService::showPros put in Cache---'.json_encode($proList));
+        return $proList;
     }
 
     // 获取某售货机下商品详情
@@ -50,10 +52,12 @@ class MallService{
         if(empty($pid) || !isset($vmId)){
             return 'error';
         }
-        // $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
+        $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
+        Log::debug('MallService::getProDetail get data from Cache---'.json_encode($proDetail));
         if(empty($proDetail)){ //需要重新拉取售货机商品列表,放入缓存
            $list = $this->showPros($vmId);
            $proDetail = Cache::get('PRO_DETAIL_'.$pid.'_'.$vmId);
+           Log::debug('MallService::getProDetail after showPros get data from Cache---'.json_encode($proDetail));
         }
         if(!empty($proDetail)){
             return $proDetail;
