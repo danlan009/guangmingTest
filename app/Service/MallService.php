@@ -10,14 +10,31 @@ use DB;
 use Cache;  
 use Log;
 class MallService{
-	// 拉取售货机列表 参数:无
-	public function getVmList(){
-		$vms = DB::table('vms')
-					->join('nodes','vms.node_id','=','nodes.id')
-                    ->select('vms.id','vms.vmid','vms.vm_name','nodes.address')
+	// 拉取点位列表 参数:无
+	public function getNodeList(){
+		$nodes = DB::table('nodes')
+					->join('vms','nodes.id','=','vms.node_id')
+                    ->select('nodes.id','nodes.node_name','nodes.address','nodes.address','nodes.lng','nodes.lat','vms.vmid','vms.vm_name')
                     ->get();
 
-        return $vms;
+        // 格式化数据
+        $nodeList = [];
+        foreach ($nodes as $node) {
+            if(in_array($node->id,$nodeList)){
+                $nodeList[$node->id]['vms'][$node->vmid]['vmid'] = $node->vmid;
+                $nodeList[$node->id]['vms'][$node->vmid]['vm_name'] = $node->vm_name;
+            }else{
+                $nodeList[$node->id]['id'] = $node->id;
+                $nodeList[$node->id]['node_name'] = $node->node_name;
+                $nodeList[$node->id]['address'] = $node->address;
+                $nodeList[$node->id]['lng'] = $node->lng;
+                $nodeList[$node->id]['lat'] = $node->lat;
+                $nodeList[$node->id]['vms'][$node->vmid]['vmid'] = $node->vmid;
+                $nodeList[$node->id]['vms'][$node->vmid]['vm_name'] = $node->vm_name;
+            }
+        }
+        Log::debug('MallService--getNodeList--returns::'.json_encode($nodeList));
+        return $nodeList;
 	}
 
 	// 根据vmid 拉取所有商品
@@ -128,7 +145,7 @@ class MallService{
         $model->blno = $blno;
         $model->vmid = $vmId;
         $res = $model->save();
-        Log::info('single_buy_code successfully---returns::'.'order_id:'.$order_id.'order_detail_id:'.$order_detail_id.'product_id:'.$product_id.'blno:'.$blno);
+        Log::debug('single_buy_code successfully---returns::'.'order_id:'.$order_id.'order_detail_id:'.$order_detail_id.'product_id:'.$product_id.'blno:'.$blno);
     }
 
     // 生成8位取货码
