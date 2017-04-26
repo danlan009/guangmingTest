@@ -10,7 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */ 
-
+ 
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,6 +27,8 @@ Route::get('qr/create',							'qrCodeController@create');
 Route::get('test',								'MallController@test');
 
 Route::get('card/getCardList',					'CoupouController@getCardList');
+
+Route::get('task/flush',						'TaskController@flushCache');
 
 // Route::group(['middleware' => 'wxAuth'], function(){
 
