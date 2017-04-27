@@ -44,8 +44,11 @@ class MallService{
                         ->where('vms.vmid',$vmid)
                         ->select('vms.vmid','vms.vm_name','nodes.address')
                         ->get();
+        if(empty($vmInfo)){
+            return '未找到售货机!';
+        }
         Log::debug('MallService---getVmInfo returns::'.json_encode($vmInfo));
-        return $vmInfo;
+        return get_object_vars($vmInfo[0]);
     }
 	// 根据vmid 拉取所有商品
 	// 参数:1.vmId 售货机id 
