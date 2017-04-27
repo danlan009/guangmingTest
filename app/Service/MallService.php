@@ -5,7 +5,6 @@ use App\Model\Orders;
 use App\Model\OrderLogs;
 use App\Model\OrderStops; 
 use App\Model\Skus; 
-use App\Lib\Bussiness;
 use DB; 
 use Cache;  
 use Log;
@@ -37,6 +36,16 @@ class MallService{
         return $nodeList;
 	}
 
+    // 根据vmid 获取售货机相关信息
+    public function getVmInfo($vmid){
+        $vmInfo = DB::table('vms')
+                        ->join('nodes','vms.node_id','=','nodes.id')
+                        ->where('vms.vmid',$vmid)
+                        ->select('vms.vmid','vms.vm_name','nodes.address')
+                        ->get();
+        // dd($vmInfo);
+        return $vmInfo;
+    }
 	// 根据vmid 拉取所有商品
 	// 参数:1.vmId 售货机id 
     //      2.type 'sale':即卖
@@ -62,6 +71,7 @@ class MallService{
                 $pro->count = $num;
             }
 
+            $pro->pic_url = "";
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
         }
         Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
