@@ -37,13 +37,14 @@ class MallService{
 	}
 
     // 根据vmid 获取售货机相关信息
+    // 参数:vmid
     public function getVmInfo($vmid){
         $vmInfo = DB::table('vms')
                         ->join('nodes','vms.node_id','=','nodes.id')
                         ->where('vms.vmid',$vmid)
                         ->select('vms.vmid','vms.vm_name','nodes.address')
                         ->get();
-        // dd($vmInfo);
+        Log::debug('MallService---getVmInfo returns::'.json_encode($vmInfo));
         return $vmInfo;
     }
 	// 根据vmid 拉取所有商品
