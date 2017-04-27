@@ -341,7 +341,7 @@ class Loader
             apache_setenv($name, $value);
         }
 
-        if (function_exists('putenv')) {
+        if (function_exists('putenv') && !empty($name)) {
             putenv("$name=$value");
         }
 
