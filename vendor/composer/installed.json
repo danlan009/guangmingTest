@@ -3908,5 +3908,49 @@
             "qrcode",
             "wrapper"
         ]
+    },
+    {
+        "name": "overtrue/laravel-wechat",
+        "version": "3.1.8",
+        "version_normalized": "3.1.8.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/overtrue/laravel-wechat.git",
+            "reference": "a9c0b0117326571fb164cb513ae9ec15ca910c46"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/overtrue/laravel-wechat/a9c0b0117326571fb164cb513ae9ec15ca910c46.zip",
+            "reference": "a9c0b0117326571fb164cb513ae9ec15ca910c46",
+            "shasum": ""
+        },
+        "require": {
+            "overtrue/wechat": "~3.0"
+        },
+        "time": "2017-03-21 08:59:43",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Overtrue\\LaravelWechat\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "微信 SDK for Laravel",
+        "keywords": [
+            "laravel",
+            "sdk",
+            "wechat",
+            "weixin"
+        ]
     }
 ]
