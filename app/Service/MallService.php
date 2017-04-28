@@ -133,7 +133,7 @@ class MallService{
         $existCount = DB::table('orders')
                         ->join('order_details as ods','orders.id','=','ods.order_id')
                         ->where('orders.channel',1)
-                        ->where('orders.orders_status','<>',3)
+                        ->where('orders.order_status','<>',3)
                         ->where('orders.vmid',$vmid)
                         ->where('ods.product_id',$product_id)
                         ->count();
@@ -141,7 +141,7 @@ class MallService{
         $num = $max - $existCount;
         return $num;
     }
-
+ 
     // 即卖生成单个取货码(下单后操作)
     public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmId){ // 预下单后买码
         $blno = $this->createBlno();
