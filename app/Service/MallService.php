@@ -82,9 +82,12 @@ class MallService{
             // $pro->pic_d3 = $this->getImg($dir,$pid,$type);
             $pro->pic_l = '';
             $pro->pic_t = '';
-            $pro->pic_d1 = '';
-            $pro->pic_d2 = '';
-            $pro->pic_d3 = '';
+            $pro->detail_pics = [
+                '',
+                '',
+                ''
+            ];
+
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
         }
         Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
