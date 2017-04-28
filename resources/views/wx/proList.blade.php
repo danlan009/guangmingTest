@@ -13,7 +13,7 @@
 <header>
 	<h1><img src="/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/account"><span>12</span></a>
+		<a href="/wx/account"><span id="cartProductsAccount"></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
@@ -25,19 +25,26 @@
 	<p><?php echo $vmInfor['address'] ?></p>
 	<a href="/wx/vmlist" class="blue_button">更换</a>
 </div>
-<section class="products_list">
+<section class="products_list" id="products_list">
 	<?php foreach ($products as $key => $value) { ?>
 		<div class="pro">
 			<p>
 				<a href="/wx/detail/<?php echo $vmInfor['vmid'].'/'.$value->product_id ?>">
-					<img src="/images/products/default.jpg" data-src="<?php echo $value->pic_url ?>" />
+					<img src="/images/products/default.jpg" data-src="<?php echo $value->pic_l ?>" />
+					<mark><?php echo isset($value->volume) && !empty($value->volume) ? $value->volume : '' ?></mark>
+					<span class="<?php echo $value->tag_name == '新品' ? '' : 'hot' ?>"></span>
+					<?php
+						echo $value->count ? '' : '<em></em>';
+					?>
 				</a>
 			</p>
-			<h1><?php echo $value->product_name ?><span><?php echo isset($value->volume) && !empty($value->volume) ?></span></h1>
+			<h1><?php echo $value->product_name ?><span></span></h1>
 			<h2>
 				￥<?php echo round($value->retail_price/100, 2) ?>
-				<del>￥<?php echo round($value->original_price/100, 2) ?></del>
-				<button class="blue_button">预定</button>
+				<?php if($value->retail_price != $value->original_price){ ?>
+					<del>￥<?php echo round($value->original_price/100, 2) ?></del>
+				<?php } ?>
+				<button class="<?php echo $value->count ? 'blue_button' : 'grey_button' ?>">预定</button>
 			</h2>
 		</div>
 	<?php } ?>
@@ -49,5 +56,10 @@
 
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
 <script src="/scripts/ui.js" ></script>
+<script type="text/javascript">
+$(function(){
+	$('#products_list button').addToCart($('#cartProductsAccount'));
+});
+</script>
 </body>
 </html>

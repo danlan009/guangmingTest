@@ -46,6 +46,7 @@ class MallController extends Controller
         // echo '<pre>';
         // print_r($detail);
         // echo '</pre>';
+        $detail->count = 0;
 
         return view('wx.details', array(
                 'detail'   => $detail
