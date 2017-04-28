@@ -35,10 +35,11 @@ Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是
 
 	Route::get('wx/vmlist', 					'MallController@vmList');
 	Route::get('wx/list/{vmid}', 				'MallController@productsList');
-	Route::get('wx/detail/{pid}', 				'MallController@productDetail');
+	Route::get('wx/detail/{vmid}/{pid}', 		'MallController@productDetail');
 	Route::get('wx/result', 					'MallController@result');
 	Route::get('wx/orders', 					'MallController@myorders');
 	Route::get('wx/cards', 						'MallController@wxCards');
+	Route::get('wx/account', 					'MallController@wxAccount');
 
 // });
 
