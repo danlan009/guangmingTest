@@ -64,16 +64,20 @@ class MallService{
         Log::debug('MallService::getAllPros---'.json_encode($proList));
  
         // 放入缓存
+        $counts = []; // 用于商品列表根据剩余量排序
         foreach ($proList as $k=>$pro) {
             $pid = $pro->product_id;
             if($type == 'sale'){ 
                 $num = $this->getNumOfSale($vmid,$pid); //计算即卖商品剩余数量
-                $pro->count = $num;      
+                $pro->count = $num;    
+                $counts[] = $num;
             }else{
                 $num = $this->getNumOfBook($vmid,$pid); //计算预定商品剩余数量
                 Log::debug('getNumOfBook---returns---'.$num);
                 $pro->count = $num;
+                $counts[] = $num;
             }
+
 
             // $pro->pic_l = $this->getImg($dir,$pid,$type);
             // $pro->pic_t = $this->getImg($dir,$pid,$type);
@@ -91,6 +95,7 @@ class MallService{
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
         }
         Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
+        array_multisort($counts,SORT_DESC,$proList);
         return $proList;
     }
 
@@ -197,6 +202,13 @@ class MallService{
 
     public function getImg($dir="products",$id,$type){
         $image_path = env('IMAGE_PATH');
+        switch($dir){
+            case 'products':
+                
+            break;
+            case 'subjects':
+            break;
+        }
         $file = $dir."/".$id."_$type".'.jpg';
         $md5 = Cache::get('API_IMG_MD5_'.$file);
         if(isset($md5)){
