@@ -24,7 +24,7 @@ Route::get('supply/get_daily_orders_to_send',	'SupplyController@getDailyOrdersTo
 Route::get('isAbleToBook',						'OrderController@isAbleToBook');
 
 Route::get('qr/create',							'qrCodeController@create');
-Route::get('test',								'MallController@test');
+Route::get('test',								'SupplyController@test');
 
 Route::get('card/getCardList',					'CoupouController@getCardList');
 
