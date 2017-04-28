@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Lib\Bussiness; 
 use Log; 
 use DB;  
-use App\Service\MallService.php
+use App\Service\MallService;
 class SupplyController extends Controller
 {
     // 补货控制器   
