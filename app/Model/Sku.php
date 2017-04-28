@@ -8,16 +8,7 @@ class Sku extends Model
 {
 	protected $table = 'sku'; 
     public static function getAllPros($vmId){
-    	/**
-    	$proList = DB::table('sku')
-    					->join('tags','sku.tag_id','=','tags.id')
-    					->where('vm_id',$vmId)
-		    			->select('sku.product_id','sku.product_name','sku.original_price','sku.retail_price','sku.tag_id','tags.tag_name')
-		    			->groupBy('product_id')
-		    			->get();
-		**/
-
-		$proList = DB::table('sku')
+		$proList = DB::table('skus')
     					->where('vm_id',$vmId)
 		    			->select('product_id','product_name','original_price','retail_price','tag_id')
 		    			->groupBy('product_id')
