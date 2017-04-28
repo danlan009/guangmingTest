@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderLogs extends Model
+class OrderLog extends Model
 {
-    
+    public $timestamps = false;
 }

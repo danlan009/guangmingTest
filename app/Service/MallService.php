@@ -1,11 +1,11 @@
 <?php
 namespace App\Service;
 
-use App\Model\Orders;
-use App\Model\OrderLogs;
-use App\Model\OrderStops; 
-use App\Model\Skus; 
-use DB; 
+use App\Model\Order;
+use App\Model\OrderLog;
+use App\Model\OrderStop; 
+use App\Model\Sku; 
+use DB;  
 use Cache;  
 use Log;
 class MallService{
@@ -45,7 +45,7 @@ class MallService{
                         ->select('vms.vmid','vms.vm_name','nodes.address')
                         ->get();
         if(empty($vmInfo)){
-            return '未找到售货机!';
+            return 0; //未找到售货机
         }
         Log::debug('MallService---getVmInfo returns::'.json_encode($vmInfo));
         return get_object_vars($vmInfo[0]);
@@ -60,9 +60,9 @@ class MallService{
             return 'parameter missing!';
         }
 
-        $proList = Skus::getAllPros($vmid);
+        $proList = Sku::getAllPros($vmid);
         Log::debug('MallService::getAllPros---'.json_encode($proList));
-
+ 
         // 放入缓存
         foreach ($proList as $k=>$pro) {
             $pid = $pro->product_id;
@@ -75,7 +75,11 @@ class MallService{
                 $pro->count = $num;
             }
 
-            $pro->pic_url = "";
+            $pro->pic_l = $this->getImg($dir,$pid,$type);
+            $pro->pic_t = $this->getImg($dir,$pid,$type);
+            $pro->pic_d1 = $this->getImg($dir,$pid,$type);
+            $pro->pic_d2 = $this->getImg($dir,$pid,$type);
+            $pro->pic_d3 = $this->getImg($dir,$pid,$type);
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
         }
         Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
@@ -182,5 +186,16 @@ class MallService{
         }
         
     }
+
+    public function getImg($dir="products",$id,$type){
+        $image_path = env('IMAGE_PATH');
+        $file = $dir."/".$id."_$type".'.jpg';
+        $md5 = Cache::get('API_IMG_MD5_'.$file);
+        if(isset($md5)){
+            $file .= "?v=$md5";
+        }
+
+        return "$image_path/$file";
+    } 
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
- 
+  
 /* 
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,7 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */ 
- 
+  
 Route::get('/', function () {
     return view('welcome');
 });
@@ -29,6 +29,7 @@ Route::get('test',								'MallController@test');
 Route::get('card/getCardList',					'CoupouController@getCardList');
 
 Route::get('task/flush',						'TaskController@flushCache');
+Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是否修改
 
 // Route::group(['middleware' => 'wxAuth'], function(){
 

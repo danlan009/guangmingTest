@@ -7,6 +7,9 @@ use DB;
 use Cache; 
 use Log;
 use App\Service\MallService;
+use App\Service\SupplyService;
+use App\Service\StatService;
+use App\Model\User;
 class MallController extends Controller
 {
     // 售货机列表
@@ -68,7 +71,7 @@ class MallController extends Controller
             ));
     }
 
-    // 我的微信卡券列表
+    // 我的微信卡券列表 
     public function wxCards(){
         $wxId = '';
 
@@ -84,9 +87,7 @@ class MallController extends Controller
     }
 
     public function test(Request $request){
-        $mallService = new MallService();
-        $proList = $mallService->getVmList();
-        dd($proList);
+        
     } 
 
 }
