@@ -38,16 +38,14 @@ class MallController extends Controller
     // 商品详情
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
-        // $vmid = "0081008";
-        // $pid = "100002";
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
 
-        echo '<pre>';
-        print_r($detail);
-        echo '</pre>';
+        // echo '<pre>';
+        // print_r($detail);
+        // echo '</pre>';
 
         return view('wx.details', array(
-                
+                'detail'   => $detail
             ));
     }
 
