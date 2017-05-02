@@ -13,7 +13,7 @@
 <header>
 	<h1><img src="/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/account"><span>12</span></a>
+		<a href="/wx/account"><span id="totalCart"></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
@@ -38,17 +38,29 @@
 	</section>
 </div>
 <footer>
-	<p>目前共<mark>3</mark>份</p>
-	<section>
-		<?php if($detail->count){ ?>
-			<button class="blue_button">加入购物车</button>
-			<a href="" class="green_button">立即支付</a>
-		<?php }else{ ?>
-			<span>暂停预定</span><a href="/wx/vmlist" class="green_button">继续购物</a>
-		<?php } ?>
+	<p>目前共<mark id="totalSelected">0</mark>份</p>
+	<section class="detailButtons" style="display:<?php echo $detail->count ? '' : 'none' ?>">
+		<button class="blue_button" id="addToCart">加入购物车</button>
+		<a href="/wx/account" class="green_button">去结算</a>
+	</section>
+
+	<section class="detailButtons" style="display:<?php echo $detail->count ? 'none' : '' ?>;">
+		<span>已订完</span><a href="/wx/list/<?php echo $vmid ?>" class="green_button">继续购物</a>
 	</section>
 </footer>
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
 <script src="/scripts/ui.js" ></script>
+<script type="text/javascript">
+$(function(){
+	$('body').detailHandler({
+		pid: '<?php echo $detail->product_id ?>',
+		pname: '<?php echo $detail->product_name ?>',
+		oprice: '<?php echo $detail->original_price ?>',
+		price: '<?php echo $detail->retail_price ?>',
+		left: '<?php echo $detail->count ?>'
+	});	
+});
+
+</script>
 </body>
 </html>

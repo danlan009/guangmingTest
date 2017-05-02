@@ -13,7 +13,7 @@
 <header>
 	<h1><img src="/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/account"><span id="cartProductsAccount"></span></a>
+		<a href="/wx/account"><span id="cartProductsAccount" data-count=""></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
@@ -44,7 +44,7 @@
 				<?php if($value->retail_price != $value->original_price){ ?>
 					<del>￥<?php echo round($value->original_price/100, 2) ?></del>
 				<?php } ?>
-				<button class="<?php echo $value->count ? 'blue_button' : 'grey_button' ?>">预定</button>
+				<button class="<?php echo 'p_'.$value->product_id.' '.($value->count ? 'blue_button' : 'grey_button') ?>" data-id="<?php echo $value->product_id ?>">预定</button>
 			</h2>
 		</div>
 	<?php } ?>
@@ -55,6 +55,35 @@
 </div>
 
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
+<script type="text/javascript">
+window.sessionStorage.setItem('productsListObj', (function(){
+	var plist = '<?php echo json_encode($products) ?>',
+		newList = {},
+		item = null;
+	console.log(plist)
+	plist = JSON.parse(plist);
+	for(var i=0,len=plist.length; i<len; i++){
+		item = plist[i];
+		newList[item['product_id']] = {
+			'pid': item['product_id'],
+			'pname': item['product_name'],
+			'oprice': item['original_price'],
+			'rprice': item['retail_price'],
+			'left': item['count']
+		};
+	}
+	return JSON.stringify(newList);
+})() );
+
+if(!window.sessionStorage['selectedProducts']){
+	window.sessionStorage['selectedProducts'] = JSON.stringify({
+		"products": { },
+	    "total": 0,
+	    "vmid": "<?php echo $vmInfor['vmid'] ?>"
+	});
+}
+
+</script>
 <script src="/scripts/ui.js" ></script>
 <script type="text/javascript">
 $(function(){
