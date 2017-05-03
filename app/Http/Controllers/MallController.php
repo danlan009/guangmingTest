@@ -32,6 +32,7 @@ class MallController extends Controller
         // print_r($productsList);
         // echo '</pre>';
         // exit;
+
         return view('wx.proList', array(
                 'products'  => $productsList,
                 'vmInfor'   => $vmInfor
@@ -46,9 +47,11 @@ class MallController extends Controller
         // echo '<pre>';
         // print_r($detail);
         // echo '</pre>';
+        // $detail->count = 0;
 
         return view('wx.details', array(
-                'detail'   => $detail
+                'detail'    => $detail,
+                'vmid'      => $vmid
             ));
     }
 
@@ -84,6 +87,9 @@ class MallController extends Controller
     // 结算
     public function wxAccount(){
 
+        return view('wx.account', array(
+                
+            ));
     }
 
     public function test(){
