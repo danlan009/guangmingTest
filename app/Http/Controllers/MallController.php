@@ -44,9 +44,10 @@ class MallController extends Controller
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
 
-        // echo '<pre>';
-        // print_r($detail);
-        // echo '</pre>';
+        echo '<pre>';
+        print_r($detail);
+        echo '</pre>';exit;
+        
         // $detail->count = 0;
 
         return view('wx.details', array(
