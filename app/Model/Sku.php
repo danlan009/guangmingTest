@@ -31,7 +31,7 @@ class Sku extends Model
                     $unit = ($proInfo->unit==1)?'ml':'g';
                     $proList[$k]->volume = ((string)$proInfo->volume).$unit; //拼接容量
                     // $proList[$k]->des = $proInfo->des; //拼接描述文案
-                    $proList[$k]->des = ''; //拼接描述文案
+                    $proList[$k]->des = $proInfo->detail; //拼接描述文案
                 }
             }
 
