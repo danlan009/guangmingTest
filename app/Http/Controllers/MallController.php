@@ -64,9 +64,9 @@ class MallController extends Controller
         // 测试图片加载 End
 
 
-        echo '<pre>';
-        print_r($detail);
-        echo '</pre>';exit;
+        // echo '<pre>';
+        // print_r($detail);
+        // echo '</pre>';exit;
 
         return view('wx.details', array(
                 'detail'    => $detail,
