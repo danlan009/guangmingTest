@@ -10,6 +10,9 @@
 	<link href="/style/base.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
+<?php 
+	define("PAGENUMBER", 2); // 每页显示商品数量
+?>
 <header>
 	<h1><img src="/images/common/logo.png" /></h1>
 	<p>
@@ -27,12 +30,14 @@
 </div>
 <section class="products_list" id="products_list">
 	<?php foreach ($products as $key => $value) { ?>
-		<div class="pro">
+		<div class="pro <?php echo $key < PAGENUMBER ? 'show' : '' ?>">
 			<p>
 				<a href="/wx/detail/<?php echo $vmInfor['vmid'].'/'.$value->product_id ?>">
-					<img src="/images/products/default.jpg" data-src="<?php echo $value->pic_l ?>" />
+					<img src="/images/products/default.jpg" data-src="<?php echo $value->pic_l ?>" class="pListImgs" />
 					<mark><?php echo isset($value->volume) && !empty($value->volume) ? $value->volume : '' ?></mark>
-					<span class="<?php echo $value->tag_name == '新品' ? '' : 'hot' ?>"></span>
+					<?php if(isset($value->tag_name) && !empty($value->tag_name)){ ?>
+						<span class="<?php echo $value->tag_name == '新品' ? '' : 'hot' ?>"></span>
+					<?php } ?>
 					<?php
 						echo $value->count ? '' : '<em></em>';
 					?>
@@ -60,7 +65,7 @@ window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($products) ?>',
 		newList = {},
 		item = null;
-	console.log(plist)
+	// console.log(plist)
 	plist = JSON.parse(plist);
 	for(var i=0,len=plist.length; i<len; i++){
 		item = plist[i];
@@ -88,6 +93,8 @@ if(!window.sessionStorage['selectedProducts']){
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));
+	$('.show .pListImgs').loadImages();
+	$('.loadmore').loadMoreProducts('<?php echo PAGENUMBER ?>');
 });
 </script>
 </body>

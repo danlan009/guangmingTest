@@ -23,9 +23,15 @@ class MallController extends Controller
 
     // 商品列表
     public function productsList($vmid){
+
         $mallService = new MallService();
         $productsList = $mallService->showPros($vmid, 'book');
         $vmInfor    = $mallService->getVmInfo($vmid);
+
+        // 测试图片加载
+        $productsList[0]->pic_l = "/images/products/100017_l.jpg";
+        $productsList[1]->pic_l = "/images/products/100018_l.jpg";
+        $productsList[2]->pic_l = "/images/products/100016_l.jpg";
 
         // echo '<pre>';
         // print_r($vmInfor);
@@ -43,12 +49,24 @@ class MallController extends Controller
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
+        echo '<pre>';
+        print_r($detail);
+        var_dump($detail);
+        echo '</pre>';exit;
+        // 测试图片加载 Start
+        $detail->pic_t = "/images/products/100016_d.jpg";
+        $detail->detail_pics = array(
+                '/images/details/img_1_1.jpg',
+                '/images/details/img_1_2.jpg',
+                '/images/details/img_1_1.jpg'
+            );
+        
+        // 测试图片加载 End
+
 
         echo '<pre>';
         print_r($detail);
         echo '</pre>';exit;
-        
-        // $detail->count = 0;
 
         return view('wx.details', array(
                 'detail'    => $detail,

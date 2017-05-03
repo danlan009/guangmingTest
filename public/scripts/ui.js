@@ -92,9 +92,22 @@ $.fn.searchVmsHandler = function(keywords, vms){
 	return html;
 };
 
-//图片加载
-$.fn.imgLoading = function(){
-	
+$.fn.loadImages = function(){
+	var _this = $(this), src=[], newImg=[];
+	console.log(_this.length)
+	for(var i=0,len=_this.length; i<len; i++){
+		(function(i){
+			src[i]=_this.eq(i).attr('data-src');
+			if(src[i]){
+				newImg[i] = new Image();
+				newImg[i].src= src[i];
+				newImg[i].onload = function(){
+					_this.eq(i).attr('src', src[i]);
+				};
+			}
+			
+		})(i);
+	}
 };
 
 //单击“预定”按钮
@@ -142,6 +155,46 @@ $.fn.addToCart = function(elm){
 	});
 };
 
+$.fn.loadMoreProducts = function(size){
+	var _this = $(this),
+		startY = 0,
+		posY = 0,
+		height = _this.height(),
+		_size = parseInt(size);
+
+	// console.log(height);
+	// console.log(typeof _size)
+	// console.log();
+
+	_this.on('touchstart', function(e){
+		startY = e.changedTouches[0].pageY;
+	});
+
+	_this.on('touchmove', function(e){
+		var touches = e.changedTouches[0];
+		posY = touches.pageY < startY ? startY- touches.pageY : 0;
+		if(height + posY < height * 1.5){
+			_this.css({
+				'height': (height + posY) + 'px'
+			});
+		}else{
+			_this.addClass('loading');
+		}
+	});
+
+	_this.on('touchend', function(e){
+		// 对列表的处理
+		var list = $('.pro').not('.show');
+		list.each(function(key, value){
+			if(key < _size){
+				$(this).addClass('show');
+			}
+		});
+		_this.removeClass('loading');
+
+	});
+};
+
 $.fn.detailHandler = function(o){
 	var selected = window.sessionStorage['selectedProducts'],
 		pid = o.pid,
@@ -150,7 +203,9 @@ $.fn.detailHandler = function(o){
 		price = o.price,
 		left = o.left;
 	selected = JSON.parse(selected);
-	refreshNumbersForDetail(selected, pid);
+
+	console.log(selected)
+	refreshNumbersForDetail(selected, pid, left);
 
 
 	$('#addToCart').on('click', function(){
@@ -162,7 +217,7 @@ $.fn.detailHandler = function(o){
 			left: left
 		}, selected);
 
-		refreshNumbersForDetail(selected, pid);
+		refreshNumbersForDetail(selected, pid, left);
 		window.sessionStorage['selectedProducts'] = JSON.stringify(selected);
 	});
 };
@@ -173,7 +228,7 @@ $.fn.accountHandler = function(){
 	selected = JSON.parse(selected);
 };
 
-function refreshNumbersForDetail(selected, pid){
+function refreshNumbersForDetail(selected, pid, left){
 	var btns = $('.detailButtons'),
 		total = selected['total'];
 	if(total){
@@ -181,11 +236,16 @@ function refreshNumbersForDetail(selected, pid){
 		$('#totalCart').text(total).show();
 	}
 
-	if(selected['products'][pid] && selected['products'][pid]['count'] < selected['products'][pid]['left'] ){
-		btns.hide().eq(0).show();
-	}else{
-		btns.hide().eq(1).show();
+	if(left > 0){
+		if(selected['products'][pid] && (selected['products'][pid]['count'] < selected['products'][pid]['left']) ){
+			console.log('可售')
+			btns.hide().eq(0).show();
+		}else{
+			btns.hide().eq(1).show();
+			console.log('已售完')
+		}
 	}
+	
 }
 
 function refreshCountOfCart(o, selected){

@@ -17,8 +17,13 @@
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
+<?php // if(){ ?>
+	
+<?php // }else{ ?>
+	
+<?php // } ?>
 <div class="detail">
-	<h3><img src="/images/products/default_d.jpg" data-src="<?php echo $detail->pic_t ?>" /></h3>
+	<h3><img src="/images/products/default_d.jpg" data-src="<?php echo $detail->pic_t ?>" class="detailImgs" /></h3>
 	<h1>
 		<?php echo $detail->product_name ?>
 		<?php if( isset($detail->volume) && !empty($detail->volume) ){ ?>
@@ -33,7 +38,7 @@
 	<p><?php echo $detail->des ?></p>
 	<section>
 		<?php foreach($detail->detail_pics as $pic){ ?>
-			<img src="/images/products/default_d.jpg" data-src="<?php echo $pic ?>" />
+			<img src="/images/products/default_d.jpg" data-src="<?php echo $pic ?>" class="detailImgs" />
 		<?php } ?>
 	</section>
 </div>
@@ -45,7 +50,7 @@
 	</section>
 
 	<section class="detailButtons" style="display:<?php echo $detail->count ? 'none' : '' ?>;">
-		<span>已订完</span><a href="/wx/list/<?php echo $vmid ?>" class="green_button">继续购物</a>
+		<!-- <span>已订完</span> --><a href="/wx/list/<?php echo $vmid ?>" class="green_button">继续购物</a>
 	</section>
 </footer>
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
@@ -59,6 +64,7 @@ $(function(){
 		price: '<?php echo $detail->retail_price ?>',
 		left: '<?php echo $detail->count ?>'
 	});	
+	$('.detailImgs').loadImages();
 });
 
 </script>
