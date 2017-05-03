@@ -1,7 +1,7 @@
 <?php
 namespace App\Service;
 
-use App\Model\Order;
+use App\Model\Order; 
 use App\Model\OrderLog;
 use App\Model\OrderStop; 
 use App\Model\Sku; 
@@ -66,7 +66,7 @@ class MallService{
         // 放入缓存
         $counts = []; // 用于商品列表根据剩余量排序
         foreach ($proList as $k=>$pro) {
-            $pid = $pro->product_id;
+            $pid = $pro->product_id; 
             if($type == 'sale'){ 
                 $num = $this->getNumOfSale($vmid,$pid); //计算即卖商品剩余数量
                 $pro->count = $num;    
@@ -123,7 +123,7 @@ class MallService{
     public function getNumOfSale($vmid,$product_id){
         $num = DB::table('skus')
                         ->join('sku_supplys as skps','skus.id','=','skps.sku_id')
-                        ->where('skus.vm_id',$vmid)
+                        ->where('skus.vmid',$vmid)
                         ->where('skus.product_id',$product_id)
                         ->where('skps.status',2)
                         ->count();
@@ -133,7 +133,7 @@ class MallService{
     // 计算某台售货机预定商品剩余数量
     public function getNumOfBook($vmid,$product_id){
         $skuList = DB::table('skus')
-                        ->where('vm_id',$vmid)
+                        ->where('vmid',$vmid)
                         ->where('product_id',$product_id)
 
                         ->select('id','sku_size')
@@ -143,14 +143,16 @@ class MallService{
             $max += $sku->sku_size;
         }
         
+        // 配送中且第二天仍不会结束
         $existCount = DB::table('orders')
                         ->join('order_details as ods','orders.id','=','ods.order_id')
                         ->where('orders.channel',1)
                         ->where('orders.order_status','<>',3)
                         ->where('orders.vmid',$vmid)
                         ->where('ods.product_id',$product_id)
-                        ->count();
-        // dd($existCount);
+                        // ->get();
+                        ->count();        
+    
         $num = $max - $existCount;
         return $num;
     }
@@ -159,7 +161,7 @@ class MallService{
     public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmId){ // 预下单后买码
         $blno = $this->createBlno();
         $date = date('Y-m-d');
-        // 去重
+        // 检验是否重复(当天,同一台取货机不能有重复取货码)
         $exists = OrderLogs::where('vmid',$vmId)->where('create_date',$date)->pluck('blno')->toArray();
         // dd($exists);
         while(in_array($blno,$exists)){
@@ -204,12 +206,13 @@ class MallService{
         $image_path = env('IMAGE_PATH');
         switch($dir){
             case 'products':
+                $file = $dir."/".$id."/".$id."_".$type.".jpg";
                 
             break;
-            case 'subjects':
+            case 'subjects': 
+                $file = $dir."/".$id."_$type".".jpg";
             break;
         }
-        $file = $dir."/".$id."_$type".'.jpg';
         $md5 = Cache::get('API_IMG_MD5_'.$file);
         if(isset($md5)){
             $file .= "?v=$md5";

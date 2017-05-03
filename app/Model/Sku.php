@@ -9,7 +9,7 @@ class Sku extends Model
 	protected $table = 'sku'; 
     public static function getAllPros($vmId){
 		$proList = DB::table('skus')
-    					->where('vm_id',$vmId)
+    					->where('vmid',$vmId)
 		    			->select('product_id','product_name','original_price','retail_price','tag_id')
 		    			->groupBy('product_id')
 		    			->get();
