@@ -1,6 +1,6 @@
 <?php
-  
-/* 
+    
+/*  
 |--------------------------------------------------------------------------
 | Application Routes
 |--------------------------------------------------------------------------
@@ -22,6 +22,7 @@ Route::get('supply/get_supply_data',			'SupplyController@getSupplyData');
 Route::get('supply/add',						'SupplyController@add');
 Route::get('supply/get_daily_orders_to_send',	'SupplyController@getDailyOrdersToSend');
 Route::get('isAbleToBook',						'OrderController@isAbleToBook');
+Route::get('supply/finish',						'SupplyController@finishSupply'); // 补货完成入口
 
 Route::get('qr/create',							'qrCodeController@create');
 Route::get('test',								'SupplyController@test');
@@ -30,6 +31,8 @@ Route::get('card/getCardList',					'CoupouController@getCardList');
 
 Route::get('task/flush',						'TaskController@flushCache');
 Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是否修改
+
+Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
 
 // Route::group(['middleware' => 'wxAuth'], function(){
 
