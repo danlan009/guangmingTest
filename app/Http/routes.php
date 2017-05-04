@@ -41,5 +41,9 @@ Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是
 	Route::get('wx/cards', 						'MallController@wxCards');
 	Route::get('wx/account', 					'MallController@wxAccount');
 
+    Route::get('wx/ajax_prepay',                'PaymentController@ajaxPrepay');
+    Route::get('wx/notify_payment',             'PaymentController@notifyPayment');
+    Route::get('wx/test',                       'PaymentController@test');
+
 // });
 
