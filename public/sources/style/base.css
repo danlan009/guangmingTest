@@ -27,8 +27,8 @@ header p a span.show{display:block;}
 header p a:first-child{width:1.2rem; height:1rem; background:url(/sources/images/common/cart.png) no-repeat center; background-size:0.7rem auto; }
 header p a img{display:block; width:100%;}
 header p a:last-child{ width:1.88rem; text-align:center; border-left:#eee 1px solid; }
-.banner{width:100%; padding-top:1rem;}
-.banner img {display:block; width:100%; }
+.banner{width:100%; margin-top:1rem; position:relative; padding-top:28.7%;}
+.banner img {display:block; width:100%; position:absolute; left:0;top:0; }
 
 .vminfor{background-color:#fff; position:relative; border-bottom:#b8e5fe 0.36rem solid; height:1.82rem; padding-left:0.4rem; padding-top:0.25rem; padding-right:1.7rem; }
 .vminfor h1{font-size:0.48rem; color:#585858; line-height:0.5rem; font-weight:bold; }
@@ -40,15 +40,15 @@ header p a:last-child{ width:1.88rem; text-align:center; border-left:#eee 1px so
 .pro{width:50%; font-size:0.36rem; color:#737373; border-bottom:#e5e5e5 1px solid; display:none;padding:0.3rem; padding-bottom:0.5rem; vertical-align:bottom; }
 .pro.show{display:inline-block; }
 .pro:nth-child(2n+1){border-right:#e5e5e5 1px solid;}
-.pro p{border:#e5e5e5 1px solid; position:relative;}
-.pro p a{display:block; }
-.pro p img{display:block; width:100%; }
+.pro p{border:#e5e5e5 1px solid;padding-top:77.7777%;position:relative;}
+.pro p a{display:block; position:absolute; left:0; top:0; z-index:2;  }
+.pro p img{display:block; width:100%;  }
 .pro p span,
 .pro p mark,
 .pro p em{display:block; position:absolute; }
-.pro p span{ width:1.3rem; height:1.23rem; background:url(/sources/images/common/new.png) no-repeat center; background-size:1.3rem auto; top:0;left:0;}
+.pro p span{ width:1.3rem; height:1.23rem; background:url(/sources/images/common/new.png) no-repeat center; background-size:1.3rem auto; top:0;left:0; z-index:3;}
 .pro p span.hot{background:url(/sources/images/common/hot.png) no-repeat center; background-size:1.3rem auto;}
-.pro p mark{top:0; right:0; background-color:#e5e5e5; font-size:0.3rem;box-shadow:-1px 1px 2px rgba(0,0,0,0.2); height:0.6rem; line-height:0.6rem; padding:0 0.3rem; border:#eee 1px solid; border-top:0;border-right:0;color:#999;border-bottom-left-radius:1rem; }
+.pro p mark{top:0; right:0; z-index:4; background-color:#e5e5e5; font-size:0.3rem;box-shadow:-1px 1px 2px rgba(0,0,0,0.2); height:0.6rem; line-height:0.6rem; padding:0 0.3rem; border:#eee 1px solid; border-top:0;border-right:0;color:#999;border-bottom-left-radius:1rem; }
 .pro p em{ background:rgba(0,0,0,0.1) url(/sources/images/common/saleout.png) no-repeat center; background-size:2.55rem auto; bottom:0; right:0; width:100%; height:100%; position:absolute; top:0; left:0;}
 .pro p.saleout img{ filter:grayscale(1); }
 .pro h1{font-size:0.36rem; position:relative; line-height:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -90,8 +90,8 @@ header p a:last-child{ width:1.88rem; text-align:center; border-left:#eee 1px so
 .detail h1{height:1.17rem; background-color:#fff; border-top:#e5e5e5 1px solid; position:relative;padding-left:0.5rem;font-size:0.48rem; line-height:1.17rem; }
 .detail h1 span{font-size:0.36rem; color:#999; display:inline-block; padding-left:0.2rem; vertical-align:baseline;}
 .detail h1 mark{color:#ff0000; font-size:0.48rem; display:block; position:absolute; right:0.5rem;top:0; line-height:1.17rem; height:1.17rem; }
-.detail h3{}
-.detail h3 img{display:block; width:100%;}
+.detail h3{ position:relative;padding-top:48.19%; }
+.detail h3 img{display:block; width:100%; position:absolute;left:0;top:0;}
 .container{margin-bottom:1.5rem;}
 .container p{width:91%; margin:0 auto; line-height:0.48rem; padding-bottom:0.3rem; font-size:0.4rem; }
 .container section{ width:96.5%; margin:0 auto; padding-bottom:0.2rem; }
