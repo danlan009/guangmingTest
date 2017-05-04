@@ -1,0 +1,5 @@
+*{margin:0; padding:0;}
+
+.login{width:400px; position:absolute; top:50%; margin-top:-300px; left:50%; margin-left:-200px; background-color:#fff; padding:25px 0; }
+.login p{ text-align:center; }
+.login h2{ font-size:18px; text-align:center; line-height:24px; padding-top:10px; color:#333; }

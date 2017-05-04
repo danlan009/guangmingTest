@@ -7,21 +7,21 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="pragma" content="no-cache" />
 	<title>欢迎预定</title>
-	<link href="/style/base.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $cdn_url ?>/style/base.css?v=<?php echo $css_version ?>" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <?php 
 	define("PAGENUMBER", 2); // 每页显示商品数量
 ?>
 <header>
-	<h1><img src="/images/common/logo.png" /></h1>
+	<h1><img src="<?php echo $cdn_url ?>/images/common/logo.png" /></h1>
 	<p>
 		<a href="/wx/account"><span id="cartProductsAccount" data-count=""></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
 <div class="banner">
-	<img src="/images/common/top.jpg" />
+	<img src="<?php echo $cdn_url ?>/images/common/top.jpg" />
 </div>
 <div class="vminfor">
 	<h1><?php echo $vmInfor['vm_name'] ?><span>编号：<?php echo $vmInfor['vmid'] ?></span></h1>
@@ -33,7 +33,7 @@
 		<div class="pro <?php echo $key < PAGENUMBER ? 'show' : '' ?>">
 			<p>
 				<a href="/wx/detail/<?php echo $vmInfor['vmid'].'/'.$value->product_id ?>">
-					<img src="/images/products/default.jpg" data-src="<?php echo $value->pic_l ?>" class="pListImgs" />
+					<img src="<?php echo $cdn_url ?>/images/products/default.jpg" data-src="<?php echo $value->pic_l ?>" class="pListImgs" />
 					<mark><?php echo isset($value->volume) && !empty($value->volume) ? $value->volume : '' ?></mark>
 					<?php if(isset($value->tag_name) && !empty($value->tag_name)){ ?>
 						<span class="<?php echo $value->tag_name == '新品' ? '' : 'hot' ?>"></span>
@@ -59,7 +59,7 @@
 	<p>上拉加载更多</p>
 </div>
 
-<script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
+<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
 window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($products) ?>',
@@ -89,7 +89,7 @@ if(!window.sessionStorage['selectedProducts']){
 }
 
 </script>
-<script src="/scripts/ui.js" ></script>
+<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));

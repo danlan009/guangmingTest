@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB; 
 use Cache; 
 use Log;
+use Config;
 use App\Service\MallService;
 use App\Service\SupplyService;
 use App\Service\StatService;
@@ -17,7 +18,10 @@ class MallController extends Controller
         $mallService = new MallService();
         $vmlist = $mallService->getNodeList();
         return view('wx.vmList', array(
-                'vms' => $vmlist
+                'vms'           => $vmlist,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 
@@ -40,8 +44,11 @@ class MallController extends Controller
         // exit;
 
         return view('wx.proList', array(
-                'products'  => $productsList,
-                'vmInfor'   => $vmInfor
+                'products'      => $productsList,
+                'vmInfor'       => $vmInfor,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 
@@ -59,18 +66,18 @@ class MallController extends Controller
                     '/images/details/img_1_1.jpg'
                 );
         }
-        
-
         // 测试图片加载 End
-
 
         // echo '<pre>';
         // print_r($detail);
         // echo '</pre>';exit;
 
         return view('wx.details', array(
-                'detail'    => $detail,
-                'vmid'      => $vmid
+                'detail'        => $detail,
+                'vmid'          => $vmid,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 
