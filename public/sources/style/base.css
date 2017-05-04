@@ -242,11 +242,11 @@ footer section span{display:inline-block; font-size:0.4rem; color:#333; line-hei
 .order .address section{padding-top:0.2rem; padding-bottom:0.55rem; height:auto;}
 .order .address p{box-shadow:none;}
 
-@-webkit-keyframes loadAnimate{
+/*@-webkit-keyframes loadAnimate{
 	0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
 	100% { -webkit-transform: rotate(0deg); transform: rotate(360deg); }
 }
 @keyframes loadAnimate{
 	0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
 	100% { -webkit-transform: rotate(0deg); transform: rotate(360deg); }
-}
+}*/
