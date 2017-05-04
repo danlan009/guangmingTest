@@ -35,4 +35,12 @@ class User extends Model
     		]);
         return $wxUser;
     }
+
+    public static function addPhone($wxId,$phone){
+        return User::where('wx_id',$wxId)->update(['phone' => $phone]);
+    }
+
+    public static function getUserByWxId($wxId){
+        return User::where('wx_id',$wxId)->first();
+    }
 }
