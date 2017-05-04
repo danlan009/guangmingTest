@@ -44,6 +44,7 @@ class User extends Model
         }else{
             return 0;
         }
+    }
 
     public static function addPhone($wxId,$phone){
         return User::where('wx_id',$wxId)->update(['phone' => $phone]);
