@@ -169,6 +169,8 @@ class PaymentController extends Controller
                     //更新货道补货信息，出货成功－状态置空
                     ApiService::updateSkuSupplyStatus($wxTrade->vmid,$wxTrade->product_id);
                 }else{
+                    //todo:买码并下发给服务器－调用买码接口
+
                     //预定order_logs待取货状态
                     foreach($orderDetails as $od){
                         $orderLogs[] = array(

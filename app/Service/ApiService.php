@@ -53,7 +53,7 @@ class ApiService {
                 }
             }
         }
-        return (new OrderDetail())->createOrderDetails($arr);
+        return OrderDetail::createOrderDetails($arr);
     }
 
     //更新货道商品状态
