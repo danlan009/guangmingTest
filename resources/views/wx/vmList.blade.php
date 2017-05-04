@@ -7,7 +7,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="pragma" content="no-cache" />
 	<title>选择点位</title>
-	<link href="/style/base.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $cdn_url ?>/style/base.css?v=<?php echo $css_version ?>" type="text/css" rel="stylesheet" />
 </head>
 <body class="grey">
 <div class="searchBox">
@@ -51,8 +51,8 @@
 	?>
 </section>
 <section class="search_result" id="search_result"></section>
-<script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
-<script src="/scripts/ui.js" ></script>
+<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
+<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	var vmlist = $('#vmList'),

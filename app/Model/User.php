@@ -35,4 +35,14 @@ class User extends Model
     		]);
         return $wxUser;
     }
+
+    public static function getPhone($wxId){
+        $phone = User::where('wx_id',$wxId)->value('phone');
+        
+        if(!empty($phone)){
+            return $phone;
+        }else{
+            return 0;
+        }
+    }
 }

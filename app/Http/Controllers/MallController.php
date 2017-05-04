@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DB; 
 use Cache; 
 use Log;
+use Config;
 use App\Service\MallService;
 use App\Service\SupplyService;
 use App\Service\StatService;
@@ -17,15 +18,24 @@ class MallController extends Controller
         $mallService = new MallService();
         $vmlist = $mallService->getNodeList();
         return view('wx.vmList', array(
-                'vms' => $vmlist
+                'vms'           => $vmlist,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 
     // 商品列表
     public function productsList($vmid){
+
         $mallService = new MallService();
         $productsList = $mallService->showPros($vmid, 'book');
         $vmInfor    = $mallService->getVmInfo($vmid);
+
+        // 测试图片加载
+        $productsList[0]->pic_l = "/images/products/100017_l.jpg";
+        $productsList[1]->pic_l = "/images/products/100018_l.jpg";
+        $productsList[2]->pic_l = "/images/products/100016_l.jpg";
 
         // echo '<pre>';
         // print_r($vmInfor);
@@ -34,8 +44,11 @@ class MallController extends Controller
         // exit;
 
         return view('wx.proList', array(
-                'products'  => $productsList,
-                'vmInfor'   => $vmInfor
+                'products'      => $productsList,
+                'vmInfor'       => $vmInfor,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 
@@ -43,16 +56,28 @@ class MallController extends Controller
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
-
-        echo '<pre>';
-        print_r($detail);
-        echo '</pre>';exit;
         
-        // $detail->count = 0;
+        // 测试图片加载 Start
+        if($detail != 'error'){
+            $detail->pic_t = "/images/products/100016_d.jpg";
+            $detail->detail_pics = array(
+                    '/images/details/img_1_1.jpg',
+                    '/images/details/img_1_2.jpg',
+                    '/images/details/img_1_1.jpg'
+                );
+        }
+        // 测试图片加载 End
+
+        // echo '<pre>';
+        // print_r($detail);
+        // echo '</pre>';exit;
 
         return view('wx.details', array(
-                'detail'    => $detail,
-                'vmid'      => $vmid
+                'detail'        => $detail,
+                'vmid'          => $vmid,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 

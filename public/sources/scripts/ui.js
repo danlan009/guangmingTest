@@ -205,6 +205,7 @@ $.fn.detailHandler = function(o){
 	selected = JSON.parse(selected);
 
 	console.log(selected)
+	console.log('--------------xiangqing')
 	refreshNumbersForDetail(selected, pid, left);
 
 
@@ -236,13 +237,17 @@ function refreshNumbersForDetail(selected, pid, left){
 		$('#totalCart').text(total).show();
 	}
 
+	console.log('剩余：'+left);
+
+
 	if(left > 0){
-		if(selected['products'][pid] && (selected['products'][pid]['count'] < selected['products'][pid]['left']) ){
-			console.log('可售')
+		console.log(selected['products'][pid])
+		if(!selected['products'][pid]){
+			btns.hide().eq(0).show();
+		}else if( selected['products'][pid]['count'] < selected['products'][pid]['left'] ){
 			btns.hide().eq(0).show();
 		}else{
 			btns.hide().eq(1).show();
-			console.log('已售完')
 		}
 	}
 	
