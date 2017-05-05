@@ -5,7 +5,7 @@ use App\Model\Order;
 use App\Model\OrderLog;
 use App\Model\OrderStop; 
 use App\Model\Sku; 
-use DB;  
+use DB;   
 use Cache;  
 use Log;
 class MallService{
@@ -121,16 +121,26 @@ class MallService{
 
     // 计算某台售货机下即卖商品剩余数量
     public function getNumOfSale($vmid,$product_id){
-        $num = DB::table('skus')
+        // 计算售货机中该商品总数量
+        $totalNum = DB::table('skus')
                         ->join('sku_supplys as skps','skus.id','=','skps.sku_id')
                         ->where('skus.vmid',$vmid)
                         ->where('skus.product_id',$product_id)
                         ->where('skps.status',2)
                         ->count();
+        // 计算售货机中预定商品数量
+        $bookNum = DB::table('orders')
+                        ->join('order_logs','orders.id','=','order_logs.order_id') 
+                        ->where('orders.order_status',2)
+                        ->where('channel',1)
+                        ->where('orders.vmid',$vmid)
+                        ->where('order_logs.product_id',$product_id)
+                        ->count();
+        $num = $totalNum - $bookNum;
         return $num;
     }
 
-    // 计算某台售货机预定商品剩余数量
+    // 计算某台售货机可以预定商品剩余数量
     public function getNumOfBook($vmid,$product_id){
         $skuList = DB::table('skus')
                         ->where('vmid',$vmid)
@@ -158,27 +168,42 @@ class MallService{
     }
  
     // 即卖生成单个取货码(下单后操作)
-    public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmId){ // 预下单后买码
-        $blno = $this->createBlno();
-        $date = date('Y-m-d');
-        // 检验是否重复(当天,同一台取货机不能有重复取货码)
-        $exists = OrderLogs::where('vmid',$vmId)->where('create_date',$date)->pluck('blno')->toArray();
-        // dd($exists);
-        while(in_array($blno,$exists)){
-            $blno = $this->createBlno();
+    public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmid){ // 预下单后买码
+        // 同一小订单不能重复买码
+        $isExist = OrderLog::where(['order_id'=>$order_id,'order_detail_id'=>$order_detail_id])->count();
+        if($isExist){
+            return ['return_code'=>'409','return_msg'=>'该商品已被买走'];
         }
+        // 校验是否有商品可供继续买码 
+        $availCount = $this->getNumOfSale($vmid,$product_id);
+        if($availCount > 0){
+            $blno = $this->createBlno();
+            $date = date('Y-m-d');
+            // 检验是否重复(当天,同一台取货机不能有重复取货码)
+            $exists = OrderLog::where('vmid',$vmid)->where('create_date',$date)->pluck('blno')->toArray();
 
-        $model = new OrderLogs();
-        $model->order_id = $order_id;
-        $model->order_detail_id = $order_detail_id;
-        $model->product_id = $product_id;
-        $model->create_date = $date;
-        $model->order_status = 201;
-        $model->is_reserved = 0;
-        $model->blno = $blno;
-        $model->vmid = $vmId;
-        $res = $model->save();
-        Log::debug('single_buy_code successfully---returns::'.'order_id:'.$order_id.'order_detail_id:'.$order_detail_id.'product_id:'.$product_id.'blno:'.$blno);
+            while(in_array($blno,$exists)){
+                $blno = $this->createBlno();
+            }
+
+            $model = new OrderLog();
+            $model->order_id = $order_id;
+            $model->order_detail_id = $order_detail_id;
+            $model->product_id = $product_id;
+            $model->create_date = $date;
+            $model->order_status = 201;
+            $model->is_reserved = 0;
+            $model->blno = $blno;
+            $model->vmid = $vmid;
+            $res = $model->save();
+            Log::debug('single_buy_code successfully---returns::'.'order_id:'.$order_id.'order_detail_id:'.$order_detail_id.'product_id:'.$product_id.'blno:'.$blno);
+            if($res){
+                return ['return_code'=>'200','return_msg'=>''];
+            }
+        }else{
+            return ['return_code'=>'410','return_msg'=>'该商品已被买走'];
+        }
+        
     }
 
     // 生成8位取货码
