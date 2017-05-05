@@ -26,22 +26,19 @@ class MallController extends Controller
     }
 
     // 商品列表
-    public function productsList($vmid){
+    public function productsList(Request $request, $vmid){
 
         $mallService = new MallService();
         $productsList = $mallService->showPros($vmid, 'book');
         $vmInfor    = $mallService->getVmInfo($vmid);
+        $request->session()->put('currentVM', $vmInfor);
 
         // 测试图片加载
-        $productsList[0]->pic_l = "/images/products/100017_l.jpg";
-        $productsList[1]->pic_l = "/images/products/100018_l.jpg";
-        $productsList[2]->pic_l = "/images/products/100016_l.jpg";
-
-        // echo '<pre>';
-        // print_r($vmInfor);
-        // print_r($productsList);
-        // echo '</pre>';
-        // exit;
+        if(!empty($productsList)){
+            $productsList[0]->pic_l = "/sources/images/products/100017_l.jpg";
+            $productsList[1]->pic_l = "/sources/images/products/100018_l.jpg";
+            $productsList[2]->pic_l = "/sources/images/products/100016_l.jpg";
+        }
 
         return view('wx.proList', array(
                 'products'      => $productsList,
@@ -59,18 +56,14 @@ class MallController extends Controller
         
         // 测试图片加载 Start
         if($detail != 'error'){
-            $detail->pic_t = "/images/products/100016_d.jpg";
+            $detail->pic_t = "/sources/images/products/100016_d.jpg";
             $detail->detail_pics = array(
-                    '/images/details/img_1_1.jpg',
-                    '/images/details/img_1_2.jpg',
-                    '/images/details/img_1_1.jpg'
+                    '/sources/images/details/img_1_1.jpg',
+                    '/sources/images/details/img_1_2.jpg',
+                    '/sources/images/details/img_1_1.jpg'
                 );
         }
         // 测试图片加载 End
-
-        // echo '<pre>';
-        // print_r($detail);
-        // echo '</pre>';exit;
 
         return view('wx.details', array(
                 'detail'        => $detail,
@@ -103,7 +96,6 @@ class MallController extends Controller
     // 我的微信卡券列表 
     public function wxCards(){
         $wxId = '';
-
         return view('wx.wxCards', array(
                 
             ));
@@ -111,10 +103,13 @@ class MallController extends Controller
     }
 
     // 结算
-    public function wxAccount(){
-
+    public function wxAccount(Request $request){
+        $vmInfor = $request->session()->get('currentVM');
         return view('wx.account', array(
-                
+                'vminfor'        => $vmInfor,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
             ));
     }
 

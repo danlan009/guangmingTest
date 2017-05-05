@@ -24,7 +24,7 @@
 	<img src="<?php echo $cdn_url ?>/images/common/top.jpg" />
 </div>
 <div class="vminfor">
-	<h1><?php echo $vmInfor['vm_name'] ?><span>编号：<?php echo $vmInfor['vmid'] ?></span></h1>
+	<h1><?php echo $vmInfor['node_name'] ?><span>编号：<?php echo $vmInfor['vmid'] ?></span></h1>
 	<p><?php echo $vmInfor['address'] ?></p>
 	<a href="/wx/vmlist" class="blue_button">更换</a>
 </div>
@@ -65,13 +65,14 @@ window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($products) ?>',
 		newList = {},
 		item = null;
-	// console.log(plist)
+	console.log(plist)
 	plist = JSON.parse(plist);
 	for(var i=0,len=plist.length; i<len; i++){
 		item = plist[i];
 		newList[item['product_id']] = {
 			'pid': item['product_id'],
 			'pname': item['product_name'],
+			'volume': item['volume'],
 			'oprice': item['original_price'],
 			'rprice': item['retail_price'],
 			'left': item['count']

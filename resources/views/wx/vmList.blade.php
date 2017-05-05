@@ -24,9 +24,7 @@
 		echo "<div>";
 		foreach ($vms as $v) { 
 			$index++; 
-			if($index == floor($count/2)){
-				echo "</div><div>";
-			}
+			
 
 			$vms = $v['vms'];
 			$vmsCount = count($vms);
@@ -45,7 +43,10 @@
 		?>
 	</p>
 
-	<?php 
+	<?php 	
+			if($count % 2 == 0){
+				echo "</div><div>";
+			}
 		}
 		echo "</div>";
 	?>
