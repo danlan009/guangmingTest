@@ -42,7 +42,7 @@ class MallService{
         $vmInfo = DB::table('vms')
                         ->join('nodes','vms.node_id','=','nodes.id')
                         ->where('vms.vmid',$vmid)
-                        ->select('vms.vmid','vms.vm_name','nodes.address')
+                        ->select('vms.vmid','vms.vm_name','nodes.id as node_id','nodes.address','nodes.lng','nodes.lat')
                         ->get();
         if(empty($vmInfo)){
             return 0; //未找到售货机
