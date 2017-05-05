@@ -6,12 +6,12 @@ class OrderService{
     	//包括正常预定订单,和之前未取且交占道费的订单
     public static function getDailyOrders($vmId){
     	//正常日配送订单 
-    	$dailyOrders = array();  
+    	$dailyOrders = array();   
  
     	$normalOrders = DB::table('orders')
     						->join('order_details as od','orders.id','=','od.order_id')
                             ->where('orders.vmid',$vmId)
-                            ->where('orders.orders_status',2) //配送中
+                            ->where('orders.order_status',2) //配送中
     						->select('orders.vmid','od.id as order_detail_id','od.order_id','od.product_id','od.product_name','od.original_price','od.retail_price')
     						->get(); 
     						// ->toArray();
@@ -31,6 +31,10 @@ class OrderService{
     	
     }
 
+    // 二次补货获取漏补订单
+    public function getLeftOrders(){
+
+    }
     // 正常每日预定/占道订单/即卖订单
     public function getPickupRes($orderId){ 
         $status = OrderLogs::select('order_status')->where('order_id',$orderId);
@@ -53,32 +57,18 @@ class OrderService{
         return json_encode($list);
     }
 
-    //判断某台售货机某件商品是否可以继续预定
-    public function isAbleToBook(Request $request){
-        $vmId = $request->input('vmId');
-        $productId = $request->input('productId');
-        //计算已有预定订单对应商品数量
-        $pNum = DB::table('orders')
-                    ->rightJoin('orders_detail as od','orders.id','=','od.order_id')
-                    ->where('orders.vmid',$vmId)
-                    ->where('orders.orders_status',1)
-                    ->where('od.product_id',$productId)
-                    ->select('orders.vmid','od.product_id')
-                    // ->get()
-                    ->count();
-                    // ->toArray();
+    // 补货时,按product_id 分组统计 订单,方便随机分配订单
+    public static function handleOrdersToAllot($vmId){
+        $dailyOrders = OrderService::getDailyOrders($vmId)['normalOrders'];
+        $formatOrders = [];
+        foreach ($dailyOrders as $k => $order) {
 
-        //计算售货机该售货机该商品可用于预定最大值
-        $max;
-        return $max>$pNum;
-    }
-
-    //判断某台售货机某件商品是否可以继续购买
-    public function isAbleToBuy(Request $request){
-        $vmId = $request->input('vmId');
-        $productId = $request->input('productId');
-        //计算该售货机该商品上位取货商品数量
-        $pNum = DB::table('orders')
+            $formatOrders[$order->product_id][] = [
+                                                    'order_id' => $order->order_id,
+                                                    'order_detail_id' => $order->order_detail_id,
+                                                  ];
+        }
+        return $formatOrders;
     }
 }
 ?>
