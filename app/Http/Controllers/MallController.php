@@ -53,11 +53,6 @@ class MallController extends Controller
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
-        echo '<pre>';
-        print_r($detail);
-        echo  '</pre>';
-        exit;
-        
         // 测试图片加载 Start
         if($detail != 'error'){
             $detail->pic_t = "/sources/images/products/100016_d.jpg";
