@@ -21,7 +21,8 @@ class MallController extends Controller
                 'vms'           => $vmlist,
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
-                'cdn_url'       => config::get('mg.cdn_url')
+                'cdn_url'       => config::get('mg.cdn_url'),
+                'host'          => Config::get('host')
             ));
     }
 
@@ -45,7 +46,8 @@ class MallController extends Controller
                 'vmInfor'       => $vmInfor,
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
-                'cdn_url'       => config::get('mg.cdn_url')
+                'cdn_url'       => config::get('mg.cdn_url'),
+                'host'          => Config::get('host')
             ));
     }
 
@@ -69,7 +71,8 @@ class MallController extends Controller
                 'vmid'          => $vmid,
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
-                'cdn_url'       => config::get('mg.cdn_url')
+                'cdn_url'       => config::get('mg.cdn_url'),
+                'host'          => Config::get('host')
             ));
     }
 
@@ -80,7 +83,8 @@ class MallController extends Controller
                 'vminfor'        => $vmInfor,
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
-                'cdn_url'       => config::get('mg.cdn_url')
+                'cdn_url'       => config::get('mg.cdn_url'),
+                'host'          => Config::get('host')
             ));
     }
 

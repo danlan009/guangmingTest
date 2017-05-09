@@ -54,7 +54,7 @@
 	</section>
 </footer>
 <script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
-<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="<?php echo $host ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('body').detailHandler({

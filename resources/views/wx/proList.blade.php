@@ -87,10 +87,24 @@ if(!window.sessionStorage['selectedProducts']){
 	    "total": 0,
 	    "vmid": "<?php echo $vmInfor['vmid'] ?>"
 	});
+}else{
+	var selected = window.sessionStorage['selectedProducts'],
+		selected = JSON.parse(selected);
+	console.log('plist')
+	console.log(selected)
+	if(selected['vmid'] != "<?php echo $vmInfor['vmid'] ?>"){
+		window.sessionStorage['selectedProducts'] = JSON.stringify({
+			"products": { },
+		    "total": 0,
+		    "vmid": "<?php echo $vmInfor['vmid'] ?>"
+		});
+	}
 }
 
+console.log(window.sessionStorage['selectedProducts'])
+
 </script>
-<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="<?php echo $host ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));

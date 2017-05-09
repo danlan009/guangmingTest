@@ -154,7 +154,7 @@
 		'vmid': '<?php echo $vminfor["vmid"] ?>'
 	};
 </script>
-<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="<?php echo $host ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 	$('#cartProductsAccount').accountHandler();
 	$('#cardList').radioBox('li:not(.disable)', 'card');
