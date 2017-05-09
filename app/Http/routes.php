@@ -43,6 +43,7 @@ Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
 	Route::get('wx/orders', 					'MallController@myorders');
 	Route::get('wx/cards', 						'MallController@wxCards');
 	Route::get('wx/account', 					'MallController@wxAccount');
+	Route::get('wx/ajax_check_wxpay', 			'MallController@ajaxWxPay');
 
     Route::get('wx/ajax_prepay',                'PaymentController@ajaxPrepay');
     Route::get('wx/notify_payment',             'PaymentController@notifyPayment');

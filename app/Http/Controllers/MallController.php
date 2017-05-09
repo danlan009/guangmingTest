@@ -53,6 +53,10 @@ class MallController extends Controller
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
+        echo '<pre>';
+        print_r($detail);
+        echo  '</pre>';
+        exit;
         
         // 测试图片加载 Start
         if($detail != 'error'){
@@ -74,10 +78,72 @@ class MallController extends Controller
             ));
     }
 
+    // 结算
+    public function wxAccount(Request $request){
+        $vmInfor = $request->session()->get('currentVM');
+        return view('wx.account', array(
+                'vminfor'        => $vmInfor,
+                'css_version'   => config::get('mg.css_version'),
+                'js_version'    => config::get('mg.js_version'),
+                'cdn_url'       => config::get('mg.cdn_url')
+            ));
+    }
+
+    // 支付
+    public function ajaxWxPay(Request $request){
+        $data = $request->all();
+        $mallService = new MallService();
+        $total_price = 0;
+        $retail_price = 0;
+        $detail = null;
+        $vmid = $data['vmid'];
+        foreach ($data['products'] as $key => $value) {
+            // 检查商品售价是否与服务器价格一致
+            $detail = $mallService->getProDetail($value['pid'], $vmid, 'book');
+            if($detail->retail_price != $value['rprice'] ){
+                return array(
+                        'code'  => 200,
+                        'pid'   => $detail->product_id,
+                        'pname' => $detail->product_name,
+                        'msg'   => '售价与服务器不符'
+                    );
+            }
+            $total_price = $total_price + $value['rprice'] * $value['count'];
+        }
+
+        // 查询卡券优惠信息
+        if(!$data['card_id']){
+            $retail_price = $total_price;
+        }else{
+            // 查看卡券信息
+            // 计算实际售价
+            // $retail_price = '';
+            // 卡券核销
+        }
+
+        //渠道：1扫码预定，2微信商城预定，3扫码购买，4微信商城购买
+        $intention = array(
+                'channel'       => 2,
+                'vmid'          => $data['vmid'],
+                'products'      => $data['products'],
+                'total_price'   => $total_price,
+                'retail_price'  => $retail_price,
+                'card_id'       => $data['card_id'],
+                'card_name'     => $data['card_name'],
+                'type'          => $data['type'],
+                'rate'          => $data['rate']
+            );
+
+        $request->session()->put('intention', $intention);
+        Log::debug('wxPay[intention:'.json_encode($request->session()->get('intention')).']');
+        header('Location:'.Config::get('host').'wx/ajax_prepay');
+        exit;
+    }
+
     // 预定结果
     public function result(){
         $mallService = new MallService();
-
+        
         return view('wx.result', array(
                 
             ));
@@ -92,30 +158,6 @@ class MallController extends Controller
                 
             ));
     }
-
-    // 我的微信卡券列表 
-    public function wxCards(){
-        $wxId = '';
-        return view('wx.wxCards', array(
-                
-            ));
-        
-    }
-
-    // 结算
-    public function wxAccount(Request $request){
-        $vmInfor = $request->session()->get('currentVM');
-        return view('wx.account', array(
-                'vminfor'        => $vmInfor,
-                'css_version'   => config::get('mg.css_version'),
-                'js_version'    => config::get('mg.js_version'),
-                'cdn_url'       => config::get('mg.cdn_url')
-            ));
-    }
-
-    public function test(){
-        
-    } 
 
 }
 

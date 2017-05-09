@@ -9,6 +9,7 @@
 
 var msgArr = {
 	'phone_error': '手机号码格式不正确，请重新输入',
+	'phone_empty': '手机号码不能为空',
 	'noVms': '暂无匹配售货机'
 };
 
@@ -234,12 +235,6 @@ $.fn.accountHandler = function(){
 	console.log(selected)
 	_this.text(selected['total']).show();
 
-	// TODO:
-	// 显示用户选择的商品
-	// 单击 + - 按钮操作, 底部总价变化
-	// 提交下单
-	// 
-
 };
 
 $.fn.selectedHandler = function(){
@@ -250,16 +245,21 @@ $.fn.selectedHandler = function(){
 		products = selected['products'];
 
 	for(var key in products){
-		var xx = products[key].rprice / 100;
-		html += '<div class="product"><section><span>'
-			 + '<img src="/sources/images/products/100017_l.jpg" />'
-			 + '</span></section>'
-			 + '<h1>'+products[key].pname
-			 + ( !products[key].volume ? '' : '<span>('+products[key].volume+')</span>' ) + '</h1>'
-			 + '<p>￥'+(products[key].rprice / 100)+'</p>'
-			 + '<h3 class="changeCount">每日配送:<span>'
-			 + '<button type="button"></button><input type="text" value="'+products[key]['count']+'" /><button type="button"></button>'
-			 + '</span></h3></div>'
+		var xx = products[key].rprice / 100,
+			_c = products[key]['count'] >= products[key]['left'];
+		if(products[key]['count']){
+			html += '<div class="product"><section><span>'
+				 + '<img src="/sources/images/products/100017_l.jpg" />'
+				 + '</span></section>'
+				 + '<h1>'+products[key].pname
+				 + ( !products[key].volume ? '' : '<span>('+products[key].volume+')</span>' ) + '</h1>'
+				 + '<p>￥'+(products[key].rprice / 100)+'</p>'
+				 + '<h3 class="changeCount" data-id="'+key+'" >每日配送:<span>'
+				 + '<button type="button" class="btn_r"></button>'
+				 + '<input type="tel" value="'+products[key]['count']+'" class="text_box '+(products[key]['count'] > products[key]['left']?'error':'')+'" />'
+				 + '<button type="button" class="btn_a '+(_c?'grey':'')+'" '+(_c?'disabled="disabled"':'')+' ></button>'
+				 + '</span></h3></div>';
+		}
 	}
 	_this.html(html);
 };
@@ -273,21 +273,25 @@ $.fn.computerTotalPrice = function(){
 	selected = JSON.parse(selected);
 	console.log(selected)
 	products = selected['products'];
-
-	for(var i in products){
-		total += products[i].count * products[i].rprice;
-	}
-
-	total = total / 100;
-
+	total = computerTotal(products);
 	_this.text('￥' + total);
 };
 
-$.fn.radioBox = function(tagname){
+$.fn.radioBox = function(tagname, type){
 	var _this = $(this);
 	_this.find(tagname).on('click', function(){
 		var _me = $(this);
 		_me.addClass('on').siblings().removeClass('on');
+
+		if(type == 'card'){
+			collectionsObj.card_id = _me.attr('data-card-id');
+			collectionsObj.card_name = _me.attr('data-card-name');
+		}else if(type == 'week'){
+			collectionsObj.rate = _me.attr('data-id');
+		}else if(type == 'days'){
+			collectionsObj['type'] = _me.attr('data-num');
+		}
+		console.log(collectionsObj);
 	});
 };
 
@@ -299,42 +303,244 @@ $.fn.checkMobilePhone = function(){
 		msg = $('#msg'),
 		clearBtn = _this.find('button').eq(0);
 	_this.on('change', function(){
-
-		if(pattern.test(_this.val())){
+		var _txt = _this.val();
+		collectionsObj.phone = '';
+		if(!_txt.length){
+			parent.addClass('error');
+			msg.text(msgArr.phone_empty);
+		}else if(pattern.test(_txt)){
 			parent.removeClass('error');
 			msg.text('');
+			collectionsObj.phone = _txt;
 		}else{
 			parent.addClass('error');
 			msg.text(msgArr.phone_error);
 		}
+		console.log(collectionsObj)
 	});
 };
 
-// $.fn.addressHandler = function(obj){
-// 	var _this = $(this),
-// 		vmList = JSON.parse(obj['vmList']),
-// 		elm = obj['selectVm'];
+// 购物车控制商品数量
+$.fn.selectedCountHandler = function(){
+	console.log('-----------------');
+	var totalPrice = $('#totalPrice'),
+		cartProductsAccount = $('#cartProductsAccount');
 
-// 	// 选择点位
-// 	_this.on('change', function(){
-// 		// 更新售货机选项
-// 		console.log('点位切换')
-// 		var _me = $(this),
-// 			_id = _me.val(),
-// 			html = '',
-// 			vms = vmList[_id]['vms'];
+	$(this).each(function(key, value){
+		console.log(key);
+		console.log(value);
 
-// 		console.log('点位id:'+_id)
-// 		console.log(vms);
+		var _this = $(this),
+			btn_reduce = _this.find('.btn_r'),
+			btn_add = _this.find('.btn_a'),
+			text_box = _this.find('.text_box'),
+			pid = _this.attr('data-id');
 
-// 		for(var i=0, len=vms.length; i<len; i++){
-// 			html = '<option value="'+vms[i][vmid]+'">' + vms[i][vm_name] + '</option>';
-// 		}
+		// 单击增加按钮
+		btn_add.on('click', function(){
+			var _me = $(this), result;
+			result = checkProductsCount(pid, 'add', null);
+			console.log(result)
+			text_box.val(result['count']);
+			if(result['result']){
+				// 置灰
+				_me.addClass('grey');
+				_me.attr('disabled', 'true');
+			}else{
+				_me.removeClass('grey');
+				_me.removeAttr('disabled');
+			}
 
-// 		console.log(html)
+			totalPrice.text('￥'+result['totalPrice']);
+			cartProductsAccount.text(result['totalCount']);
+			buttonStyle(result['result'], {
+				'reduce': btn_reduce,
+				'add': btn_add,
+				'text': text_box
+			});
+		});
 
-// 	});
-// };
+		// 单击减少按钮
+		btn_reduce.on('click', function(){
+			var _me = $(this), result;
+			result = checkProductsCount(pid, 'reduce', null);
+			text_box.val(result['count']);
+			console.log(result);
+			if(result['result'] == 1 || result['result'] == 4){
+				// 置灰
+				_me.addClass('grey');
+				_me.attr('disabled', 'true');
+				if(result['result'] == 1){
+					_this.parent('.product').hide();
+				}
+			}else{
+				_me.removeClass('grey');
+				_me.removeAttr('disabled');
+			}
+
+			totalPrice.text('￥'+result['totalPrice']);
+			cartProductsAccount.text(result['totalCount']);
+			buttonStyle(result['result'], {
+				'reduce': btn_reduce,
+				'add': btn_add,
+				'text': text_box
+			});
+		});
+
+		// 修改文本框
+		text_box.on('change', function(){
+			var _me = $(this), result, _text = _me.val();
+			if(!/^\d+$/.test(_text)){
+				_me.addClass('error');
+				return false;
+			}
+			result = checkProductsCount(pid, 'text', _text);
+			if(result['result'] == 3 || result['result'] == 0){
+				_me.addClass('error');
+			}else{
+				_me.removeClass('error');
+			}
+
+			totalPrice.text('￥'+result['totalPrice']);
+			cartProductsAccount.text(result['totalCount']);
+			buttonStyle(result['result'], {
+				'reduce': btn_reduce,
+				'add': btn_add,
+				'text': text_box
+			});
+		});
+
+	});
+};
+
+$.fn.weixinPay = function(){
+	var _this = $(this);
+
+	_this.on('click', function(){
+		// 检查用户的信息是否都合法
+		if(!collectionsObj.phone){ 
+			$('#msg').text(msgArr.phone_error);
+			return false; 
+		}
+		if($('.changeCount').find('.error').length){return false;}
+
+		var data, selected;
+		selected = window.sessionStorage['selectedProducts'];
+		if(!selected){ return false; }
+		selected = JSON.parse(selected);
+		collectionsObj.products = selected.products;
+
+		console.log(collectionsObj);
+
+		$.ajax({
+			url: '/wx/ajax_check_wxpay',
+			type: 'get',
+			data: collectionsObj,
+			success: function(data){
+
+			}
+		})
+	});
+};
+
+// 控制增加 减少 输入框样式
+function buttonStyle(result, elmsObj){
+	// 1: 用户预定数量正常
+	// 2: 用户预定数量与剩余量一样
+	// 3: 用户预定数量大于剩余量
+	// 4: 用户预定数量小于0
+	switch(result){
+		case 0:
+			elmsObj['text'].removeClass('error');
+			elmsObj['reduce'].removeClass('grey').removeAttr('disabled');
+			elmsObj['add'].removeClass('grey').removeAttr('disabled');
+			break;
+		case 2:
+			elmsObj['text'].removeClass('error');
+			elmsObj['reduce'].removeClass('grey').removeAttr('disabled');
+			elmsObj['add'].addClass('grey').attr('disabled','disabled');
+			break;
+		case 3:
+			elmsObj['text'].addClass('error');
+			elmsObj['reduce'].removeClass('grey').removeAttr('disabled');
+			elmsObj['add'].removeClass('grey').removeAttr('disabled');
+			break;
+	}
+}
+
+// 计算商品总价
+function computerTotal(products){
+	var total = 0;
+
+	for(var i in products){
+		total += products[i].count * products[i].rprice;
+	}
+
+	total = total / 100;
+	return total;
+}
+
+// 检查商品数量是否超出
+function checkProductsCount(pid, type, text){
+	var selected = window.sessionStorage['selectedProducts'],
+		products,
+		result,
+		oldCount = 0;
+
+	selected = JSON.parse(selected);
+	products = selected['products'];
+	oldCount = products[pid]['count'];
+
+	switch(type){
+		case "add":
+			selected['total']++;
+			products[pid]['count']++;
+			break;
+		case "reduce":
+			selected['total']--;
+			products[pid]['count']--;
+			break;
+		case "text":
+			var _count = parseInt(text);
+			selected['total'] += _count - oldCount;
+			products[pid]['count'] = _count;
+			break;
+	}
+
+	selected['total'] = selected['total'] < 0 ? 0 : selected['total'];
+
+	console.log(products[pid]['count'])
+	console.log(products[pid]['left'])
+
+	if(products[pid]['count'] == 0 ){
+		result = 1;
+		delete products[pid];
+	}else if(products[pid]['count'] == products[pid]['left']){
+		result = 2;
+	}else if(products[pid]['count'] > products[pid]['left']){
+		result = 3;
+	}else if(products[pid]['count'] < 0){
+		result = 4;
+	}else{
+		result = 0;
+	}
+
+	window.sessionStorage['selectedProducts'] = JSON.stringify(selected);
+
+	// 1:0
+	// 2:与left值一样
+	// 3:大于left的值
+	// 4:小于0
+
+	return {
+		'pid': pid,
+		'type': type,
+		'count': result!=1 ? products[pid]['count'] : 0,
+		'result':  result,
+		'totalPrice': computerTotal(selected['products']),
+		'totalCount': selected['total']
+	}
+}
 
 function refreshNumbersForDetail(selected, pid, left){
 	var btns = $('.detailButtons'),
