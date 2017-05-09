@@ -104,7 +104,7 @@ if(!window.sessionStorage['selectedProducts']){
 console.log(window.sessionStorage['selectedProducts'])
 
 </script>
-<script src="<?php echo $host ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="<?php echo $host ?>sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));
