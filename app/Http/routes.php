@@ -1,6 +1,6 @@
 <?php
-    
-/*  
+     
+/*   
 |--------------------------------------------------------------------------
 | Application Routes
 |--------------------------------------------------------------------------
@@ -9,7 +9,7 @@
 | It's a breeze. Simply tell Laravel the URIs it should respond to
 | and give it the controller to call when that URI is requested.
 |
-*/ 
+*/  
   
 Route::get('/', function () {
     return view('welcome');
@@ -33,6 +33,9 @@ Route::get('task/flush',						'TaskController@flushCache');
 Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是否修改
 
 Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
+
+Route::get('supply/start_supplyment',			'SupplyController@startSupplyment');
+Route::get('supply/list_skus',					'SupplyController@listSkus');
 
 // Route::group(['middleware' => 'wxAuth'], function(){
 
