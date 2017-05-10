@@ -1,17 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers; 
  
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
+ 
+use App\Http\Requests; 
+use App\Http\Controllers\Controller; 
 use Cache;
+use Log;
+
+use App\Model\Order;
+use App\Model\OrderStop;
+
+use App\Service\SupplyService;
+use App\Service\OrderService;
 class TaskController extends Controller
 {
+
     //脚本自动批量买码
     public function dailyBuyCodes($vmId){
-    	$dailyOrders = Bussiness::getDailyOrders($vmId);
+    	$dailyOrders = OrderService::getDailyOrders($vmId);
     	// dd($dailyOrders['normalOrders'][0]->vmid);
     	$normalOrders = $dailyOrders['normalOrders'];
     	$reservedOrders = $dailyOrders['reservedOrders'];
@@ -22,7 +30,7 @@ class TaskController extends Controller
         $normalCount = count($normalOrders);
         
         $blnoArr = $this->createBlno($normalCount);
-        Log::info('script_buy_codes---get::'.json_encode($blnoArr));
+        Log::debug('script_buy_codes---get::'.json_encode($blnoArr));
         foreach ($normalOrders as $k=>$normalOrder) { //正常订单创建orders_log
             //$price 从缓存中读取,$price 从session中读取
             // dd($normalOrder);
@@ -67,8 +75,8 @@ class TaskController extends Controller
                 return 'buyCodeFail!';
             }
         }
+        Log::debug('daily_buy_codes---successful,resolved---dailyOrders::'.json_encode($dailyOrders));
         return 1;
-        Log::info('daily_buy_codes---successful,resolved---dailyOrders::'.json_encode($dailyOrders));
     } 
 
     public function dailyCheckOrders(){ // 每日定时任务修改订单状态 是否改为配送完成/暂停配送/配送中
@@ -81,30 +89,56 @@ class TaskController extends Controller
         $tomorrow = date('Y-m-d',strtotime("+1 day"));
         
         // 1.处理待配送订单
-        $waitOrders = Orders::where('orders_status',1)
+        $waitOrders = Order::where('order_status',1)
                                 ->where('pay_status',1)
-                                ->select('id','orders_status','start_date','type','rate')
+                                ->select('id','order_status','start_date','type','rate')
+                                ->get();
+                                // ->toArray();
+
+        // 2.暂停配送订单
+        $stopOrders = Order::where('order_status',4)
+                                ->where('pay_status',1)
+                                ->select('id','order_status','start_date','type','rate')
                                 ->get();
 
-        $length = $waitOrders->type;
-        $start = $waitOrders->start_date;
-        $rate = $waitOrders->rate;
-        $orderId = $waitOrders->order_id;
+        // 3.配送中订单
+        $sendOrders = Order::where('order_status',2)
+                                ->where('pay_status',1)
+                                ->select('id','order_status','start_date','type','rate')
+                                ->get();
 
+        // 处理配送未开始订单
+        /*
+            今天是配送开始日期
+                    |-- 订单为工作日配送
+                            |-- 当天是周六/周日 => 改为暂停配送
+                            |-- 当天是工作日 
+                                    |-- 申请停送 => 改为暂停配送
+                                    |-- 未申请停送 => 改为配送中
+                    |-- 订单为每天配送
+                            |-- 申请停送 => 改为暂停配送
+                            |-- 未申请停送 => 改为配送中
+        */
         foreach ($waitOrders as $waitOrder) {
-            //检查明天是否是配送开始日期
+            //检查今天是否是配送开始日期
             $startDate = $waitOrder->start_date;
-            if($tomorrow == $now){
+            $rate = $waitOrder->rate;
+            $orderId = $waitOrder->id;
+            if($now == $startDate){
+
+                $stopLog = OrderStop::where('order_id',$orderId)
+                                        ->where('start_date','<=',$now)
+                                        ->where('end_date','>=',$now)
+                                        ->get()
+                                        ->toArray();
+
                 if($rate){ //工作日配送
-                    if($day == 5 || $day ==6){ //周五,周六 改为暂停
-                        $waitOrder->orders_status = 4;
+                    if($day == 6 || $day == 0){ //周六,周日 改为暂停
+                        $waitOrder->order_status = 4;
                         $waitOrder->save();
-                    }else{ //周一,周二,周三,周四,周日
-                        $stopLog = OrderStop::where('order_id',$orderId)
-                                                ->where('start_date','<=',$now)
-                                                ->where('end_date','>=',$now)
-                                                ->get();
-                        if($stopLog){ //有停送申请
+                    }else{ //周一到周五
+                       
+                        if(!empty($stopLog)){ //停送中
                             $waitOrder->order_status = 4;
                             $waitOrder->save();
                         }else{
@@ -113,11 +147,8 @@ class TaskController extends Controller
                         }
                     }
                 }else{ //每天配送
-                    $stopLog = OrderStop::where('order_id',$orderId)
-                                            ->where('start_date','<=',$now)
-                                            ->where('end_date','>=',$now)
-                                            ->get();
-                    if($stopLog){ //有停送申请
+                    
+                    if(!empty($stopLog)){ //停送中
                         $waitOrder->order_status = 4;
                         $waitOrder->save();
                     }else{
@@ -127,109 +158,113 @@ class TaskController extends Controller
                 }
             }
         }
+
+        // die;
+
     	// 2.处理暂停订单
-		//获取所有暂停订单
-		$stopOrders = Orders::where('orders_status',4)
-                                ->where('pay_status',1)
-								->select('id','orders_status','start_date','type','rate')
-								->get();
-								// ->toArray();
+        /*
+            订单为工作日配送
+                    |-- 当天为工作日 
+                            |-- 没有申请停送 => 改为配送中
+            订单为每天配送
+                    |-- 没有停送申请 => 改为配送中
+        */
 		foreach ($stopOrders as $stopOrder) {
 			$length = $stopOrder->type;
 			$start = $stopOrder->start_date;
 			$rate = $stopOrder->rate;
-            $orderId = $stopOrder->order_id;
+            $orderId = $stopOrder->id;
+
+            //判断是否停送
+            $stopLog = OrderStop::where('order_id',$orderId)
+                                    ->where('start_date','<=',$now)
+                                    ->where('end_date','>=',$now)
+                                    ->get()
+                                    ->toArray();
             //判断订单 配送频率(工作日/每天)
 			if($rate){ // 工作日配送
-                
-                //判断是否已申请停送
-                $stopLog = OrderStop::where('order_id',$orderId)
-                                        ->where('start_date','<=',$now)
-                                        ->where('end_date','>=',$now)
-                                        ->get();
-                if($day == 0){
-                    if(!$stopLog){ //没有申请停送记录,则将暂停中改为配送中
-                        $stopOrder->orders_status = 2;
-                        $stopOrder->save();
-                    }else{
-                        $isLastStop = ($stopLog->end_date == $now);
-                        if(isLastStop){ //有停送申请,但是最后一天
-                            $stopOrder->orders_status = 2;
-                            $stopOrder->save();
-                        }
-                    }
-                }else if($day <= 5 && $day > 0){ //工作日,停送到最后一天
-                    $isLastStop = ($stopLog->end_date == $now);
-                    if($isLastStop){
-                        $stopOrder->orders_status = 2;   
+                                
+                if($day <= 5 && $day > 0){ //周一到周五,停送到最后一天
+                    if(empty($stopLog)){
+                        $stopOrder->order_status = 2;   
                         $stopOrder->save();  
                     }
+                    
                 }
                 
+                
             }else{ //每天配送
-                $stopLog = OrderStop::where('order_id',$orderId)
-                                        ->where('start_date','<=',$now)
-                                        ->where('end_date','>=',$now)
-                                        ->get();
-                if($stopLog){ //有停送记录并且是最后一天停送,则修改状态
-                    $isLastStop = ($stopLog->end_date == $now);
-                    if($isLastStop){
-                        $stopOrder->orders_status = 2;
-                        $stopOrder->save();
-                    }
+        
+                if(empty($stopLog)){ //没有停送申请
+                    $stopOrder->order_status = 2;
+                    $stopOrder->save();
                 }
             }
 		}
+
+        // die;
         
-        // 3.处理配送中订单,检查是否暂停配送
-        $sendOrders = Orders::where('orders_status',2)
-                                ->where('pay_status',1)
-                                ->select('id','orders_status','start_date','type','rate')
-                                ->get();
-                                // ->toArray();
+        // 3.处理配送中订单,检查是否暂停配送/配送完成
+        /*
+            订单为工作日配送
+                    |-- 今天日期大于(开始时间+天数+暂停天数) => 配送完成
+                    |-- 今天日期小于等于配送最后一天日期
+                                |-- 今天是周六/周日 => 暂停配送
+                                |-- 今天是工作日
+                                        |-- 有停送申请 => 暂停配送
+            订单为每天配送
+                    |-- 今天日期大于(开始时间+天数+暂停天数) => 配送完成
+                    |-- 有停送申请 => 暂停配送
+
+        */
         foreach ($sendOrders as $sendOrder) {
             $length = $sendOrder->type;
             $start = $sendOrder->start_date;
             $rate = $sendOrder->rate;
-            $orderId = $sendOrder->order_id;
-
+            $orderId = $sendOrder->id;
+            \Log::debug('sendOrders handling sendOrder returns'.json_encode($sendOrder));
+            \Log::debug('sendOrders handling orderid returns'.$orderId);
             // 计算最后一天配送日期
-            $lastSendDay = date('Y-m-d',strtotime("$start+$length day"));
-            //工作日配送
-            if($rate){
-                if($day == 5){
-                    if($lastSendDay == $now){ //周五恰好为配送最后一天
-                        $sendOrder->orders_status = 3; //配送完成
-                        $sendOrder->save();
-                    }else{ //不是最后一天 则改为暂停
-                        $sendOrder->orders_status = 4; 
-                        $sendOrder->save();
-                    }
-                }else if($day>=1 && $day<=4){ //周一到周四
-                    if($lastSendDay == $now){
-                        $sendOrder->orders_status = 3; 
-                    }else{
-                        $stopLog = OrderStop::where('order_id',$orderId)
+            // $lastSendDay = date('Y-m-d',strtotime("+".$length." day",strtotime($start))-1);
+            $lastSendDay = $this->getDateAfterWeekDays($length);
+
+            $stopLog = OrderStop::where('order_id',$orderId)
                                         ->where('start_date','<=',$now)
                                         ->where('end_date','>=',$now)
-                                        ->get();
-                        if($stopLog){ // 有停送申请 订单状态改为暂停
-                            $sendOrder->orders_status = 4;
+                                        ->get()
+                                        ->toArray();
+// 
+            // dd($stopLog);
+            // \Log::debug('sendOrders handling stopLog returns ---'.json_encode($stopLog));
+            // dd($lastSendDay);
+            // 工作日配送
+            if($rate){
+                if($lastSendDay < $now){ //配送完成
+                    $sendOrder->order_status = 3;
+                    $sendOrder->save();
+                }else{
+                    if($day == 6 || $day == 0){ // 周六周日
+                        $sendOrder->order_status = 4; //暂停
+                        $sendOrder->save();
+                    }else{ //周一到周五
+                        
+                        if(!empty($stopLog)){ // 有停送申请 订单状态改为暂停
+                            $sendOrder->order_status = 4;
                             $sendOrder->save();
                         }
+                        
                     }
                 }
+                
             //每天配送
             }else{
-                if($lastSendDay == $now){ //是最后一天配送
+                if($lastSendDay < $now){ //是最后一天配送
                     $sendOrder->order_status = 3; //配送完成
                     $sendOrder->save();
                 }else{
-                    $stopLog = OrderStop::where('order_id',$orderId)
-                                        ->where('start_date','<=',$now)
-                                        ->where('end_date','>=',$now)
-                                        ->get();
-                    if($stopLog){ //有停送申请 订单状态改为暂停
+                   
+                    
+                    if(!empty($stopLog)){ //有停送申请 订单状态改为暂停
                         $sendOrder->order_status = 4;
                         $sendOrder->save();
                     }
@@ -238,9 +273,61 @@ class TaskController extends Controller
         }
     }
 
+
     // 清理缓存
     public function flushCache(){
         Cache::flush();
         return 1;
+    }
+
+    // md5_file() 检测图片是否修改,修改则更新版本号并放置缓存
+    public function updateImg(){
+        $root = public_path().'/file_img/images';
+        $this->my_scandir($root);
+    }
+
+    public function my_scandir($dir)
+    {
+        if(is_dir($dir))
+        {
+            if($handle=opendir($dir))
+            {
+                while(($file=readdir($handle))!==false)
+                {
+                    if($file!="." && $file!="..")
+                    {
+                        if(is_dir($dir."/".$file))
+                        {
+                            $this->my_scandir($dir."/".$file);
+                        }
+                        else
+                        {
+                            $md5 = md5_file($dir.'/'.$file);
+                            $fileTag = "{$dir}/$file";
+                            $v = substr($md5,22);
+                            Cache::put("API_IMG_MD5_$fileTag", $v ,1440); 
+                            Log::debug('updateImg --- make a new fileTag::'."API_IMG_MD5_$fileTag---".$v);
+                        }
+                    }
+                }
+                closedir($handle);
+            }
+        }
+    }
+
+    // 获取经过指定工作日(周一到周五)后的日期
+    public function getDateAfterWeekDays($count){
+
+        $now = time();
+        $timer = strtotime(date('Y-m-d',$now));
+        for ($i=1; $i <= $count; $i++) { 
+            $timer = $timer+3600*24;
+            $num = date('N',$timer);
+            if($num == 6 || $num == 7){
+                $i--;
+            }
+        }
+        $date = date('Y-m-d',$timer);
+        return $date;
     }
 }
