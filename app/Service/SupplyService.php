@@ -2,8 +2,10 @@
 namespace App\Service;
 use App\Service\OrderService;
 
+use App\Model\SkuSupply;
+use App\Model\OrderLog;  
 class SupplyService{ 
-
+   
     // 获取所有补货员列表
     public function getSenderList(){
         $senderList = file_get_contents(env('SENDER_FILE_PATH'));
@@ -12,22 +14,21 @@ class SupplyService{
             return json_decode($senderList,true);
         }
     }
-
+ 
 	// 补货前获取售货机内现有商品列表
     public function getNowProList($vmId){
-        // $vmId = $request->input("vmId");
         
         $proList = \DB::table('skus')
                             ->join('sku_supplys','skus.id','=','sku_supplys.sku_id')
                             ->select('skus.id','skus.seq','skus.product_id','skus.product_name','skus.sku_size','sku_supplys.location','sku_supplys.status')
-                            ->where('vm_id',$vmId)
+                            ->where('vmid',$vmId)
                             ->where('status','<>',1) //未出货
                             ->get();
         \Log::debug('SupplyService---getNowProList returns:'.json_encode($proList));
         return $proList;
     }
 
-    // 补货时计算补货数据
+    // 补货时根据订单计算补货数据
     public function getSupplyData($vmid){ 
         if(!isset($vmid)){
             return 'parameter missing!';
@@ -38,8 +39,8 @@ class SupplyService{
                             // ->get();
         // 获取货道配置商品信息
         $skuSet = \DB::table('skus')
-                            ->where('vm_id',$vmid)
-                            ->select('seq','product_name','product_id','sku_size')
+                            ->where('vmid',$vmid)
+                            ->select('id','seq','product_name','product_id','sku_size')
                             ->get();
         // dd($skuSet);
         // 处理数据
@@ -47,21 +48,21 @@ class SupplyService{
         foreach ($skuSet as $list) {
             $afterSkuSet[$list->seq]['product_id'] = $list->product_id;
             $afterSkuSet[$list->seq]['product_name'] = $list->product_name;
+            $afterSkuSet[$list->seq]['sku_id'] = $list->id;
             $afterSkuSet[$list->seq]['sku_size'] = $list->sku_size;
         }
 
-        ksort($afterSkuSet);
-        // dd($afterSkuSet);              
-        // dd($vmSkuNum);
+        ksort($afterSkuSet); // 键值排序
+        
         $proList = $this->getNowProList($vmid); //返回售货机内已存在商品列表
-        // dd($proList);
+
         $afterProList = [];
         foreach ($proList as $k => $pro) {
             $afterProList[$pro->seq]['product_id'] = $pro->product_id;
             $afterProList[$pro->seq]['product_name'] = $pro->product_name;
             $afterProList[$pro->seq]['sku_size'] = $pro->sku_size;
             $afterProList[$pro->seq]['normal'] = isset($afterProList[$pro->seq]['normal'])?$afterProList[$pro->seq]['normal']:0;
-            $afterProList[$pro->seq]['warn'] = isset($afterProList[$pro->seq]['warn'])?$afterProList[$pro->seq]['warn']:0;
+            $afterProList[$pro->seq]['warn'] = isset($afterP值roList[$pro->seq]['warn'])?$afterProList[$pro->seq]['warn']:0;
             if($pro->status == 2){
                 $afterProList[$pro->seq]['normal']++;
             }else{
@@ -88,12 +89,13 @@ class SupplyService{
         $realList = [];
         foreach($afterSkuSet as $k=>$sku) { 
             $pid = $sku['product_id'];
-            \Log::debug('test---condition foreach afterSkuSet come in!');
+            // \Log::debug('test---pid---'.$pid.'condition foreach afterSkuSet come in!');
             $realList[$k]['product_id'] = $pid;
             $realList[$k]['product_name'] = $sku['product_name'];
+            $realList[$k]['sku_id'] = $sku['sku_id'];
             $realList[$k]['sku_size'] = $sku['sku_size'];
-            if(in_array($pid, $countList)){ //该货道配置的商品需要补货
-                Log::debug('test---condition in_array come in!');
+            if(array_key_exists($pid, $countList)){ //该货道配置的商品需要补货
+                // \Log::debug('test---condition in_array come in!');
                 if(isset($afterProList[$k])){ //该货道已存有商品
 
                     $realList[$k]['normal'] = $afterProList[$k]['normal']; //存入正常商品数量
@@ -103,9 +105,9 @@ class SupplyService{
                     
                     if($countList[$pid] >= $available){ //该货道不能容纳全部商品,需下一个货道
                         $countList[$pid] -= $available;
-                        $realList[$k]['add'] = $available;
+                        $realList[$k]['default_add'] = $available;
                     }else{
-                        $realList[$k]['pid'] = $countList[$pid];
+                        $realList[$k]['default_add'] = $countList[$pid];
                         $countList[$pid] = 0;
                     }
                 }else{ //该货道为空
@@ -115,19 +117,31 @@ class SupplyService{
 
                     $available = $sku['sku_size'];
                     if($countList[$pid] >= $available){
-                        $realList[$k]['add'] = $sku['sku_size'];
+                        $realList[$k]['default_add'] = $sku['sku_size'];
                         $countList[$pid] -= $available;
                     }else{
-                        $realList[$k]['add'] = $countList[$pid];
+                        $realList[$k]['default_add'] = $countList[$pid];
                         $countList[$pid] = 0;
                     }
                     
                 }
                 
+            }else{
+                if(isset($afterProList[$k])){
+                    $realList[$k]['normal'] = $afterProList[$k]['normal']; //存入正常商品数量
+                    $realList[$k]['warn'] = $afterProList[$k]['warn']; //存入过期预警商品数量
+                    $realList[$k]['default_add'] = 0;
+                    
+                }else{
+                    $realList[$k]['normal'] = 0; //存入正常商品数量
+                    $realList[$k]['warn'] = 0; //存入过期预警商品数量
+                    $realList[$k]['default_add'] = 0;
+                }
             }
+            $realList[$k]['actual_add'] = '';
         }
         // echo 1;
-        dd($realList);
+        // dd($realList);
         /*  totalList 格式
             [
                 1=>[
@@ -140,8 +154,9 @@ class SupplyService{
                 3=>[]...
             ]
         */
-        return $totalList;
+        return $realList;
     }
+
 
     public function getMaxSupplyList($vmid){
         $skuSetList = DB::table('skus')
@@ -161,7 +176,7 @@ class SupplyService{
         return $countMaxProList;
     }
     
-    // 用于发送邮件
+    // 用于发送邮件(企业号开放运营入口)
     public  function getDailyOrdersToSend(Request $request){ 
         $vmid = $request->input('vmid');
         $dailyOrders = Bussiness::getDailyOrders($vmid);
@@ -213,8 +228,7 @@ class SupplyService{
                 }
             }
         }
-        // dd($vmProList);
-        // dd($vmAfterProList);
+     
         $finalList = [];
         foreach($countMaxProList as $p_id => $pro){
             // 携带最小值
@@ -239,9 +253,97 @@ class SupplyService{
             }
             $finalList[$p_id]['max'] = $max;
         }
-        dd($finalList);
+        // dd($finalList);
         return json_encode($countOrders); 
+    }
+
+    // 接收补货员实际补货数据,并与订单补货数据比较,计算是否漏补
+    public function calulate(Request $request){
 
     }
+
+    // 补货完成时,发送
+    public function handleFinishData($array_data,$vmid){
+        $product_order_list = OrderService::handleOrdersToAllot('0081008');
+        // dd($product_order_list);
+        $date = date('Y-m-d');
+        foreach ($array_data as $k => $sku) {
+            $sku_id = $sku['sku_id'];
+            \Log::debug('foreach --- array_data come in! sku---'.json_encode($sku));
+            // 预定商品分配
+            if($sku['actual_add'] > 0){
+                for ($i=1; $i <= $sku['actual_add'] ; $i++) { 
+                    SkuSupply::create([
+                            'sku_id' => $sku_id,
+                            'location' => $i,
+                            'supply_date' => $date,
+                            'status' => 2
+                        ]);
+                    \Log::debug('sku_id---'.$sku['sku_id'].'fenpei');
+                    foreach ($product_order_list as $pid => $orderList){
+                        $count = count($orderList);
+                        if(($sku['product_id'] == $pid) && ($count>0)){
+
+                            if($count == 1){
+                                $order = array_splice($product_order_list[$pid],0,1)[0];
+                            }else{
+                                // 获取数组随机索引
+                                $index = mt_rand(0,$count-1);
+                                // 该订单已被分配商品,移出
+                                $order = array_splice($product_order_list[$pid],$index,1)[0];
+                            }
+                            // orderLogs 插入数据
+                            // \Log::debug('Test --- foreach --- current_product_order_list returns:'.json_encode($product_order_list));
+                            \Log::debug('Test --- foreach --- order:'.json_encode($order));
+                            OrderLog::create([
+                                    'order_id' => $order['order_id'],
+                                    'order_detail_id' => $order['order_detail_id'],
+                                    'product_id' => $pid,
+                                    'create_date' => $date,
+                                    'order_status' => 201,
+                                    'is_reserved' => 0,
+                                    'vmid' => $vmid
+                                ]);
+                            
+                            break;
+                        }
+                    }
+                }  
+            }
+
+        }
+        \Log::debug('SupplyService---after finish supply dailyOrders returns::'.json_encode($product_order_list));
+        // 遍历剩余订单
+       
+        foreach ($product_order_list as $k => $orderList) {
+            // 订单为分配(漏补订单) -> 发送模板消息/短信通知
+            if(count($orderList) > 0){
+                foreach ($orderList as $order) {
+                    // 每个订单发送消息
+                    \Log::debug('Sending message to order_id:'.$order['order_id'].' order_detail_id:'.$order['order_detail_id']);
+                }
+            }
+        }
+        
+        return 1;
+        
+    }
+
+    // 获取经过指定工作日(周一到周五)后的日期
+    public function getDateAfterWeekDays($count){
+
+        $now = time();
+        $timer = strtotime(date('Y-m-d',$now));
+        for ($i=1; $i <= $count; $i++) { 
+            $timer = $timer+3600*24;
+            $num = date('N',$timer);
+            if($num == 6 || $num == 7){
+                $i--;
+            }
+        }
+        $date = date('Y-m-d',$timer);
+        return $date;
+    }
+
 }
 ?>
