@@ -22,7 +22,7 @@ class MallController extends Controller
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
                 'cdn_url'       => config::get('mg.cdn_url'),
-                'host'          => Config::get('host')
+                'host'          => Config::get('mg.host')
             ));
     }
 
@@ -47,7 +47,7 @@ class MallController extends Controller
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
                 'cdn_url'       => config::get('mg.cdn_url'),
-                'host'          => Config::get('host')
+                'host'          => Config::get('mg.host')
             ));
     }
 
@@ -72,7 +72,7 @@ class MallController extends Controller
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
                 'cdn_url'       => config::get('mg.cdn_url'),
-                'host'          => Config::get('host')
+                'host'          => Config::get('mg.host')
             ));
     }
 
@@ -84,7 +84,7 @@ class MallController extends Controller
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
                 'cdn_url'       => config::get('mg.cdn_url'),
-                'host'          => Config::get('host')
+                'host'          => Config::get('mg.host')
             ));
     }
 
@@ -135,7 +135,7 @@ class MallController extends Controller
 
         $request->session()->put('intention', $intention);
         Log::debug('wxPay[intention:'.json_encode($request->session()->get('intention')).']');
-        header('Location:'.Config::get('host').'wx/ajax_prepay');
+        header('Location:/wx/ajax_prepay');
         exit;
     }
 
