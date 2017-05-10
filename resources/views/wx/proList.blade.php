@@ -24,7 +24,7 @@
 	<img src="<?php echo $cdn_url ?>/images/common/top.jpg" />
 </div>
 <div class="vminfor">
-	<h1><?php echo $vmInfor['vm_name'] ?><span>编号：<?php echo $vmInfor['vmid'] ?></span></h1>
+	<h1><?php echo $vmInfor['node_name'] ?><span>编号：<?php echo $vmInfor['vmid'] ?></span></h1>
 	<p><?php echo $vmInfor['address'] ?></p>
 	<a href="/wx/vmlist" class="blue_button">更换</a>
 </div>
@@ -59,19 +59,20 @@
 	<p>上拉加载更多</p>
 </div>
 
-<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
+<script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
 window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($products) ?>',
 		newList = {},
 		item = null;
-	// console.log(plist)
+	console.log(plist)
 	plist = JSON.parse(plist);
 	for(var i=0,len=plist.length; i<len; i++){
 		item = plist[i];
 		newList[item['product_id']] = {
 			'pid': item['product_id'],
 			'pname': item['product_name'],
+			'volume': item['volume'],
 			'oprice': item['original_price'],
 			'rprice': item['retail_price'],
 			'left': item['count']
@@ -86,10 +87,24 @@ if(!window.sessionStorage['selectedProducts']){
 	    "total": 0,
 	    "vmid": "<?php echo $vmInfor['vmid'] ?>"
 	});
+}else{
+	var selected = window.sessionStorage['selectedProducts'],
+		selected = JSON.parse(selected);
+	console.log('plist')
+	console.log(selected)
+	if(selected['vmid'] != "<?php echo $vmInfor['vmid'] ?>"){
+		window.sessionStorage['selectedProducts'] = JSON.stringify({
+			"products": { },
+		    "total": 0,
+		    "vmid": "<?php echo $vmInfor['vmid'] ?>"
+		});
+	}
 }
 
+console.log(window.sessionStorage['selectedProducts'])
+
 </script>
-<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));

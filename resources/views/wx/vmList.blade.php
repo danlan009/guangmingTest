@@ -24,9 +24,7 @@
 		echo "<div>";
 		foreach ($vms as $v) { 
 			$index++; 
-			if($index == floor($count/2)){
-				echo "</div><div>";
-			}
+			
 
 			$vms = $v['vms'];
 			$vmsCount = count($vms);
@@ -45,14 +43,17 @@
 		?>
 	</p>
 
-	<?php 
+	<?php 	
+			if($count % 2 == 0){
+				echo "</div><div>";
+			}
 		}
 		echo "</div>";
 	?>
 </section>
 <section class="search_result" id="search_result"></section>
 <script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
-<script src="<?php echo $cdn_url ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	var vmlist = $('#vmList'),
