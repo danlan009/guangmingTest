@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Payment\Order as wechatOrder;
+use Log;
 class PaymentController extends Controller
 {
     /**
@@ -72,6 +73,17 @@ class PaymentController extends Controller
             $wxTrade->vmid = $vmid;
             $wxTrade->created_at = date('Y-m-d H:i:s');
             $wxTrade->save();
+
+            // 测试数据,跳过微信支付 Start
+            if($request->input('test') == 'laiguangying'){
+                return json_encode(array(
+                    'code'  => 200,
+                    'wxTxnId'  => $wxTrade->id,
+                    'msg'   => '测试中，跳过微信支付'
+                ));
+            }
+            // 测试数据,跳过微信支付 End
+
             //微信支付
             $payment = $app->payment;
             $attrs = [
