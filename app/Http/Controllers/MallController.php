@@ -79,6 +79,8 @@ class MallController extends Controller
     // 结算
     public function wxAccount(Request $request){
         $vmInfor = $request->session()->get('currentVM');
+        // phpinfo();
+        // exit;
         return view('wx.account', array(
                 'vminfor'        => $vmInfor,
                 'css_version'   => config::get('mg.css_version'),
@@ -90,6 +92,10 @@ class MallController extends Controller
 
     // 支付
     public function ajaxWxPay(Request $request){
+        // 测试用
+        $request->session()->put('wxId', 'test');
+        // 测试用 End
+
         $data = $request->all();
         $mallService = new MallService();
         $total_price = 0;
@@ -100,12 +106,12 @@ class MallController extends Controller
             // 检查商品售价是否与服务器价格一致
             $detail = $mallService->getProDetail($value['pid'], $vmid, 'book');
             if($detail->retail_price != $value['rprice'] ){
-                return array(
-                        'code'  => 200,
+                return json_encode(array(
+                        'code'  => 400,
                         'pid'   => $detail->product_id,
                         'pname' => $detail->product_name,
                         'msg'   => '售价与服务器不符'
-                    );
+                    ));
             }
             $total_price = $total_price + $value['rprice'] * $value['count'];
         }
@@ -120,11 +126,23 @@ class MallController extends Controller
             // 卡券核销
         }
 
+        // array('product_id'=>1,product_name='鲜奶',original_price=>100,retail_price=>100,'num'=>2),
+        $products = null;
+        foreach ($data['products'] as $k => $v) {
+            $products[] = array(
+                    'product_id'    => $v['pid'],
+                    'product_name'  => $v['pname'],
+                    'original_price'=> $v['oprice'],
+                    'retail_price'  => $v['rprice'],
+                    'num'           => $v['count']
+                );
+        }
+
         //渠道：1扫码预定，2微信商城预定，3扫码购买，4微信商城购买
         $intention = array(
                 'channel'       => 2,
                 'vmid'          => $data['vmid'],
-                'products'      => $data['products'],
+                'products'      => $products,
                 'total_price'   => $total_price,
                 'retail_price'  => $retail_price,
                 'card_id'       => $data['card_id'],
@@ -135,16 +153,27 @@ class MallController extends Controller
 
         $request->session()->put('intention', $intention);
         Log::debug('wxPay[intention:'.json_encode($request->session()->get('intention')).']');
-        header('Location:'.Config::get('mg.host').'wx/ajax_prepay');
+
+        return json_encode(array(
+                    'code'  => 200,
+                    'msg'   => 'success'
+                ));
         exit;
     }
 
     // 预定结果
-    public function result(){
+    public function result($wxtId){
         $mallService = new MallService();
-        
+        $vmid       = '0081801'; // 测试数据
+        $vmInfor    = $mallService->getVmInfo($vmid);
+
+        // echo '<pre>';
+        // print_r($vmInfor);
+        // echo '</pre>';
+
+        // 根据微信交易单号查看订单
         return view('wx.result', array(
-                
+                'vmInfor' => $vmInfor
             ));
     }
 

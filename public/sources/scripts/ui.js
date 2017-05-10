@@ -437,9 +437,24 @@ $.fn.weixinPay = function(){
 			type: 'get',
 			data: collectionsObj,
 			success: function(data){
-
+				console.log(data);
+				var d = JSON.parse(data);
+				if(d.code === 200){
+					$.ajax({
+						url: '/wx/ajax_prepay?test=laiguangying',
+						type: 'get',
+						success: function(data){
+							var result = JSON.parse(data);
+							// 调起微信支付
+							if(result.code == 200){
+								// 跳转到预定结果页面
+								window.location.href = '/wx/result/'+result.wxTxnId;
+							}
+						}
+					});
+				}
 			}
-		})
+		});
 	});
 };
 
