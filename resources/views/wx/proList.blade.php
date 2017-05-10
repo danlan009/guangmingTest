@@ -59,7 +59,7 @@
 	<p>上拉加载更多</p>
 </div>
 
-<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
+<script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
 window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($products) ?>',
@@ -104,7 +104,7 @@ if(!window.sessionStorage['selectedProducts']){
 console.log(window.sessionStorage['selectedProducts'])
 
 </script>
-<script src="<?php echo $host ?>sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));

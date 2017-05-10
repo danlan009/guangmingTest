@@ -135,7 +135,7 @@ class MallController extends Controller
 
         $request->session()->put('intention', $intention);
         Log::debug('wxPay[intention:'.json_encode($request->session()->get('intention')).']');
-        header('Location:/wx/ajax_prepay');
+        header('Location:'.Config::get('mg.host').'/wx/ajax_prepay');
         exit;
     }
 

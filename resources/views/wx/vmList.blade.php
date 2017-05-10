@@ -52,8 +52,8 @@
 	?>
 </section>
 <section class="search_result" id="search_result"></section>
-<script src="<?php echo $cdn_url ?>sources/scripts/lib/zepto.min.js"></script>
-<script src="<?php echo $host ?>/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
+<script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 $(function(){
 	var vmlist = $('#vmList'),

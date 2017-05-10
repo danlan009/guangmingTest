@@ -143,7 +143,7 @@
 	
 </div>
 
-<script src="<?php echo $cdn_url ?>/scripts/lib/zepto.min.js"></script>
+<script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
 	var collectionsObj = {
 		'card_id': '',		// 卡券id
@@ -154,7 +154,7 @@
 		'vmid': '<?php echo $vminfor["vmid"] ?>'
 	};
 </script>
-<script src="<?php echo $host ?>sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
+<script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
 <script type="text/javascript">
 	$('#cartProductsAccount').accountHandler();
 	$('#cardList').radioBox('li:not(.disable)', 'card');
