@@ -8,6 +8,8 @@ use App\Model\Sku;
 use DB;   
 use Cache;  
 use Log;
+
+use App\Service\StatService;
 class MallService{
 	// 拉取点位列表 参数:无
 	public function getNodeList(){
@@ -61,7 +63,7 @@ class MallService{
         }
 
         $proList = Sku::getAllPros($vmid);
-        Log::debug('MallService::getAllPros---'.json_encode($proList));
+        // Log::debug('MallService::getAllPros---'.json_encode($proList));
  
         // 放入缓存
         $counts = []; // 用于商品列表根据剩余量排序
@@ -78,23 +80,20 @@ class MallService{
                 $counts[] = $num;
             }
 
-
-            // $pro->pic_l = $this->getImg($dir,$pid,$type);
-            // $pro->pic_t = $this->getImg($dir,$pid,$type);
-            // $pro->pic_d1 = $this->getImg($dir,$pid,$type);
-            // $pro->pic_d2 = $this->getImg($dir,$pid,$type);
-            // $pro->pic_d3 = $this->getImg($dir,$pid,$type);
-            $pro->pic_l = '';
-            $pro->pic_t = '';
+            $pro->pic_l = StatService::getImg('products',$pid,'l'); // 商品列表展示图
+            $pro->pic_t = StatService::getImg('products',$pid,'t'); // 商品详情大图
+            $pro->pic_d1 = StatService::getImg('products',$pid,'d1'); // 商品详情描述图1
+            $pro->pic_d2 = StatService::getImg('products',$pid,'d2'); // 商品详情描述图2
+            $pro->pic_d3 = StatService::getImg('products',$pid,'d3'); // 商品详情描述图3
             $pro->detail_pics = [
-                '',
-                '',
-                ''
+                "$pro->pic_d1",
+                "$pro->pic_d2",
+                "$pro->pic_d3"  
             ];
 
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
         }
-        Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
+        // Log::debug('MallService::showPros to '.$type.' put in Cache---'.json_encode($proList));
         array_multisort($counts,SORT_DESC,$proList);
         return $proList;
     }
@@ -116,10 +115,7 @@ class MallService{
             return $proDetail;
                   
         }else{
-            return array(
-                    'code' => '404',
-                    'msg' => '商品未找到!'
-                );
+            return null;
         }
     }
 
@@ -227,23 +223,6 @@ class MallService{
         
     }
 
-    public function getImg($dir="products",$id,$type){
-        $image_path = env('IMAGE_PATH');
-        switch($dir){
-            case 'products':
-                $file = $dir."/".$id."/".$id."_".$type.".jpg";
-                
-            break;
-            case 'subjects': 
-                $file = $dir."/".$id."_$type".".jpg";
-            break;
-        }
-        $md5 = Cache::get('API_IMG_MD5_'.$file);
-        if(isset($md5)){
-            $file .= "?v=$md5";
-        }
-
-        return "$image_path/$file";
-    } 
+    
 }
 ?>
