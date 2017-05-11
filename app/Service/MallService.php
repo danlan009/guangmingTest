@@ -82,13 +82,13 @@ class MallService{
 
             $pro->pic_l = StatService::getImg('products',$pid,'l'); // 商品列表展示图
             $pro->pic_t = StatService::getImg('products',$pid,'t'); // 商品详情大图
-            $pro->pic_d1 = StatService::getImg('products',$pid,'d1'); // 商品详情描述图1
-            $pro->pic_d2 = StatService::getImg('products',$pid,'d2'); // 商品详情描述图2
-            $pro->pic_d3 = StatService::getImg('products',$pid,'d3'); // 商品详情描述图3
+            $pic_d1 = StatService::getImg('products',$pid,'d1'); // 商品详情描述图1
+            $pic_d2 = StatService::getImg('products',$pid,'d2'); // 商品详情描述图2
+            $pic_d3 = StatService::getImg('products',$pid,'d3'); // 商品详情描述图3
             $pro->detail_pics = [
-                "$pro->pic_d1",
-                "$pro->pic_d2",
-                "$pro->pic_d3"  
+                "$pic_d1",
+                "$pic_d2",
+                "$pic_d3"  
             ];
 
             Cache::put('PRO_DETAIL_'.$proList[$k]->product_id.'_'.$vmid,$proList[$k],1440);
