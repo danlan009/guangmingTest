@@ -4,7 +4,7 @@ namespace App\Service;
 use App\Model\Order; 
 use App\Model\OrderLog;
 use App\Model\OrderStop; 
-use App\Model\Sku; 
+use App\Model\Sku;  
 use DB;   
 use Cache;  
 use Log;
@@ -114,8 +114,12 @@ class MallService{
         }
         if(!empty($proDetail)){
             return $proDetail;
+                  
         }else{
-            return 'error';
+            return array(
+                    'code' => '404',
+                    'msg' => '商品未找到!'
+                );
         }
     }
 
@@ -128,11 +132,11 @@ class MallService{
                         ->where('skus.product_id',$product_id)
                         ->where('skps.status',2)
                         ->count();
-        // 计算售货机中预定商品数量
+        // 计算售货机中已下单商品(包括预定和即卖)
         $bookNum = DB::table('orders')
                         ->join('order_logs','orders.id','=','order_logs.order_id') 
                         ->where('orders.order_status',2)
-                        ->where('channel',1)
+                        // ->where('channel',1)
                         ->where('orders.vmid',$vmid)
                         ->where('order_logs.product_id',$product_id)
                         ->count();
@@ -169,11 +173,7 @@ class MallService{
  
     // 即卖生成单个取货码(下单后操作)
     public function singleBuyCode($order_id,$order_detail_id,$product_id,$vmid){ // 预下单后买码
-        // 同一小订单不能重复买码
-        $isExist = OrderLog::where(['order_id'=>$order_id,'order_detail_id'=>$order_detail_id])->count();
-        if($isExist){
-            return ['return_code'=>'409','return_msg'=>'该商品已被买走'];
-        }
+        
         // 校验是否有商品可供继续买码 
         $availCount = $this->getNumOfSale($vmid,$product_id);
         if($availCount > 0){
