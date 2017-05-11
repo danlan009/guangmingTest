@@ -232,8 +232,7 @@ class TaskController extends Controller
                                         ->where('start_date','<=',$now)
                                         ->where('end_date','>=',$now)
                                         ->get()
-                                        ->toArray();
-// 
+                                        ->toArray(); 
             // dd($stopLog);
             // \Log::debug('sendOrders handling stopLog returns ---'.json_encode($stopLog));
             // dd($lastSendDay);
@@ -282,7 +281,7 @@ class TaskController extends Controller
 
     // md5_file() 检测图片是否修改,修改则更新版本号并放置缓存
     public function updateImg(){
-        $root = public_path().'/file_img/images';
+        $root = public_path().'/file_img/images'; //需要修改,上线时更改到指定服务器图片目录
         $this->my_scandir($root);
     }
 
@@ -306,7 +305,7 @@ class TaskController extends Controller
                             $fileTag = "{$dir}/$file";
                             $v = substr($md5,22);
                             Cache::put("API_IMG_MD5_$fileTag", $v ,1440); 
-                            Log::debug('updateImg --- make a new fileTag::'."API_IMG_MD5_$fileTag---".$v);
+                            Log::debug('TaskController--- updateImg --- make a new fileTag::'."API_IMG_MD5_$fileTag?v=".$v);
                         }
                     }
                 }
