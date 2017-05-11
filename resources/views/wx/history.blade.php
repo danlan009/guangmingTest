@@ -13,14 +13,14 @@
 <header>
 	<h1><img src="/sources/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/history" class="h">历史订单</a>
+		<a href="" class="h">我的订单</a>
 	</p>
 </header>
 <div class="history">
 	<div class="empty">
 		<p><img src="/sources/images/common/icon.png" /></p>
-		<h3>暂无订单</h3>
-		<a href="/wx/vmlist" class="blue_button">马上预定</a>
+		<h3>暂无历史订单</h3>
+		<a href="" class="blue_button">马上预定</a>
 	</div>
 </div>
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>

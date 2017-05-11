@@ -11,6 +11,8 @@ use App\Service\MallService;
 use App\Service\SupplyService;
 use App\Service\StatService;
 use App\Model\User;
+use App\Model\WxTrade;
+use App\Service\ApiService;
 class MallController extends Controller
 {
     // 售货机列表
@@ -55,6 +57,12 @@ class MallController extends Controller
     public function productDetail($vmid, $pid){
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
+
+        // echo '<pre>';
+        // print_r($detail);
+        // echo '</pre>';
+        // exit;
+
         // 测试图片加载 Start
         if($detail != 'error'){
             $detail->pic_t = "/sources/images/products/100016_d.jpg";
@@ -79,8 +87,9 @@ class MallController extends Controller
     // 结算
     public function wxAccount(Request $request){
         $vmInfor = $request->session()->get('currentVM');
-        // phpinfo();
-        // exit;
+
+        // 获取用户上次订单的手机号
+
         return view('wx.account', array(
                 'vminfor'        => $vmInfor,
                 'css_version'   => config::get('mg.css_version'),
@@ -162,28 +171,82 @@ class MallController extends Controller
     }
 
     // 预定结果
-    public function result($wxtId){
-        $mallService = new MallService();
-        $vmid       = '0081801'; // 测试数据
-        $vmInfor    = $mallService->getVmInfo($vmid);
-
+    public function result(Request $request, $wxtId){
+        $wxId           = $request->session()->get('wx_id');
+        $mallService    = new MallService();
+        $apiService     = new ApiService(); 
+        $wxTrade        = WxTrade::find($wxtId);
+        if($wxTrade->openid != $wxId){
+            return view('wx.error', array(
+                    'code'      => 400,
+                    'message'   => '订单与本人不符'
+                ));
+        }
         // echo '<pre>';
-        // print_r($vmInfor);
-        // echo '</pre>';
+        // print_r($wxTrade);
+        // echo  '</pre>';
+        // exit;
+        $vmid           = $wxTrade->vmid;
+        $vmInfor        = $mallService->getVmInfo($vmid);
+        $orderId        = $wxTrade->order_id;
+        $orderDetail    = $apiService->getOrderById($orderId);
+        $order = array(
+                'vmid'          => $orderDetail->vmid,
+                'type'          => $orderDetail->type,
+                'start_date'    => $orderDetail->start_date,
+                'retail_price'  => $orderDetail->retail_price,
+                'pay_status'    => $orderDetail->pay_status,
+                'rate'          => $orderDetail->rate,
+                'wx_id'         => $orderDetail->wx_id
+            );
+
+        // 联系电话
+        $count = 0;
+        $products = array();
+        foreach ($orderDetail->products as $key => $value) {
+            if(isset($products[$value->product_id])){
+                $products[$value->product_id]['num'] ++;
+            }else{
+                $products[$value->product_id] = array(
+                    'id'    => $value->product_id,
+                    'pname' => $value->product_name,
+                    'num'   => 1,
+                    'volume' => $value->volume.($value->unit == 1 ? 'ml' : 'g')
+                );
+            }
+            $count ++;
+        }
+
+        $order['products'] = $products;
+        $order['count'] = $count;
 
         // 根据微信交易单号查看订单
         return view('wx.result', array(
-                'vmInfor' => $vmInfor
+                'vmInfor'   => $vmInfor,
+                'order'     => $order
             ));
     }
 
     // 我的订单
-    public function myorders(){
+    public function myorders(Request $request){
         // 获取用户信息
-        $mallService = new MallService();
+        $mallService    = new MallService();
+        $wxId           = $request->session()->get('wx_id');
+
+        // 用户的配送中的订单列表
+        
 
         return view('wx.myOrders', array(
                 
+            ));
+    }
+
+    // 历史订单
+    public function historyOrders(Request $request){
+        $wxId           = $request->session()->get('wx_id');
+
+        return view('wx.history', array(
+
             ));
     }
 

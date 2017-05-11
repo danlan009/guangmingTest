@@ -446,6 +446,9 @@ $.fn.weixinPay = function(){
 						success: function(data){
 							var result = JSON.parse(data);
 							// 调起微信支付
+
+							// 支付完成，清空购物车
+							window.sessionStorage['selectedProducts'] = null;
 							if(result.code == 200){
 								// 跳转到预定结果页面
 								window.location.href = '/wx/result/'+result.wxTxnId;

@@ -21,10 +21,11 @@ class OrderDetail extends Model
 
     //查询订单商品详情
     public static function getOrderProducts($orderId){
-        return DB::table('order_details')
-                ->select('order_details.*','products.volume','products.unit')
-                ->join('products','order_details.product_id','=','products.id')
-                ->where('order_details.order_id',$orderId)
-                ->get();
+        return \DB::table('order_details')
+            ->select('order_details.*',\DB::raw('count(order_details.id) as num'),'products.volume','products.unit')
+            ->join('products','order_details.product_id','=','products.id')
+            ->where('order_details.order_id',$orderId)
+            ->groupBy('order_details.product_id')
+            ->get();
     }
 }
