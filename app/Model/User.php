@@ -4,6 +4,7 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use Log;
+use App\Model\Order;
 class User extends Model
 { 
 	protected $table = 'users';
@@ -36,9 +37,18 @@ class User extends Model
         return $wxUser;
     }
 
+    // 下单时获取最近一单联系方式
     public static function getPhone($wxId){
-        $phone = User::where('wx_id',$wxId)->value('phone');
         
+        $phone = Order::where('wx_id',$wxId)
+                            ->orderBy('id','desc')
+                            ->take(1)
+                            ->value('phone');
+
+        if(empty($phone)){
+            $phone = User::where('wx_id',$wxId)->value('phone');
+        }
+
         if(!empty($phone)){
             return $phone;
         }else{
