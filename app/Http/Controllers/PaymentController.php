@@ -209,6 +209,21 @@ class PaymentController extends Controller
     }
 
     public function test(){
+        $data = ApiService::getOrdersByWxId(123);
+        var_dump($data);
+        exit;
+        $now = strtotime('2017-05-12');
+        $timer = strtotime(date('Y-m-d',$now));
+        $count = 5;
+        for ($i=1; $i <= $count; $i++) {
+            $timer = $timer+3600*24;
+            $num = date('N',$timer);
+            if($num == 6 || $num == 7){
+                $i--;
+            }
+        }
+        $date = date('Y-m-d',$timer);
+        echo $date;exit;
         $data = ApiService::getOrderById(1);
         var_dump($data);
         exit;

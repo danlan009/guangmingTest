@@ -79,23 +79,62 @@ class ApiService {
         return $order;
     }
 
+    /*
+     * 用户订单列表合并（进行中预定列表和已完成订单）
+     */
+    public static function getOrdersByWxId($wxId){
+        $orders = Order::getOrders($wxId);
+        $historyOrders = array();
+        $unFinishedOrders = array();
+        foreach($orders as &$o){
+            if($o->order_status == 3){//已完成订单
+                $o = self::getOrderDetails($o);
+                if($o->channel == 1 || $o->channel == 2){//预定
+                    $o->stop = OrderStop::getOrderStop($o->id);//暂停配送
+                }
+                $historyOrders[] = $o;
+            }else{//预定未配送完成订单
+                $o = self::getOrderDetails($o);
+                $o->stop = OrderStop::getOrderStop($o->id);//暂停配送
+                $unFinishedOrders = $o;
+            }
+        }
+        return array(
+            'unFinishedOrders' => $unFinishedOrders,
+            'historyOrders'    => $historyOrders
+        );
+    }
+
     //获取进行中预定商品列表
     public static function getReserveOrdersByWxId($wxId){
         $orders = Order::getValidateReserveOrders($wxId);
-        $stop = OrderStop::getOrderStop(2);
         foreach($orders as &$o){
             $o = self::getOrderDetails($o);
-            var_dump($o);exit;
             $o->stop = OrderStop::getOrderStop($o->id);//暂停配送
 //            $o->end_date = self::getOrderTime($o)['end_date'];
         }
         return $orders;
     }
 
-    //
+    //已完成订单列表
+    public static function getHistoryOrders($wxId){
+        $orders = Order::getHistoryOrders($wxId);
+        foreach($orders as &$o){
+            $o = self::getOrderDetails($o);
+            if($o->channel == 1 || $o->channel == 2){//预定
+                $o->stop = OrderStop::getOrderStop($o->id);//暂停配送
+            }
+        }
+        return $orders;
+    }
 
     public static function getOrderDetails($order){
-        $order->products = OrderDetail::getOrderProducts($order->id);//订单商品详情
+        //获取商品并查询图片
+        $products = OrderDetail::getOrderProducts($order->id);//订单商品详情
+        foreach($products as &$p){
+            $p->img_url = StatService::getImg('products',$p->product_id,'l');//标准图片
+        }
+        $order->products = $products;
         $order->vms = Vm::getVm($order->vmid);//售货机详情
         $order->user = User::getUserByWxId($order->wx_id);//用户
         return $order;
