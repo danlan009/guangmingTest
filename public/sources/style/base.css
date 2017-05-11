@@ -28,7 +28,9 @@ header p a span{ height:0.4rem; border-radius:0.4rem; background-color:#fd0101; 
 header p a span.show{display:block;}
 header p a:first-child{width:1.2rem; height:1rem; background:url(/sources/images/common/cart.png) no-repeat center; background-size:0.7rem auto; }
 header p a img{display:block; width:100%;}
+header p a.last,
 header p a:last-child{ width:1.88rem; text-align:center; border-left:#eee 1px solid; }
+header p a.h{background:none; height:1rem;}
 header p a.disable{ opacity:0.3; }
 .banner{width:100%; margin-top:1rem; position:relative; padding-top:28.7%;}
 .banner img {display:block; width:100%; position:absolute; left:0;top:0; }
@@ -38,7 +40,8 @@ header p a.disable{ opacity:0.3; }
 .vminfor h1 span{ display:inline-block; background-color:#ccc; color:#fff; text-shadow:1px 1px 0 rgba(0,0,0,0.3); font-size:0.3rem; height:0.5rem; line-height:0.5rem; padding:0 0.48rem; border-radius:0.5rem; vertical-align:bottom; margin-left:0.4rem; box-shadow:0 1px 0 rgba(0,0,0,0.3);}
 .vminfor p{color:#b8b8b8; font-size:0.36rem; line-height:0.65rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .vminfor a{display:block; position:absolute; right:0.4rem;top:0.35rem; font-size:0.36rem; text-align:center; line-height:0.8rem;  }
-.vminfor.re{margin-top:1.5rem; border-bottom:0; height:1.82rem; padding-top:0.45rem;}
+.vminfor.re{margin-top:1.5rem; border-bottom:0; height:auto; min-height:1.82rem; padding-top:0.45rem; padding-bottom:0.2rem; padding-right:0.4rem; }
+.vminfor.re p{white-space:normal;}
 
 .products_list{font-size:0;}
 .pro{width:50%; font-size:0.36rem; color:#737373; border-bottom:#e5e5e5 1px solid; display:none;padding:0.3rem; padding-bottom:0.5rem; vertical-align:bottom; }
@@ -233,7 +236,7 @@ footer section span{display:inline-block; font-size:0.4rem; color:#333; line-hei
 .order .address p{box-shadow:none;}
 
 .box h4{font-weight:normal; font-size:0.48rem; color:#585858; text-align:center; line-height:1.24rem; border-bottom:#ebebeb 1px solid; width:90%; margin:0 auto; }
-.box h4 mark{color:#6ea5ee;}
+.box h4 mark{color:#6ea5ee; display:inline-block; min-width:0.5rem; }
 .box h2{color:#737373; font-size:0.48rem; text-align:right; padding-right:0.8rem;}
 .box h2 mark{font-size:0.72rem; color:#6ea5ee; }
 
@@ -253,3 +256,10 @@ footer section span{display:inline-block; font-size:0.4rem; color:#333; line-hei
 
 .result{background:url(/sources/images/common/ok.png) no-repeat center 0; background-size:2.4rem auto; margin-top:1.65rem;  min-height:5.18rem; padding-top:2.25rem;}
 .result h1{color:#4c4c4c; text-align:center; font-size:0.48rem; }
+
+.history{width:95%; margin:0 auto; background-color:#fff; margin-top:1.4rem; min-height:15rem; }
+.empty{ position:relative; padding-top:3.4rem;}
+.empty p{ text-align:center; width:2.61rem; margin:0 auto;}
+.empty p img{width:2.61rem;}
+.empty h3{font-size:0.48rem; color:#e6e6ea; text-align:center; height:1.4rem; line-height:1.4rem; }
+.empty a{width:48.64%; height:1.2rem; line-height:1.2rem; text-align:center; margin:0 auto; display:block; margin-top:1rem; font-size:0.48rem; }

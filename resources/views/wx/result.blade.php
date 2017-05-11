@@ -23,31 +23,42 @@
 </div>
 <div class="order space_top2">
 	<section class="box">
-		<h4>从<mark>1</mark>天后<mark>5月5日周六</mark>,每天配送<mark>5</mark>瓶</h4>
-		<div class="product">
-			<section>
-				<span><img src="/sources/images/products/100016_l.jpg" /></span>
-			</section>
-			<h1>加钙鲜牛奶<span>(350ml)</span></h1>
-			<h2><mark>3</mark>瓶</h2>
-		</div>
-		<div class="product">
-			<section>
-				<span>
-					<img src="/sources/images/products/100017_l.jpg" />
-				</span>
-			</section>
-			<h1>加钙鲜牛奶<span>(200g)</span></h1>
-			<h2><mark>2</mark>瓶</h2>
-		</div>
+		<?php 
+			$weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+		?>
+		<h4>从<mark><?php echo date('m月d日').$weekArr[date('w')] ?></mark>，每次配送<mark><?php echo $order['count'] ?></mark>瓶</h4>
+		<?php
+			// echo '<pre>';
+			// print_r($order['products']);
+			// echo '</pre>';
+		?>
+		<?php foreach($order['products'] as $p){ ?>
+			<div class="product">
+				<section>
+					<span><img src="/sources/images/products/100016_l.jpg" /></span>
+				</section>
+				<h1>
+				<?php 
+					echo $p['pname'];
+					if($p['volume']){
+						echo '<span>('.$p['volume'].')</span>';
+					}
+				?>
+				</h1>
+				<h2><mark><?php echo $p['num'] ?></mark>瓶</h2>
+			</div>
+		<?php } ?>
 	</section>
 </div>
 
 <div class="order">
 	<section class="box deliver">
-		<p class="day">共配送<mark>30</mark>天</p>
+		<p class="day">
+			共配送<mark><?php echo $order['type']  ?></mark>天
+			（<mark><?php echo $order['rate'] ? '工作日' : '每天' ?>配送</mark>）
+		</p>
 		<p class="phone">您的联系电话：13800138000</p>
-		<p class="total">总计：<mark>323.50</mark>元</p>
+		<p class="total">总计：<mark><?php echo round($order['retail_price'] / 100, 2) ?></mark>元</p>
 	</section>
 </div>
 

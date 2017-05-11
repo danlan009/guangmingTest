@@ -44,6 +44,7 @@ Route::get('supply/list_skus',					'SupplyController@listSkus');
 	Route::get('wx/detail/{vmid}/{pid}', 		'MallController@productDetail');
 	Route::get('wx/result/{wxid}', 				'MallController@result');
 	Route::get('wx/orders', 					'MallController@myorders');
+	Route::get('wx/history', 					'MallController@historyOrders');
 	Route::get('wx/cards', 						'MallController@wxCards');
 	Route::get('wx/account', 					'MallController@wxAccount');
 	Route::get('wx/ajax_check_wxpay', 			'MallController@ajaxWxPay');
