@@ -52,7 +52,7 @@ class User extends Model
         if(!empty($phone)){
             return $phone;
         }else{
-            return 0;
+            return null;
         }
     }
 
