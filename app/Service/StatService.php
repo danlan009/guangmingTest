@@ -1,13 +1,21 @@
 <?php
 namespace App\Service;
 use Log;
-use Cache;
+use Cache; 
 class StatService{
     
 
-    public function getImg($dir="products",$id,$type){
+    public static function getImg($dir="products",$id,$type){
         $image_path = env('IMAGE_PATH');
-        $file = $dir."/".$id."_$type".'.jpg';
+        switch($dir){
+            case 'products':
+                $file = $dir."/".$id."/".$id."_".$type.".jpg";
+                
+            break;
+            case 'subjects': 
+                $file = $dir."/".$id."_$type".".jpg";
+            break;
+        }
         $md5 = Cache::get('API_IMG_MD5_'.$file);
         if(isset($md5)){
             $file .= "?v=$md5";
