@@ -33,7 +33,6 @@ class PaymentController extends Controller
      */
     public function ajaxPrepay(Request $request, Application $app){
         //微信权限
-        $oauthUser = session('wechat.oauth_user');
         $intention = $request->session()->get('intention');
         $rt = array();
         Log::debug('ajaxPrepay:[intention:'.json_encode($intention).']');
@@ -85,6 +84,7 @@ class PaymentController extends Controller
             // 测试数据,跳过微信支付 End
 
             //微信支付
+            $oauthUser = session('wechat.oauth_user');
             $payment = $app->payment;
             $attrs = [
                 'trade_type'       => 'JSAPI', // JSAPI，NATIVE，APP...
