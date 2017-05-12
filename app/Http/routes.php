@@ -28,7 +28,7 @@ Route::get('supply/finish',						'SupplyController@finishSupply'); // 补货完�
 Route::post('supply/ajax_receive_data',			'SupplyController@ajaxReceiveData');
 
 Route::get('qr/create',							'qrCodeController@create');
-Route::get('test',								'SupplyController@test')->middleware('wxAuth','wechat.oauth');
+Route::get('test',								'SupplyController@test')->middleware('wxAuth');
 
 Route::get('card/getCardList',					'CoupouController@getCardList');
 
