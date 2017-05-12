@@ -50,9 +50,15 @@ class SupplyController extends Controller
 
         // $this->getDateAfterWeekDays(30);
 
+<<<<<<< HEAD
         // return view('supply.startSupplyment');
         // return phpinfo();
         echo 111;
+=======
+        return view('supply.startSupplyment');
+        // return phpinfo();
+        // echo 111;
+>>>>>>> 3a4b754ac165091d4e37cfda04f057fe732add00
     } 
 
     public function startSupplyment(){
