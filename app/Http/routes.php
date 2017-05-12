@@ -37,7 +37,7 @@ Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是
 
 Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
 
-Route::group(['middleware' =>['web', 'wechat.oauth', 'wxAuth'] ], function(){
+// Route::group(['middleware' =>['web', 'wechat.oauth', 'wxAuth'] ], function(){
 
 	Route::get('wx/vmlist', 					'MallController@vmList');
 	Route::get('wx/list/{vmid}', 				'MallController@productsList');
@@ -53,5 +53,5 @@ Route::group(['middleware' =>['web', 'wechat.oauth', 'wxAuth'] ], function(){
     Route::get('wx/notify_payment',             'PaymentController@notifyPayment');
     Route::get('wx/test',                       'PaymentController@test');
 
-});
+// });
 
