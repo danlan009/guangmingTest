@@ -17,11 +17,6 @@
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
-<?php // if(){ ?>
-	
-<?php // }else{ ?>
-	
-<?php // } ?>
 <div class="detail">
 	<h3><img src="<?php echo $cdn_url ?>/images/products/default_d.jpg" data-src="<?php echo $detail->pic_t ?>" class="detailImgs" /></h3>
 	<h1>
@@ -66,11 +61,6 @@ $(function(){
 	});	
 	$('.detailImgs').loadImages();
 });
-
-// 10cm * 10cm 
-// 分辨率 300
-
-
 </script>
 </body>
 </html>

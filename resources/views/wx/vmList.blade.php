@@ -11,11 +11,11 @@
 </head>
 <body class="grey">
 <div class="searchBox">
-	<p>
-		<button id="btnSearchVms"></button>
+	<form>
+		<button id="btnSearchVms" type="button"></button>
 		<input type="text" placeholder="输入点位名称" /> 
 		<span id="btnClearText" style="display:none;"></span>
-	</p>
+	</form>
 </div>
 <section class="vmlist" id="vmList">
 	<?php 
