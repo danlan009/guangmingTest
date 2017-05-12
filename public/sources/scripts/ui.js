@@ -21,11 +21,12 @@ $.fn.listHandler = function(){
 		if(_me.hasClass('multi')){
 			event.preventDefault();
 			_this.find('span').removeClass('on');
-			next.toggleClass('on');
-			if(next.hasClass('on')){
-				_me.addClass('on');
+			if(_me.hasClass('on')){
+				_this.find('a').removeClass('on');
+				next.removeClass('on');
 			}else{
-				_me.removeClass('on');
+				_me.addClass('on');
+				next.addClass('on');
 			}
 		}
 	});
@@ -451,7 +452,7 @@ $.fn.weixinPay = function(){
 							window.sessionStorage['selectedProducts'] = null;
 							if(result.code == 200){
 								// 跳转到预定结果页面
-								window.location.href = '/wx/result/'+result.wxTxnId;
+								// window.location.href = '/wx/result/'+result.wxTxnId;
 							}
 						}
 					});
@@ -562,7 +563,13 @@ function checkProductsCount(pid, type, text){
 
 function refreshNumbersForDetail(selected, pid, left){
 	var btns = $('.detailButtons'),
-		total = selected['total'];
+		total = 0;
+
+	if(!selected){
+		return false;
+	}
+
+	total = selected['total'];
 	if(total){
 		$('#totalSelected').text(total);
 		$('#totalCart').text(total).show();

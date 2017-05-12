@@ -66,7 +66,7 @@
 		<p class="pos"><?php echo $vminfor['node_name'] ?></p>
 		<p class="building"><?php echo $vminfor['address'] ?></p>
 		<p class="phone">
-			<input type="text" placeholder="我的手机号码(必填)" value="" id="userPhone" /> 
+			<input type="text" placeholder="我的手机号码(必填)" value="<?php echo $phone ? $phone : '' ?>" id="userPhone" /> 
 			<!-- <button style="display:none;"><span></span></button> -->
 		</p>
 	</section>
@@ -108,39 +108,7 @@
 	<form>
 		<input />
 		<button>微信支付</button>
-	</form>
-
-	<?php 
-	// 'intention':[
-	// 	'vmid'=>'0081801',
-	// 	'channel'=>'1',
-	//     'total_price'=>'100',
-	//     'retail_price'=>'100',
-	//     'products'=>array(
-	// 	    array(
-	// 		    	'product_id'=>1,
-	// 		    	'product_name'='鲜奶',
-	// 		    	'original_price'=>100,
-	// 		    	'retail_price'=>100,
-	// 		    	'num'=>2
-	// 	    	),
-	// 	    array(
-	// 		    	'product_id'=>2,
-	// 		    	'product_name'='酸奶',
-	// 		    	'original_price'=>100,
-	// 		    	'retail_price'=>100,
-	// 		    	'num'=>2
-	// 	    	),
-	//     ),
-	//     'card_id'='1111',
-	//     'card_name'='满10减5元',
-	//     'type'=>30,
-	//     'rate'=>0,
-	//     'phone'='15612345678'
- //    ],
-     
-	?>
-	
+	</form>	
 </div>
 
 <script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
@@ -150,7 +118,7 @@
 		'card_name': '',	// 卡券名称
 		'type': '30',		// 预定周期
 		'rate': '0',		// 0 每天配送, 1工作日配送
-		'phone': '',		// 用户电话
+		'phone': '<?php echo $phone ? $phone : "" ?>',		// 用户电话
 		'vmid': '<?php echo $vminfor["vmid"] ?>'
 	};
 </script>

@@ -29,7 +29,10 @@
 	<a href="/wx/vmlist" class="blue_button">更换</a>
 </div>
 <section class="products_list" id="products_list">
-	<?php foreach ($products as $key => $value) { ?>
+	<?php 
+		$productsInfo = array();
+		foreach ($products as $key => $value) { 
+	?>
 		<div class="pro <?php echo $key < PAGENUMBER ? 'show' : '' ?>">
 			<p>
 				<a href="/wx/detail/<?php echo $vmInfor['vmid'].'/'.$value->product_id ?>">
@@ -52,7 +55,17 @@
 				<button class="<?php echo 'p_'.$value->product_id.' '.($value->count ? 'blue_button' : 'grey_button') ?>" data-id="<?php echo $value->product_id ?>">预定</button>
 			</h2>
 		</div>
-	<?php } ?>
+	<?php 
+			$productsInfo[] = array(
+					'product_id' 	=> $value->product_id,
+					'product_name' 	=> $value->product_name,
+					'volume' 		=> $value->volume,
+					'original_price'=> $value->original_price,
+					'retail_price' 	=> $value->retail_price,
+					'count' 		=> $value->count
+				);
+		} 
+	?>
 </section>
 
 <div class="loadmore">
@@ -62,9 +75,10 @@
 <script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
 window.sessionStorage.setItem('productsListObj', (function(){
-	var plist = '<?php echo json_encode($products) ?>',
+	var plist = '<?php echo json_encode($productsInfo) ?>',
 		newList = {},
 		item = null;
+	console.log('----------商品列表--------');
 	console.log(plist)
 	plist = JSON.parse(plist);
 	for(var i=0,len=plist.length; i<len; i++){
@@ -92,7 +106,7 @@ if(!window.sessionStorage['selectedProducts']){
 		selected = JSON.parse(selected);
 	console.log('plist')
 	console.log(selected)
-	if(selected['vmid'] != "<?php echo $vmInfor['vmid'] ?>"){
+	if(!selected || (selected && selected['vmid'] != "<?php echo $vmInfor['vmid'] ?>")){
 		window.sessionStorage['selectedProducts'] = JSON.stringify({
 			"products": { },
 		    "total": 0,
