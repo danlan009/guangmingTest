@@ -29,7 +29,7 @@ class SupplyService{
     }
 
     // 补货时根据订单计算补货数据
-    public function getSupplyData($vmid){ 
+    public function getSupplyData($vmid){  
         if(!isset($vmid)){
             return 'parameter missing!';
         }

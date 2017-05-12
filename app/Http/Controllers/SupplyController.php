@@ -40,9 +40,9 @@ class SupplyController extends Controller
         // $orderService = new OrderService();
         // $data = $orderService->handleOrdersToAllot('0081008');
     
-        $str = '{"1":{"product_id":100002,"product_name":"纯牛奶","sku_id":100062,"sku_size":10,"normal":3,"warn":0,"default_add":0,"actual_add":0},"2":{"product_id":100003,"product_name":"鲜牛奶","sku_id":100063,"sku_size":10,"normal":7,"warn":0,"default_add":3,"actual_add":3},"3":{"product_id":100002,"product_name":"光明酸奶","sku_id":100003,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"4":{"product_id":100002,"product_name":"光明酸奶","sku_id":100004,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"5":{"product_id":100002,"product_name":"光明酸奶","sku_id":100005,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"6":{"product_id":100006,"product_name":"光明鲜奶6","sku_id":100007,"sku_size":5,"normal":1,"warn":0,"default_add":2,"actual_add":2},"7":{"product_id":100007,"product_name":"光明鲜奶7","sku_id":100008,"sku_size":5,"normal":1,"warn":0,"default_add":1,"actual_add":1},"8":{"product_id":100008,"product_name":"光明鲜奶8","sku_id":100009,"sku_size":5,"normal":1,"warn":0,"default_add":1,"actual_add":1},"9":{"product_id":100009,"product_name":"光明鲜奶9","sku_id":100010,"sku_size":5,"normal":2,"warn":0,"default_add":2,"actual_add":2},"10":{"product_id":100010,"product_name":"光明鲜奶10","sku_id":100011,"sku_size":5,"normal":4,"warn":0,"default_add":1,"actual_add":1},"19":{"product_id":100001,"product_name":"光明鲜奶","sku_id":100064,"sku_size":5,"normal":5,"warn":0,"default_add":0,"actual_add":0}}';
-        $data = json_decode($str,true);
-        dd($data);
+        // $str = '{"1":{"product_id":100002,"product_name":"纯牛奶","sku_id":100062,"sku_size":10,"normal":3,"warn":0,"default_add":0,"actual_add":0},"2":{"product_id":100003,"product_name":"鲜牛奶","sku_id":100063,"sku_size":10,"normal":7,"warn":0,"default_add":3,"actual_add":3},"3":{"product_id":100002,"product_name":"光明酸奶","sku_id":100003,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"4":{"product_id":100002,"product_name":"光明酸奶","sku_id":100004,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"5":{"product_id":100002,"product_name":"光明酸奶","sku_id":100005,"sku_size":5,"normal":0,"warn":0,"default_add":0,"actual_add":0},"6":{"product_id":100006,"product_name":"光明鲜奶6","sku_id":100007,"sku_size":5,"normal":1,"warn":0,"default_add":2,"actual_add":2},"7":{"product_id":100007,"product_name":"光明鲜奶7","sku_id":100008,"sku_size":5,"normal":1,"warn":0,"default_add":1,"actual_add":1},"8":{"product_id":100008,"product_name":"光明鲜奶8","sku_id":100009,"sku_size":5,"normal":1,"warn":0,"default_add":1,"actual_add":1},"9":{"product_id":100009,"product_name":"光明鲜奶9","sku_id":100010,"sku_size":5,"normal":2,"warn":0,"default_add":2,"actual_add":2},"10":{"product_id":100010,"product_name":"光明鲜奶10","sku_id":100011,"sku_size":5,"normal":4,"warn":0,"default_add":1,"actual_add":1},"19":{"product_id":100001,"product_name":"光明鲜奶","sku_id":100064,"sku_size":5,"normal":5,"warn":0,"default_add":0,"actual_add":0}}';
+        // $data = json_decode($str,true);
+        // dd($data);
 
        
         // $this->finishSupply();
@@ -50,7 +50,9 @@ class SupplyController extends Controller
 
         // $this->getDateAfterWeekDays(30);
 
-        return view('supply.startSupplyment');
+        // return view('supply.startSupplyment');
+        // return phpinfo();
+        echo 111;
     } 
 
     public function startSupplyment(){

@@ -11,73 +11,67 @@
 <body> 
 <div id="mainDiv" class="container">
 	<div class="panel panel-default">
-	  <div class="panel-heading"> 
-	    <!-- <h3 class="panel-title">选择要补货的柜子</h3> -->
-	  </div>
-	  <div class="panel-body container"> 
-	  		<div class='row' style='padding:10px'>
+		  <div class="panel-heading"> 
+		    <!-- <h3 class="panel-title">选择要补货的柜子</h3> -->
+		  </div>
+		  <div class="panel-body container"> 
+		  		<div class='row' style='padding:10px'>
 
-	  			<div id="show_sku" class="jumbotron" style="padding:10px;margin-bottom:0px">
-	  			  <h1 id="sku_seq">货道 <label>1</label></h1>
-	  			  <h3 id="p_name">商品:大果块黄桃+芒果</h3>
-	  			  <h3 id="normal">原有: <label>5</label></h3>
-	  			  <h3 id="warn">过期: <label>0</label></h3>
-	  			  <h3 id="default_add">增加: <label>0</label> </h3>
-	  			  <input type="hidden" id="actual_add" value="">
-	  			  <p><button id="btn_alert" class="btn btn-default" href="#" type="button">更正</button></p>
-	  			</div>
-				<a id="btn_pre" class='col-xs-3 btn btn-primary btn-lg btn_cubes' >上个货道</a>
-				<div class='col-xs-1'>&nbsp;</div>
-				<a id="btn_next" class='col-xs-3 btn btn-primary btn-lg btn_cubes'>下个货道</a>
-	  		</div>
-			
+		  			<div id="show_sku" class="jumbotron" style="padding:10px;margin-bottom:0px">
+		  			  <h1 id="sku_seq">货道 <label>1</label></h1>
+		  			  <h3 id="p_name">商品:大果块黄桃+芒果</h3>
+		  			  <h3 id="normal">原有: <label>5</label></h3>
+		  			  <h3 id="warn">过期: <label>0</label></h3>
+		  			  <h3 id="default_add">增加: <label>0</label> </h3>
+		  			  <input type="hidden" id="actual_add" value="">
+		  			  <p><button id="btn_alert" class="btn btn-default" href="#" type="button">更正</button></p>
+		  			</div>
+					<a id="btn_pre" class='col-xs-3 btn btn-primary btn-lg btn_cubes' >上个货道</a>
+					<div class='col-xs-1'>&nbsp;</div>
+					<a id="btn_next" class='col-xs-3 btn btn-primary btn-lg btn_cubes'>下个货道</a>
+		  		</div>
+				
+		  </div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content" style="width:90%;margin:0 auto">
+	      <div class="modal-header">
+	        <h4 class="modal-title" id="myModalLabel">补货列表</h4>
+	      </div>
+	      <div class="modal-body">
+	         <span>
+	         	货道 1: 
+	         	| <span class="label label-default">原有:</span> 3 
+	         	| <span class="label label-success">增加:</span> 4
+	         </span>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" id="btn_dia_close" class="btn btn-default" data-dismiss="modal">修改</button>
+	        <button type="button" id="btn_dia_save" class="btn btn-primary">保存</button>
+	      </div>
+	    </div>
 	  </div>
 	</div>
-	
-		<div class="panel panel-default">
-	  		<div class="panel-body text-center">
-	    		若不继续补货，请点击<br/>
-	    		<button id="btn_done" type="button" class="btn btn-warning">补货完成</button>
-	  		</div>
-		</div>	
-		<div id="div_finish" class="text-center">
-	  		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;
-	  		<a href=""></a>
-		</div>	
+
+	<div class="panel panel-default">
+  		<div class="panel-body text-center">
+    		若不继续补货，请点击<br/>
+    		<button id="btn_done" type="button" class="btn btn-warning" data-toggle="modal">补货完成</button>
+  		</div>
+	</div>	
+	<div id="div_finish" class="text-center">
+  		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;
+  		<a href=""></a>
+	</div>	
 
 </div>
 <!-- <script src="https://ufan.ubox.cn/js/jquery.min.1.11.2.js?2015081102"></script> -->
 <!-- <script src="/scripts/bootstrap.min.js?2015081102"></script> -->
 <script src="/sources/scripts/lib/zepto.min.js"></script>
 <script>
-
-function bindEvents(){
-    /*
-	$('.btn_cubes').on('click', function(){
-		location.href="supply_cube?ic=<?php //echo $innerCode;?>&uid=<?php //echo $uid;?>&c=" + $(this).text();
-	});
-	*/
-	// $('#btn_done').on('click', function(){
-	// 	$.ajax({
-	// 		type: 'get',
-	// 		url: 'ajax_finish_supplyment',
-	// 		data: {},
-	// 		dataType: 'text',
-	// 		timeout: 10000,
-	// 		context: $('body'),
-	// 		success: function(data){
-	// 			wx.closeWindow();
-	// 		},
-	// 		error: function(xhr, type){
-	// 			alert("Error: " + type);
-	// 		}
-	// 	});	
-	// });	
-
-	// $('#btn_pre').on('click',preSku);
-	// $('#btn_next').on('click',nextSku);
-}
-
 
 
 $.fn.setData = function(seq,obj){
@@ -89,7 +83,7 @@ $.fn.setData = function(seq,obj){
 		_this.find('#p_name').html('商品: '+ obj.product_name);
 		_this.find('#normal label').html(obj.normal);
 		_this.find('#warn label').html(obj.warn);
-		_this.find('#default_add label').html( obj.default_add );
+		_this.find('#default_add label').html( (obj.actual_add)?obj.actual_add:obj.default_add );
 	}
 }
 
@@ -217,12 +211,39 @@ $(function(){
 
 	});
 
+
 	$('#btn_done').on('click',function(){
-		console.log(data);
-		// alert('done');
+		$('#myModal').show();
+		var addHtml = '';
+		$.each(data,function(index,item){
+			// 未更改数量的货道,默认增加量作为实际增加量
+			data[index].actual_add = (data[index].actual_add) ? data[index].actuall_add : data[index].default_add;
+			addHtml += '<h5>货道 '+index+': 　| 　<span class="label label-default">原有:</span> '+item.normal+' 　|　 <span class="label label-success">增加:</span> '+((item.actual_add)?item.actual_add:item.default_add)+'</h5>';
+		});
+		$('#myModal .modal-body span').html(addHtml);
+	});
+
+	$('#btn_dia_close').on('click',function(){
+		$('#myModal').hide();
+	});
+
+	$('#btn_dia_save').on('click',function(){
+		$.ajax({
+			type : 'POST',
+			url : 'ajax_receive_data',
+			data : {data:JSON.stringify(data)},
+			timeout : 1000,
+			dataType : 'json',
+			success : function(d){
+				console.log(d);
+			},
+			error : function(){
+				console.log('ajax error!');
+			}
+
+		});
 	});
 	
-	bindEvents();
 });
 
 </script>

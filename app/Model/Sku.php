@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 class Sku extends Model
 {
-	protected $table = 'sku'; 
-    public static function getAllPros($vmId){
+	protected $table = 'skus'; 
+    public static function getAllPros($vmId){ 
 		$proList = DB::table('skus')
     					->where('vmid',$vmId)
 		    			->select('product_id','product_name','original_price','retail_price','tag_id')

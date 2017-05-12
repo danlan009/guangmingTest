@@ -3653,58 +3653,6 @@
         ]
     },
     {
-        "name": "overtrue/socialite",
-        "version": "1.0.23",
-        "version_normalized": "1.0.23.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/overtrue/socialite.git",
-            "reference": "a8ac52707db5fbef78d025d5d31c13da615ecb2d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://files.phpcomposer.com/files/overtrue/socialite/a8ac52707db5fbef78d025d5d31c13da615ecb2d.zip",
-            "reference": "a8ac52707db5fbef78d025d5d31c13da615ecb2d",
-            "shasum": ""
-        },
-        "require": {
-            "guzzlehttp/guzzle": "~5.0|~6.0",
-            "php": ">=5.4.0",
-            "symfony/http-foundation": "~2.6|~2.7|~2.8|~3.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "~0.9",
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2017-03-04 02:57:44",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "Overtrue\\Socialite\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "overtrue",
-                "email": "anzhengchao@gmail.com"
-            }
-        ],
-        "description": "A collection of OAuth 2 packages that extracts from laravel/socialite.",
-        "keywords": [
-            "login",
-            "oauth",
-            "qq",
-            "social",
-            "wechat",
-            "weibo"
-        ]
-    },
-    {
         "name": "pimple/pimple",
         "version": "v3.0.2",
         "version_normalized": "3.0.2.0",
@@ -3750,66 +3698,6 @@
         "keywords": [
             "container",
             "dependency injection"
-        ]
-    },
-    {
-        "name": "overtrue/wechat",
-        "version": "3.2.7",
-        "version_normalized": "3.2.7.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/overtrue/wechat.git",
-            "reference": "1ae43c00335462290ae3a8a621f9564ac39bc25b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://files.phpcomposer.com/files/overtrue/wechat/1ae43c00335462290ae3a8a621f9564ac39bc25b.zip",
-            "reference": "1ae43c00335462290ae3a8a621f9564ac39bc25b",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/cache": "~1.4",
-            "ext-openssl": "*",
-            "guzzlehttp/guzzle": "~6.2.1",
-            "monolog/monolog": "^1.17",
-            "overtrue/socialite": ">=1.0.7",
-            "php": ">=5.5.0",
-            "pimple/pimple": "~3.0",
-            "symfony/http-foundation": "~2.6|~2.7|~2.8|~3.0",
-            "symfony/psr-http-message-bridge": "~0.3|^1.0"
-        },
-        "require-dev": {
-            "mockery/mockery": "^0.9.9",
-            "overtrue/phplint": "dev-master",
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2017-03-31 11:14:48",
-        "type": "library",
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "EasyWeChat\\": "src/"
-            },
-            "files": [
-                "src/Payment/helpers.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "overtrue",
-                "email": "anzhengchao@gmail.com"
-            }
-        ],
-        "description": "微信SDK",
-        "keywords": [
-            "sdk",
-            "wechat",
-            "weixin",
-            "weixin-sdk"
         ]
     },
     {
@@ -3907,6 +3795,118 @@
             "laravel",
             "qrcode",
             "wrapper"
+        ]
+    },
+    {
+        "name": "overtrue/socialite",
+        "version": "1.0.23",
+        "version_normalized": "1.0.23.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/overtrue/socialite.git",
+            "reference": "a8ac52707db5fbef78d025d5d31c13da615ecb2d"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/overtrue/socialite/a8ac52707db5fbef78d025d5d31c13da615ecb2d.zip",
+            "reference": "a8ac52707db5fbef78d025d5d31c13da615ecb2d",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/guzzle": "~5.0|~6.0",
+            "php": ">=5.4.0",
+            "symfony/http-foundation": "~2.6|~2.7|~2.8|~3.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "~0.9",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2017-03-04 02:57:44",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Overtrue\\Socialite\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "A collection of OAuth 2 packages that extracts from laravel/socialite.",
+        "keywords": [
+            "login",
+            "oauth",
+            "qq",
+            "social",
+            "wechat",
+            "weibo"
+        ]
+    },
+    {
+        "name": "overtrue/wechat",
+        "version": "3.2.7",
+        "version_normalized": "3.2.7.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/overtrue/wechat.git",
+            "reference": "1ae43c00335462290ae3a8a621f9564ac39bc25b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://files.phpcomposer.com/files/overtrue/wechat/1ae43c00335462290ae3a8a621f9564ac39bc25b.zip",
+            "reference": "1ae43c00335462290ae3a8a621f9564ac39bc25b",
+            "shasum": ""
+        },
+        "require": {
+            "doctrine/cache": "~1.4",
+            "ext-openssl": "*",
+            "guzzlehttp/guzzle": "~6.2.1",
+            "monolog/monolog": "^1.17",
+            "overtrue/socialite": ">=1.0.7",
+            "php": ">=5.5.0",
+            "pimple/pimple": "~3.0",
+            "symfony/http-foundation": "~2.6|~2.7|~2.8|~3.0",
+            "symfony/psr-http-message-bridge": "~0.3|^1.0"
+        },
+        "require-dev": {
+            "mockery/mockery": "^0.9.9",
+            "overtrue/phplint": "dev-master",
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2017-03-31 11:14:48",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "EasyWeChat\\": "src/"
+            },
+            "files": [
+                "src/Payment/helpers.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "overtrue",
+                "email": "anzhengchao@gmail.com"
+            }
+        ],
+        "description": "微信SDK",
+        "keywords": [
+            "sdk",
+            "wechat",
+            "weixin",
+            "weixin-sdk"
         ]
     },
     {

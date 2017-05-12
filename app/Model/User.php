@@ -22,7 +22,7 @@ class User extends Model
                 echo $res?'successful':'fail';
             }else{
                $this->createPassword($wxId); 
-            }	
+            }	 
     	}else{
             $res = User::where('wx_id',$wxId)->update(['password'=>$pass]);
             Log::debug('User_'.$wxId.' password created---'.$res);

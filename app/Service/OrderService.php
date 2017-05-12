@@ -5,7 +5,7 @@ class OrderService{
 	//获取某台售货机当天需要买码的订单,
     	//包括正常预定订单,和之前未取且交占道费的订单
     public static function getDailyOrders($vmId){
-    	//正常日配送订单 
+    	//正常日配送订单  
     	$dailyOrders = array();   
  
     	$normalOrders = DB::table('orders')
