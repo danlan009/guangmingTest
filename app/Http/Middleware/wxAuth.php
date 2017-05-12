@@ -5,7 +5,6 @@ use Closure;
 use App\Service\MallService;
 use Log;
 
-use Log;
 use App\Model\User;
 class wxAuth{
 
