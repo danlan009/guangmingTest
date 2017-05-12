@@ -9,7 +9,7 @@
 | It's a breeze. Simply tell Laravel the URIs it should respond to
 | and give it the controller to call when that URI is requested.
 |
-*/  
+*/   
   
 Route::get('/', function () {
     return view('welcome');
@@ -22,10 +22,13 @@ Route::get('supply/get_supply_data',			'SupplyController@getSupplyData');
 Route::get('supply/add',						'SupplyController@add');
 Route::get('supply/get_daily_orders_to_send',	'SupplyController@getDailyOrdersToSend');
 Route::get('isAbleToBook',						'OrderController@isAbleToBook');
+Route::get('supply/start_supplyment',			'SupplyController@startSupplyment');
+Route::get('supply/list_skus',					'SupplyController@listSkus');
 Route::get('supply/finish',						'SupplyController@finishSupply'); // 补货完成入口
+Route::post('supply/ajax_receive_data',			'SupplyController@ajaxReceiveData');
 
 Route::get('qr/create',							'qrCodeController@create');
-Route::get('test',								'SupplyController@test');
+Route::get('test',								'SupplyController@test')->middleware('wxAuth');
 
 Route::get('card/getCardList',					'CoupouController@getCardList');
 
@@ -34,8 +37,6 @@ Route::get('task/updateImg',					'TaskController@updateImg'); // 检测图片是
 
 Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
 
-Route::get('supply/start_supplyment',			'SupplyController@startSupplyment');
-Route::get('supply/list_skus',					'SupplyController@listSkus');
 
 // Route::group(['middleware' => 'wxAuth'], function(){
 
