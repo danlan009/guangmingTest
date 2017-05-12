@@ -16,9 +16,10 @@ use App\Service\ApiService;
 class MallController extends Controller
 {
     // 售货机列表
-    public function vmList(){
-        $mallService = new MallService();
-        $vmlist = $mallService->getNodeList();
+    public function vmList(Request $request){
+        $wxId           = $request->session()->get('wxId');
+        $mallService    = new MallService();
+        $vmlist         = $mallService->getNodeList();
         return view('wx.vmList', array(
                 'vms'           => $vmlist,
                 'css_version'   => config::get('mg.css_version'),
@@ -30,10 +31,10 @@ class MallController extends Controller
 
     // 商品列表
     public function productsList(Request $request, $vmid){
-
-        $mallService = new MallService();
-        $productsList = $mallService->showPros($vmid, 'book');
-        $vmInfor    = $mallService->getVmInfo($vmid);
+        $wxId           = $request->session()->get('wxId');
+        $mallService    = new MallService();
+        $productsList   = $mallService->showPros($vmid, 'book');
+        $vmInfor        = $mallService->getVmInfo($vmid);
         $request->session()->put('currentVM', $vmInfor);
 
         // 测试图片加载
@@ -58,13 +59,14 @@ class MallController extends Controller
         $mallService = new MallService();
         $detail = $mallService->getProDetail($pid, $vmid, 'book');
 
-        // echo '<pre>';
-        // print_r($detail);
-        // echo '</pre>';
-        // exit;
+        if(empty($detail)){
+            return view('wx.error', array(
+                    'message'   => $detail['msg']
+                ));
+        }
 
         // 测试图片加载 Start
-        if($detail != 'error'){
+        if(!empty($detail)){
             $detail->pic_t = "/sources/images/products/100016_d.jpg";
             $detail->detail_pics = array(
                     '/sources/images/details/img_1_1.jpg',
@@ -86,12 +88,20 @@ class MallController extends Controller
 
     // 结算
     public function wxAccount(Request $request){
+        $wxId    = $request->session()->get('wxId');
         $vmInfor = $request->session()->get('currentVM');
 
         // 获取用户上次订单的手机号
+        $phone = User::getPhone($wxId);
+        // echo '<pre>';
+        // echo $wxId;
+        // print_r($phone);
+        // echo '</pre>';
+        // exit;
 
         return view('wx.account', array(
-                'vminfor'        => $vmInfor,
+                'vminfor'       => $vmInfor,
+                'phone'         => $phone,
                 'css_version'   => config::get('mg.css_version'),
                 'js_version'    => config::get('mg.js_version'),
                 'cdn_url'       => config::get('mg.cdn_url'),
@@ -101,10 +111,6 @@ class MallController extends Controller
 
     // 支付
     public function ajaxWxPay(Request $request){
-        // 测试用
-        $request->session()->put('wxId', 'test');
-        // 测试用 End
-
         $data = $request->all();
         $mallService = new MallService();
         $total_price = 0;
@@ -172,20 +178,17 @@ class MallController extends Controller
 
     // 预定结果
     public function result(Request $request, $wxtId){
-        $wxId           = $request->session()->get('wx_id');
+        $wxId           = $request->session()->get('wxId');
         $mallService    = new MallService();
         $apiService     = new ApiService(); 
         $wxTrade        = WxTrade::find($wxtId);
+
         if($wxTrade->openid != $wxId){
             return view('wx.error', array(
-                    'code'      => 400,
                     'message'   => '订单与本人不符'
                 ));
         }
-        // echo '<pre>';
-        // print_r($wxTrade);
-        // echo  '</pre>';
-        // exit;
+
         $vmid           = $wxTrade->vmid;
         $vmInfor        = $mallService->getVmInfo($vmid);
         $orderId        = $wxTrade->order_id;
@@ -231,19 +234,19 @@ class MallController extends Controller
     public function myorders(Request $request){
         // 获取用户信息
         $mallService    = new MallService();
-        $wxId           = $request->session()->get('wx_id');
+        $wxId           = $request->session()->get('wxId');
 
         // 用户的配送中的订单列表
-        
 
-        return view('wx.myOrders', array(
+
+        return view('wx.myorders', array(
                 
             ));
     }
 
     // 历史订单
     public function historyOrders(Request $request){
-        $wxId           = $request->session()->get('wx_id');
+        $wxId           = $request->session()->get('wxId');
 
         return view('wx.history', array(
 
