@@ -17,6 +17,8 @@ class MallController extends Controller
 {
     // 售货机列表
     public function vmList(Request $request){
+        phpinfo();
+        exit;
         $wxId           = $request->session()->get('wxId');
         $mallService    = new MallService();
         $vmlist         = $mallService->getNodeList();
