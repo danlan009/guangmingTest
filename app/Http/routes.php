@@ -37,7 +37,7 @@ Route::get('task/check_orders',					'TaskController@dailyCheckOrders');
 Route::get('supply/start_supplyment',			'SupplyController@startSupplyment');
 Route::get('supply/list_skus',					'SupplyController@listSkus');
 
-// Route::group(['middleware' => 'wxAuth'], function(){
+Route::group(['middleware' => 'wxAuth'], function(){
 
 	Route::get('wx/vmlist', 					'MallController@vmList');
 	Route::get('wx/list/{vmid}', 				'MallController@productsList');
@@ -53,5 +53,5 @@ Route::get('supply/list_skus',					'SupplyController@listSkus');
     Route::get('wx/notify_payment',             'PaymentController@notifyPayment');
     Route::get('wx/test',                       'PaymentController@test');
 
-// });
+});
 
