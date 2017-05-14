@@ -1,6 +1,6 @@
 <?php
      
-/*   
+/*    
 |--------------------------------------------------------------------------
 | Application Routes
 |--------------------------------------------------------------------------
@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
  
+Route::any('server',							'SupplyController@server');
 Route::get('orders/daily_buy_codes/{vmId}',		'MallController@dailyBuyCodes');
 Route::get('orders/daily_check_orders',			'MallController@dailyCheckOrders');
 

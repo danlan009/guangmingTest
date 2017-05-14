@@ -12,6 +12,8 @@ use App\Lib\Bussiness;
 use App\Service\MallService; 
 use App\Service\SupplyService;
 use App\Service\OrderService;
+
+use EasyWeChat\Foundation\Application;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
@@ -56,6 +58,33 @@ class SupplyController extends Controller
         // echo 111;
 
     } 
+
+
+    public function serve(Application $wechat)
+    {
+        Log::info('request arrived.');
+        $server = $wechat->server;
+        // $server->setMessageHandler(function($message){
+        //     Log::debug('Message:'.json_encode($message));
+        //     if(strtolower($message['MsgType']) == 'event') {
+        //         switch (strtolower($message->Event)) {
+        //             case 'location':
+        //                 $this->getLocation($message);
+        //                 break;
+        //             case 'click':
+        //                 return $this->sendMsg($message);
+        //                 break;
+        //             default:
+        //                 //return "Hello";
+        //                 break;
+        //         }
+        //     }
+        // });
+
+        Log::info('return response.');
+        $response  = $server->serve();
+        return $response->send();
+    }
 
     public function startSupplyment(){
         $mode = 1; // 正常补货
