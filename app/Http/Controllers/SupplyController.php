@@ -21,7 +21,7 @@ class SupplyController extends Controller
     public function test(Application $wechat){
         $userService = $wechat->user;
 
-        $user = $userService->get($openId);
+        $user = $userService->get('oidFcxGkJZygk-wpjP64WakpxwkE');
         echo $user->nickname;
         // return view('supply.startSupplyment');
         // return phpinfo();
