@@ -19,10 +19,12 @@ class SupplyController extends Controller
 { 
     // 补货控制器   
     public function test(Application $wechat){
-        $userService = $wechat->user;
-
-        $user = $userService->get('oidFcxGkJZygk-wpjP64WakpxwkE');
-        echo $user->nickname;
+        // $userService = $wechat->user;
+        $card = $wechat->card;
+        $res = $card->getUserCards('oidFcxGkJZygk-wpjP64WakpxwkE');
+        dd($res);
+        // $user = $userService->get('oidFcxGkJZygk-wpjP64WakpxwkE');
+        // echo $user->nickname;
         // return view('supply.startSupplyment');
         // return phpinfo();
         // echo 111;
