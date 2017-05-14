@@ -14,6 +14,7 @@ use App\Service\SupplyService;
 use App\Service\OrderService;
 
 use EasyWeChat\Foundation\Application;
+use Log;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
