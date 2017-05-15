@@ -23,7 +23,7 @@ class SupplyController extends Controller
         // $userService = $wechat->user;
 
         $couponService = new CouponService();
-        session(['wxId'=>'SIrewrv8f8UgNWp8u_qYwhwCM6s']);
+        session(['wxId'=>'oidFcxGkJZygk-wpjP64WakpxwkE']);
         $cardList = $couponService->getCardList($app);
         dd($cardList);
         // $card = $wechat->card;
