@@ -12,20 +12,25 @@ use App\Lib\Bussiness;
 use App\Service\MallService; 
 use App\Service\SupplyService;
 use App\Service\OrderService;
-
+ 
 use EasyWeChat\Foundation\Application;
 use Log;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
-    public function test(Application $wechat){
+    public function test(){
         // $userService = $wechat->user;
+
+        $couponService = new CouponService();
+        session(['wxId'=>'SIrewrv8f8UgNWp8u_qYwhwCM6s']);
+        $cardList = $couponService->getCardList($app);
+        dd($cardList);
         $card = $wechat->card;
         $res = $card->getUserCards('oidFcxGkJZygk-wpjP64WakpxwkE');
         dd($res);
         // $user = $userService->get('oidFcxGkJZygk-wpjP64WakpxwkE');
         // echo $user->nickname;
-        // return view('supply.startSupplyment');
+        
         // return phpinfo();
         // echo 111;
 
