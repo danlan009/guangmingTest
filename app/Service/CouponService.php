@@ -10,7 +10,7 @@ class CouponService{
         
         $card = $app->card;
         $openid = session('wxId');
-        dd($openid);
+        // dd($openid);
         if(!$openid){
             return '403未授权!';
         }
