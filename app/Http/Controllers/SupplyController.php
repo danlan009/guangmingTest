@@ -12,6 +12,7 @@ use App\Lib\Bussiness;
 use App\Service\MallService; 
 use App\Service\SupplyService;
 use App\Service\OrderService;
+use App\Service\CouponService;
  
 use EasyWeChat\Foundation\Application;
 use Log;
