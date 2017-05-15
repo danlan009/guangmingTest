@@ -6,7 +6,7 @@ use App\Http\Requests;
 use Log;
 use EasyWeChat\Foundation\Application;
 class CouponService{
-    public getCardList(Application $app){
+    public getCardList($app){
         
         $card = $app->card;
         $openid = session('wxId');
