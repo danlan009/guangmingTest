@@ -10,25 +10,28 @@ class wxAuth{
 
 	public function handle($request, Closure $next){
 		// 微信鉴权
-		// $request->session()->flush();
 		$oauthUser = session('wechat.oauth_user'); // esay-wechat自动配置session
-		// Log::debug('')
 		Log::debug('wxAuth---oauthUser returns---'.json_encode($oauthUser));
-		// if(!empty($oauthUser)){
-		// 	$openid = $oauthUser->getId(); // 获取openid
-		// 	$nick_name = $oauthUser->getNickname();
-		// 	$password = User::createPassword($openid);
-		// 	$model = User::firstOrCreate([
-		// 									['wx_id' => $openid],
-		// 									[
-		// 										'wx_id' => $openid,
-		// 										'wx_name' => $nick_name,
-		// 										'password' => $password
-		// 									]
-		// 								]);
-		// 	Log::debug('new user created ---'.json_encode($model));
-		// 	session(['openid',$openid]);
-		// }
+		if(!empty($oauthUser)){
+			$openid = $oauthUser->getId(); // 获取openid
+			$nick_name = $oauthUser->getNickname();
+			$user = User::where('wx_id',$openid)->get()->toArray();
+			if(empty($user)){
+				$newUser = User::create([
+								'wx_id' => $openid,
+								'wx_name' => $nick_name, 
+							]);
+				User::createPassword($openid);
+				Log::debug('new user created ---'.json_encode($newUser));
+			}
+
+			$request->session()->put('wxId',$openid);
+
+		}else if(env('APP_ENV')=='local'){
+            $request->session()->set('wxId', 'local_test');
+            return $next($request);
+        }
+
 		return $next($request);
 	}
 

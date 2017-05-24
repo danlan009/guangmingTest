@@ -19,7 +19,6 @@ class User extends Model
             if(!in_array($pass,$pwds)){
                 $res = User::where('wx_id',$wxId)->update(['password'=>$pass]);
                 Log::debug('User_'.$wxId.' password created---'.$res);
-                echo $res?'successful':'fail';
             }else{
                $this->createPassword($wxId); 
             }	 

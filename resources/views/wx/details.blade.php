@@ -13,7 +13,7 @@
 <header>
 	<h1><img src="<?php echo $cdn_url ?>/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/account"><span id="totalCart"></span></a>
+		<a href="/wx/account/<?php echo $vmid ?>"><span id="totalCart"></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>

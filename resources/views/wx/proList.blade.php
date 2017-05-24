@@ -11,12 +11,12 @@
 </head>
 <body>
 <?php 
-	define("PAGENUMBER", 2); // 每页显示商品数量
+	define("PAGENUMBER", 4); // 每页显示商品数量
 ?>
 <header>
 	<h1><img src="<?php echo $cdn_url ?>/images/common/logo.png" /></h1>
 	<p>
-		<a href="/wx/account"><span id="cartProductsAccount" data-count=""></span></a>
+		<a href="/wx/account/<?php echo $vmInfor['vmid'] ?>"><span id="cartProductsAccount" data-count=""></span></a>
 		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
@@ -68,9 +68,11 @@
 	?>
 </section>
 
-<div class="loadmore">
-	<p>上拉加载更多</p>
-</div>
+<?php if(count($products) > PAGENUMBER){ ?>
+	<div class="loadmore">
+		<p>上拉加载更多</p>
+	</div>
+<?php } ?>
 
 <script src="<?php echo $cdn_url ?>scripts/lib/zepto.min.js"></script>
 <script type="text/javascript">
@@ -78,8 +80,6 @@ window.sessionStorage.setItem('productsListObj', (function(){
 	var plist = '<?php echo json_encode($productsInfo) ?>',
 		newList = {},
 		item = null;
-	console.log('----------商品列表--------');
-	console.log(plist)
 	plist = JSON.parse(plist);
 	for(var i=0,len=plist.length; i<len; i++){
 		item = plist[i];
@@ -98,24 +98,24 @@ window.sessionStorage.setItem('productsListObj', (function(){
 if(!window.sessionStorage['selectedProducts']){
 	window.sessionStorage['selectedProducts'] = JSON.stringify({
 		"products": { },
-	    "total": 0,
+		"originTotal": 0,	// 优惠前的总价
+		"retailTotal": 0, 	// 优惠后的总价
+	    "total": 0,			// 总数量
 	    "vmid": "<?php echo $vmInfor['vmid'] ?>"
 	});
 }else{
 	var selected = window.sessionStorage['selectedProducts'],
 		selected = JSON.parse(selected);
-	console.log('plist')
-	console.log(selected)
 	if(!selected || (selected && selected['vmid'] != "<?php echo $vmInfor['vmid'] ?>")){
 		window.sessionStorage['selectedProducts'] = JSON.stringify({
 			"products": { },
 		    "total": 0,
+		    "originTotal": 0,	// 优惠前的总价
+			"retailTotal": 0, 	// 优惠后的总价
 		    "vmid": "<?php echo $vmInfor['vmid'] ?>"
 		});
 	}
 }
-
-console.log(window.sessionStorage['selectedProducts'])
 
 </script>
 <script src="/sources/scripts/ui.js?v=<?php echo $js_version ?>" ></script>
@@ -123,7 +123,7 @@ console.log(window.sessionStorage['selectedProducts'])
 $(function(){
 	$('#products_list button').addToCart($('#cartProductsAccount'));
 	$('.show .pListImgs').loadImages();
-	$('.loadmore').loadMoreProducts('<?php echo PAGENUMBER ?>');
+	$('.loadmore').loadMoreRecords('<?php echo PAGENUMBER ?>', '.pro');
 });
 </script>
 </body>

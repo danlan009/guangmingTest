@@ -4,7 +4,9 @@ namespace App\Service;
 use App\Model\Order; 
 use App\Model\OrderLog;
 use App\Model\OrderStop; 
-use App\Model\Sku;  
+use App\Model\Sku;
+use App\Model\SkuSupply;
+use EasyWeChat\Foundation\Application;
 use DB;   
 use Cache;  
 use Log;
@@ -221,6 +223,52 @@ class MallService{
             return $str;
         }
         
+    }
+
+    public function sendExpireProduct(Application $app){
+        $expire_product_list = SkuSupply::getExpireProduct();
+        $notice = $app->notice;
+        //dd($expire_product_list);
+        //获得配送员的配置信息
+        $string = file_get_contents(public_path().'\file_img\json\sender.json');
+        $obj = json_decode($string);
+        $infos = $obj->deliverymen;
+        //先按照普通公众号的推送消息
+        $templateId = '';
+        $i=0;
+        $arr = array();
+        //组合数据
+        if(count($expire_product_list)>0){
+            $res = array();
+            foreach ($infos as $info){
+                $res[$info->wx_id][]=$info;
+                foreach ($res[$info->wx_id] as $resF){
+                    foreach ($expire_product_list as $v){
+                        foreach ($resF->vms as $k=>$vms){
+                            if($v->vmid==$vms) {
+                                $resF->vms[$vms][]=$v;
+                                //unset($resF->vms[$k]);
+                            }else{
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            //字符串拼接好后向其发送消息
+            foreach ($res as $k=>$v){
+                $openid = $k;
+                $url = '';
+                $data = array();
+                //foreach循环取出
+                $arr[$i] = json_decode($notice->uses($templateId)->withUrl($url)->andData($data)->andReceiver($openid)->send());
+                $i++;
+            }
+
+
+        }
+        return $arr;
     }
 
     

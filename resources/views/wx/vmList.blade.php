@@ -36,7 +36,7 @@
 			if($vmsCount > 1){
 				echo '<span>';
 				foreach ($vms as $key => $value) {
-					echo '<a href="/wx/list/'.$value['vmid'].'" data-name="'.$v['node_name'].$value['vm_name'].'" data-vmid="'.$value['vmid'].'">'.$value['vm_name'].'</a>';
+					echo '<a href="/wx/list/'.$value['vmid'].'?c='.$channel.'" data-name="'.$v['node_name'].$value['vm_name'].'" data-vmid="'.$value['vmid'].'">'.$value['vm_name'].'</a>';
 				}
 				echo '</span>';
 			}

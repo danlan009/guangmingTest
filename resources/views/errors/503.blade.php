@@ -1,47 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-        <title>Be right back.</title>
-
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
-
-        <style>
-            html, body {
-                height: 100%;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                color: #B0BEC5;
-                display: table;
-                font-weight: 100;
-                font-family: 'Lato';
-            }
-
-            .container {
-                text-align: center;
-                display: table-cell;
-                vertical-align: middle;
-            }
-
-            .content {
-                text-align: center;
-                display: inline-block;
-            }
-
-            .title {
-                font-size: 72px;
-                margin-bottom: 40px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="content">
-                <div class="title">Be right back.</div>
-            </div>
-        </div>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <title>光明订奶</title>
+    <link href="/sources/style/base.css" type="text/css" rel="stylesheet" />
+</head>
+<body class="grey">
+<header>
+    <h1><img src="/sources/images/common/logo.png" /></h1>
+    <p>
+        <a href="/wx/history" class="h">历史订单</a>
+    </p>
+</header>
+<div class="empty" style="display:;">
+    <p><img src="/sources/images/common/icon.png" /></p>
+    <h3>错误代码：503</h3>
+    <a href="/wx/vmlist" class="blue_button">马上预定</a>
+</div>
+<script src="/sources/scripts/lib/zepto.min.js"></script>
+<script src="/sources/scripts/ui.js" ></script>
+</body>
 </html>

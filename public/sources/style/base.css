@@ -24,9 +24,9 @@ header h1{padding:0.1rem 0 0 0.1rem;}
 header h1 img{display:block;height:0.8rem; }
 header p{font-size:0.3rem; position:absolute;right:0; top:0;}
 header p a{ color:#585858; display:inline-block; position:relative; line-height:1rem; vertical-align:top; }
-header p a span{ height:0.4rem; border-radius:0.4rem; background-color:#fd0101; position:absolute;top:0.1rem;right:0.1rem; color:#fff; line-height:0.4rem; padding:0 0.1rem; display:none; }
+header p a span{min-width:0.4rem; /*height:0.4rem;*/ line-height:0.4rem; text-align:center; border-radius:0.4rem; background-color:#fd0101; position:absolute;top:0.1rem;right:0.1rem; color:#fff; padding:0 0.1rem; display:none; }
 header p a span.show{display:block;}
-header p a:first-child{width:1.2rem; height:1rem; background:url(/sources/images/common/cart.png) no-repeat center; background-size:0.7rem auto; }
+header p a:first-child{width:1.2rem; height:1rem; background:url(/sources/images/common/cart.png?v=1) no-repeat center; background-size:0.7rem auto; }
 header p a img{display:block; width:100%;}
 header p a.last,
 header p a:last-child{ width:1.88rem; text-align:center; border-left:#eee 1px solid; }
@@ -42,8 +42,10 @@ header p a.disable{ opacity:0.3; }
 .vminfor a{display:block; position:absolute; right:0.4rem;top:0.35rem; font-size:0.36rem; text-align:center; line-height:0.8rem; }
 .vminfor.re{margin-top:1.5rem; border-bottom:0; height:auto; min-height:1.82rem; padding-top:0.45rem; padding-bottom:0.2rem; padding-right:0.4rem; }
 .vminfor.re p{white-space:normal;}
+.vminfor.o{margin-top:0.5rem;}
+.vminfor h1 mark{color:#6ea5ee; font-size:0.48rem; font-weight:normal; }
 
-.products_list{font-size:0;}
+.products_list{font-size:0; }
 .pro{width:50%; font-size:0.36rem; color:#737373; border-bottom:#e5e5e5 1px solid; display:none;padding:0.3rem; padding-bottom:0.5rem; vertical-align:bottom; }
 .pro.show{display:inline-block; }
 .pro:nth-child(2n+1){border-right:#e5e5e5 1px solid;}
@@ -257,9 +259,60 @@ footer section span{display:inline-block; font-size:0.4rem; color:#333; line-hei
 .result{background:url(/sources/images/common/ok.png) no-repeat center 0; background-size:2.4rem auto; margin-top:1.65rem;  min-height:5.18rem; padding-top:2.25rem;}
 .result h1{color:#4c4c4c; text-align:center; font-size:0.48rem; }
 
-.history{width:95%; margin:0 auto; background-color:#fff; margin-top:1.4rem; min-height:15rem; }
-.empty{ position:relative; padding-top:3.4rem;}
+.empty{width:95%; margin:0 auto; background-color:#fff; margin-top:1.4rem;  }
+.empty{ position:relative; padding-top:3.4rem;min-height:15rem;}
 .empty p{ text-align:center; width:2.61rem; margin:0 auto;}
 .empty p img{width:2.61rem;}
 .empty h3{font-size:0.48rem; color:#e6e6ea; text-align:center; height:1.4rem; line-height:1.4rem; }
 .empty a{width:48.64%; height:1.2rem; line-height:1.2rem; text-align:center; margin:0 auto; display:block; margin-top:1rem; font-size:0.48rem; }
+.empty.space{margin-top:0.4rem; margin-bottom:1rem;}
+
+.myorders{ width:95.7%;margin:0.5rem auto;padding-left:0.6rem; padding-right:0.33rem; background-color:#fff; font-size:0.36rem; color:#585858; position:relative; padding-bottom:0.5rem; }
+.myorders p{line-height:0.7rem; position:relative;}
+.myorders p span{display:block;position:absolute;top:0; right:0;}
+.red{color:#ff0000;}
+.myorders li{line-height:0.7rem; background:url(/sources/images/common/dot.png) 0.13rem 0.3rem no-repeat; background-size:0.1rem auto; padding-left:0.36rem; }
+.block{border-bottom:#ebebeb 1px solid; padding:0.2rem 0;}
+.myorders .btn{height:0.9rem; padding-top:0.3rem; position:relative;}
+.myorders .btn select,
+.myorders .btn button{width:2.35rem; height:0.81rem; display:block; position:absolute;right:0; top:0.3rem;}
+.myorders .btn select{opacity:0;}
+.myorders h1{font-size:0.48rem; color:#737373;}
+.myorders .btn p{line-height:0.8rem; }
+.myorders .btn p mark{color:#6ea5ee; display:inline-block; padding:0 0.15rem;}
+.block.a{line-height:0.5rem; padding-top:0.5rem; font-size:0.4rem;}
+.block.a mark{color:#6ea5ee;}
+.status{display:block; position:absolute; width:3.23rem; height:1.2rem;line-height:0.86rem; background:url(/sources/images/common/label.png) no-repeat; background-size:3.23rem auto;color:#fff; text-align:center;  right:-0.16rem; top:0.15rem; padding-left:0.35rem; }
+.block.b{ padding:0; background:url(/sources/images/common/arrow_left.png) no-repeat right center; background-size:0.7rem auto; }
+.block section{width:87%; padding-left:3.9rem; position:relative; height:3.68rem; border-bottom:#ebebeb 1px solid;}
+.block section p{position:absolute;left:0;border:#b5b5b5 1px solid;top:0.45rem;width:3.58rem; height:2.78rem; overflow:hidden;}
+.block section p img{display:block; width:100%;}
+.block section h1{font-size:0.48rem; color:#737373; padding-top:0.7rem;}
+.block section h3{font-size:0.36rem; color:#b7b7b7;}
+.block section h2{font-size:0.48rem; color:#737373; padding-top:0.5rem;}
+.block section h2 mark{color:#ff0000; padding-right:0.2rem;}
+.block section h2 span{color:#6ea5ee; padding-left:0.2rem;}
+.block section h2 mark,
+.block section h2 span{display:inline-block; vertical-align:baseline;}
+.block section:last-child{border-bottom:0; }
+.block.d section{width:100%;}
+.block h4{position:absolute;right:-0.55rem; bottom:0.45rem; color:#6ea5ee; font-size:0.36rem; width:3.87rem; height:1.26rem; padding-left:1.8rem; line-height:1rem; background:url(/sources/images/common/label_2.png) no-repeat 0 0; background-size:3.87rem auto; }
+.block h4 span{ display:block; position:absolute; }
+.block h4 span.x1{left:0.88rem;top:0.14rem; width:0.63rem; height:0.63rem;border-radius:0.7rem; background:#7bd34e url(/sources/images/common/icon_ok.png) no-repeat center; background-size:0.3rem auto; box-shadow:0 2px 2px rgba(123,211,78, 0.4);}
+.block h4 span.x2{ background:url(/sources/images/common/alert.png) no-repeat 0 0; background-size:0.6rem 0.6rem;}
+.block h4 span.x3{left:0.85rem;top:0.1rem; width:0.7rem; height:0.7rem; background:url(/sources/images/common/clock.png) no-repeat 0 0; background-size:0.7rem 0.7rem;}
+.block h4 span.x2,
+.block h4 span.x4, 
+.block h4 span.x5{width:0.6rem; height:0.6rem; left:0.9rem;top:0.15rem; }
+.block h4 span.x4{background:url(/sources/images/common/unknow.png) no-repeat 0 0; background-size:0.6rem 0.6rem;}
+.block h4 span.x5{background:url(/sources/images/common/giveup.png) no-repeat 0 0; background-size:0.6rem 0.6rem;}
+
+.block h5{position:absolute; left:3.9rem; bottom:0.05rem; font-size:0.3rem; color:#ff0001;}
+
+.mask{position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.3); z-index:10;}
+.mask section{width:6rem; height:6rem; background-color:#424242; color:#fefefe; position:absolute; left:50%; top:50%; margin:-3rem 0 0 -3rem;}
+.mask section p{width:1.28rem; height:1.28rem; margin:2rem auto 0 auto; background:url(/sources/images/common/loading.gif) no-repeat center; background-size:1.28rem auto;}
+.mask h3{font-size:0.48rem; text-align:center; font-weight:normal; bottom:0.57rem; position:absolute; left:0; width:100%; line-height:1rem;}
+
+.maskA{position:fixed;width:100%; height:100%; top:0; left:0;}
+.maskA p{width:6rem; height:1.5rem;font-size:0.36rem; background-color:rgba(0,0,0,0.6); color:#fff; border-radius:5px; position:absolute;left:50%;top:50%; margin-left:-3rem; margin-top:-3rem; text-align:center;line-height:1.5rem;}

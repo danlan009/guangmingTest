@@ -14,7 +14,7 @@
 	<h1><img src="/sources/images/common/logo.png" /></h1>
 	<p>
 		<a href="" class="disable"><span>12</span></a>
-		<a href="">我的订单</a>
+		<a href="/wx/orders">我的订单</a>
 	</p>
 </header>
 <div class="vminfor re">
@@ -27,15 +27,10 @@
 			$weekArr = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 		?>
 		<h4>从<mark><?php echo date('m月d日').$weekArr[date('w')] ?></mark>，每次配送<mark><?php echo $order['count'] ?></mark>瓶</h4>
-		<?php
-			// echo '<pre>';
-			// print_r($order['products']);
-			// echo '</pre>';
-		?>
 		<?php foreach($order['products'] as $p){ ?>
 			<div class="product">
 				<section>
-					<span><img src="/sources/images/products/100016_l.jpg" /></span>
+					<span><img src="<?php echo $p['pic']  ?>" /></span>
 				</section>
 				<h1>
 				<?php 
@@ -57,7 +52,7 @@
 			共配送<mark><?php echo $order['type']  ?></mark>天
 			（<mark><?php echo $order['rate'] ? '工作日' : '每天' ?>配送</mark>）
 		</p>
-		<p class="phone">您的联系电话：13800138000</p>
+		<p class="phone">您的联系电话：<?php echo $order['phone'] ?></p>
 		<p class="total">总计：<mark><?php echo round($order['retail_price'] / 100, 2) ?></mark>元</p>
 	</section>
 </div>
@@ -79,5 +74,10 @@
 
 <script src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js"></script>
 <script src="/sources/scripts/ui.js" ></script>
+<script type="text/javascript">
+$('.disable').on('click', function(e){
+	e.preventDefault();
+});
+</script>
 </body>
 </html>

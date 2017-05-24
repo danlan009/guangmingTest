@@ -4,9 +4,9 @@ use Log;
 use Cache; 
 class StatService{
     
-
+ 
     public static function getImg($dir="products",$id,$type){
-        $image_path = public_path().'/'.env('IMAGE_PATH'); //需要修改,上线时更改到指定服务器图片目录
+        $image_path = env('UBOX_TEST_HOST').'/'.env('IMAGE_PATH'); //需要修改,上线时更改到指定服务器图片目录
         switch($dir){
             case 'products':
                 $file = $dir."/".$id."/".$id."_".$type.".jpg";

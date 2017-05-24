@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-<head>
+<head> 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,minimum-scale=1,user-scalable=no">
 	<title>补货</title>
-	<link rel="stylesheet" href="/style/bootstrap.min.css">
+	<link rel="stylesheet" href="/sources/style/bootstrap.min.css">
 	
+	<style type="text/css">
+		#touchBox{width:100%;cursor:default;cursor: move;overflow:hidden;margin-bottom:10px;}
+		#innerBox{width:1000%;margin:0px;padding:0px;position:relative;overflow:hidden}
+		#innerBox li{position:relative;float:left;width:20%;list-style:none;text-align:left;}
+
+		#btn_prev{border-top-left-radius: 20px;border-bottom-left-radius: 20px;padding-left:15px;}
+		#btn_next{border-top-right-radius: 20px;border-bottom-right-radius: 20px;padding-right:15px;}
+	</style>
 </head>
-<body> 
-<div id="mainDiv" class="container">
-	<div class="panel panel-default">
+<body>  
+
+<div id="mainDiv" class=""> 
+	<div class=""> 
 		  <div class="panel-heading"> 
 		    <!-- <h3 class="panel-title">选择要补货的柜子</h3> -->
 		  </div>
-		  <div class="panel-body container"> 
-		  		<div class='row' style='padding:10px'>
-
-		  			<div id="show_sku" class="jumbotron" style="padding:10px;margin-bottom:0px">
-		  			  <h1 id="sku_seq">货道 <label>1</label></h1>
-		  			  <h3 id="p_name">商品:大果块黄桃+芒果</h3>
-		  			  <h3 id="normal">原有: <label>5</label></h3>
-		  			  <h3 id="warn">过期: <label>0</label></h3>
-		  			  <h3 id="default_add">增加: <label>0</label> </h3>
-		  			  <input type="hidden" id="actual_add" value="">
-		  			  <p><button id="btn_alert" class="btn btn-default" href="#" type="button">更正</button></p>
-		  			</div>
-					<a id="btn_pre" class='col-xs-3 btn btn-primary btn-lg btn_cubes' >上个货道</a>
-					<div class='col-xs-1'>&nbsp;</div>
-					<a id="btn_next" class='col-xs-3 btn btn-primary btn-lg btn_cubes'>下个货道</a>
+		  <div class="panel-body"> 
+		  		<div id="touchBox" class="">
+			  		<ul id="innerBox">
+			  			
+			  		</ul>
 		  		</div>
+			  	<button id="btn_alter" class="btn btn-default" type="button">更正</button>
+
+		  		<center><button id="btn_prev" class="btn btn-primary" style="margin-right:50px">上一张</button> <button id="btn_next" class="btn btn-primary">下一张</button></center>
 				
 		  </div>
 	</div>
@@ -71,6 +73,7 @@
 <!-- <script src="https://ufan.ubox.cn/js/jquery.min.1.11.2.js?2015081102"></script> -->
 <!-- <script src="/scripts/bootstrap.min.js?2015081102"></script> -->
 <script src="/sources/scripts/lib/zepto.min.js"></script>
+<script src="/sources/scripts/lib/zTouch.js" type="text/javascript"></script>
 <script>
 
 
@@ -88,26 +91,28 @@ $.fn.setData = function(seq,obj){
 }
 
 // 给文本(p标签内)添加输入框
-$.fn.alertToWritable = function(element){ 
+$.fn.alterToWritable = function(){ 
 	var _this = $(this);
+	console.log(_this);
 	var label = _this.find('label');
 	var num = label.text();
 	_this.find('label').replaceWith('<input type="text" value="'+num+'" size="5">');
 }
 
 // 取消输入框,变回文本
-$.fn.alertToText = function(){ 
+$.fn.alterToText = function(){ 
 	var _this = $(this);
 	var num = _this.find('input').val();
 	_this.find('input').replaceWith('<label>'+num+'</label>');
 }
 
 $.fn.checkNum = function(num,sku_obj){
+	var _this = $(this);
 	// 判断数量格式是否合法
 	var num = parseInt(num);
 	var total = num + sku_obj.normal;
 	if(isNaN(num) || total>sku_obj.sku_size){ 
-		$('#default_add input').trigger('focus').css('border','1px solid red');
+		_this.trigger('focus').css('border','1px solid red');
 		return false;
 	}else{
 		return true;
@@ -115,133 +120,186 @@ $.fn.checkNum = function(num,sku_obj){
 }
 
 $(function(){
-	var nv = $("#hello");
-	// console.log(nv);
-	var data = <?php echo $supplyData ?>;
+	// 验证该售货机是否配置货道,没有配置则跳回start_supplyment
+	var nv = $("#hello"),
+	    vmid = "{{ $vmid }}",
+	    data = <?php echo $supplyData ?>,
 	
-	var arr = Object.keys(data);
-	var min_index = arr[0]; // 获取货道最小序列号
-	var index = min_index;
+		arr = Object.keys(data), // 存储货道序列号的数组
+		length = arr.length; // 货道总数
 
-	$('#btn_pre').attr('disabled',true);
-	// console.log(min_index);
-	var max_index = arr[arr.length-1]; // 获取货道最大序列号
-	var current = new Object();
+	// 初始化指向当前货道的指针(sku_id)
+	var current = parseInt(arr[0]);
 
-	//初始化第一页(第一条货道信息)
-	current = data[index];
-	$('#show_sku').setData(index,current);
+	var skusHtml = '';
+	// 初始化货道信息
+	$.each(data,function(index, sku) {
+		skusHtml += '<li>'
+						+'<div id="'+'sku_'+index+'_show'+'" class="jumbotron" style="padding:10px;margin-bottom:0px">'
+						+  '<h1 name="sku_seq">货道 <label>'+index+'</label></h1>'
+						+  '<h3 name="p_name">商品:'+sku.product_name+'</h3>'
+						+  '<h3 name="normal">原有: <label>'+sku.normal+'</label></h3>'
+						+  '<h3 name="warn">过期: <label>'+sku.warn+'</label></h3>'
+						+  '<h3 name="default_add">增加: <label>'+sku.default_add+'</label> </h3>'
+						+  '<input type="hidden" name="actual_add" value="">'
+						// +  '<button name="btn_alter" class="btn btn-default" href="#" type="button">更正</button>'
+						+'</div>'
+					+'</li>';
+	});
 
-	$('#btn_pre').on('click',function(){
-		//判断'增加'数据是否合法
-		if($('#default_add').find('input').length){
-			$('#default_add input').trigger('focus').css('border','1px solid red');
+	var num1 = length.toString()+'00%';
+	var num2 = Number(1/length*100).toFixed(7)+'%'
+	$('#innerBox').width(num1);
+	$('#innerBox').html(skusHtml);
+	$('#innerBox li').width(num2);
+
+	function transformBox(obj,value,time,has3d){
+		var time=time?time:0;
+		transl=has3d?"translate3d("+value+"px,0,0)":"translate("+value+"px,0)";
+		obj.css({'-webkit-transform':transl,'-webkit-transition':time+'ms linear'});
+	}
+
+	// 滑动
+	function slide(tPoint,d){
+		//校验"增加"是否合法
+		var input = $('h3 input');	
+		if(input.length){
 			return false;
 		}
-		// 防止越界
-		if(index == min_index){
-			return false; // 阻止点击事件
-		}
-		var cur_index = --index;
-		for (var i = cur_index; i >= min_index; i--) {
-			if(i == min_index){
-				$('#btn_pre').attr('disabled',true);
+
+		var _this = tPoint.self,
+			_inner = _this.children(),
+			innerW = _inner.width(),
+			count = tPoint.count,
+			d = d?d:tPoint.direction;
+		switch(d){
+			case "left":
+				--count;
 				
-			}
-			if(data[i]){
-				current = data[i];
-				index = i;
-				$('#show_sku').setData(index,current);
-				$('#btn_next').removeAttr('disabled');
+				current = ((current == length)?length:(current+1)); //指针+1
 				break;
-			}
-		};
-		// console.log(current);
-	});
-
-	$('#btn_next').on('click',function(){
-		//判断'增加'数据是否合法
-		if($('#default_add').find('input').length){
-			$('#default_add input').trigger('focus').css('border','1px solid red');
-			return false;
+			case "right":
+				++count;
+				
+				current = ((current == 1)?1:(current-1)); //指针-1
+				break;
 		}
 
-		// 防止越界
-		if(index == max_index){
-			return false; // 阻止点击事件
+		if(count == 1){
+			count = 0;
 		}
+		if(count == -tPoint.total){
+			count = -tPoint.total+1;
+		}
+		var offset = (count * innerW/tPoint.total);
+		transformBox(_inner,offset,tPoint.speed,tPoint.has3d);
+		tPoint.setAttr('count',count);
+	}
 
-		var cur_index = ++index;
-		for (var i = cur_index; i <= max_index; i++) {
-			if(i == max_index){
-				$('#btn_next').attr('disabled',true);
-			}
-			if(data[i]){
-				current = data[i];
-				index = i;
-				$('#show_sku').setData(index,current);
-				$('#btn_pre').removeAttr('disabled');
-				break;
-			}
-		};
-		
-		// console.log(current);
-	});
+	// 手势滑动参数
+	args = {
+		speed:300, //动画效果速度
+		iniL:30, //x轴方向最小移动距离(才能触发)
+		eCallback:function(tPoint){ // 手势后回调
+			slide(tPoint);
+		},
+		afterCallback:function(tPoint){ // 实例化后触发
+			$('#btn_prev').on('click',function(){
+				//判断'增加'数据是否合法
+				if($('h3 input').length){
+					// $('input').trigger('focus').css('border','1px solid red');
+					return false;
+				}
+				slide(tPoint,"right");
+			});
 
-	$('#btn_alert').on('click',function(){
-		container = $('#default_add');
-		if(container.find('input').length){
-			var seq = $('#sku_seq label').text();
-			var num = container.find('input').val(); //填写的数量
+			$('#btn_next').on('click',function(){
+				//判断'增加'数据是否合法
+				if($('h3 input').length){
+					// $('input').trigger('focus').css('border','1px solid red');
+					return false;
+				}
+				slide(tPoint,'left');
+			});
+		}
+	}
+	$("#touchBox").Swipe(args);	
+
+	// 点击更正
+	$("#btn_alter").on('click',function(e){
+		_this = $(this);
+		var container = $('#sku_'+current+'_show'), //货道展示div
+			input = container.find('h3 input');
+		if(input.length){
+			var seq = container.find('h1 label').text();
+			var num = input.val(); //填写的数量
 			sku_obj = data[seq]; // 取出原始货道补货数据
-			if(container.find('input').checkNum(num,sku_obj)){
-				container.alertToText();
+			if(input.checkNum(num,sku_obj)){
+				container.find('h3[name="default_add"]').alterToText();
 				// 填写的数量存入data[seq]
 				if(!(data[seq].actual_add = num)){
 					return false;
 				}
-				console.log(sku_obj);
 				$(this).text('更正');
 				
 			}
 		}else{
-			container.alertToWritable();
+			container.find('h3[name="default_add"]').alterToWritable();
 			$(this).text('确定');
 		}
 
+		return false;
+
 	});
 
-
+	// 点击补货完成
 	$('#btn_done').on('click',function(){
 		$('#myModal').show();
 		var addHtml = '';
 		$.each(data,function(index,item){
-			// 未更改数量的货道,默认增加量作为实际增加量
-			data[index].actual_add = (data[index].actual_add) ? data[index].actuall_add : data[index].default_add;
+			// console.log(data[index]);
 			addHtml += '<h5>货道 '+index+': 　| 　<span class="label label-default">原有:</span> '+item.normal+' 　|　 <span class="label label-success">增加:</span> '+((item.actual_add)?item.actual_add:item.default_add)+'</h5>';
+			// 未更改数量的货道,默认增加量作为实际增加量(手动修改为0被记录为'0')
+			data[index].actual_add = (item.actual_add?item.actual_add:item.default_add);
 		});
 		$('#myModal .modal-body span').html(addHtml);
 	});
 
+	// 对话框点击"修改"
 	$('#btn_dia_close').on('click',function(){
 		$('#myModal').hide();
 	});
 
+	// 对话框点击"保存/确认"
 	$('#btn_dia_save').on('click',function(){
-		$.ajax({
-			type : 'POST',
-			url : 'ajax_receive_data',
-			data : {data:JSON.stringify(data)},
-			timeout : 1000,
-			dataType : 'json',
-			success : function(d){
-				console.log(d);
-			},
-			error : function(){
-				console.log('ajax error!');
-			}
-
+		// 计算是否有新补货
+		var total = 0;
+		$.each(data,function(index,item){
+			total += item.actual_add;
 		});
+		if(!total){
+			alert('没有补货!');
+			window.location.href="start_supplyment";	
+		}else{
+			$.ajax({
+				type : 'POST',
+				url : 'ajax_receive_data',
+				data : {
+							data:JSON.stringify(data),
+							vmid:vmid
+						},
+				timeout : 3000,
+				dataType : 'json',
+				success : function(d){
+					alert('售货机:'+vmid+'补货成功!');
+					window.location.href="start_supplyment";
+				},
+				error : function(){
+					console.log('ajax error!');
+				}
+			});
+		}
+		
 	});
 	
 });

@@ -107,11 +107,15 @@ class Application extends Container
      */
     public function __construct($config)
     {
+        Log::debug('Start:'.json_encode($config));
+
         parent::__construct();
 
         $this['config'] = function () use ($config) {
             return new Config($config);
         };
+
+        Log::debug('Second:'.json_encode($config));
 
         if ($this['config']['debug']) {
             error_reporting(E_ALL);
@@ -121,7 +125,9 @@ class Application extends Container
         $this->registerBase();
         $this->initializeLogger();
 
+        Log::debug('wechat[config:'.json_encode($this['config']).']');
         Http::setDefaultOptions($this['config']->get('guzzle', ['timeout' => 5.0]));
+        Log::debug('wechat[config-guzzle:'.json_encode($this['config']->get('guzzle', ['timeout' => 5.0])).']');
 
         foreach (['app_id', 'secret'] as $key) {
             !isset($config[$key]) || $config[$key] = '***'.substr($config[$key], -5);

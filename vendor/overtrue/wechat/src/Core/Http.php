@@ -59,9 +59,9 @@ class Http
      * @var array
      */
     protected static $defaults = [
-        'curl' => [
-            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-        ],
+        // 'curl' => [
+        //     CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+        // ],
     ];
 
     /**

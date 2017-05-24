@@ -5,7 +5,7 @@
 		fz = scw / 10.8;
 	$('html').css('font-size', fz);
 	$('body').css('font-size', fz);
-}());
+}()); 
 
 $.fn.listHandler = function(){
 	var _this = $(this);

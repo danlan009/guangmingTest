@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
  
-use App\Http\Requests; 
+use App\Http\Requests;  
 use App\Http\Controllers\Controller; 
 use Cache;
 use Log;
 
 use App\Model\Order;
-use App\Model\OrderStop;
+use App\Model\OrderStop; 
 
 use App\Service\SupplyService;
-use App\Service\OrderService;
+use App\Service\OrderService; 
 class TaskController extends Controller
 {
 
@@ -69,7 +69,8 @@ class TaskController extends Controller
                                                             'blno'=>$blnoResArr[$k]
                                                         ]);
                 if(!$res){
-                    return 'error';
+                    Log::debug('buyCode error---order_id---'.$order_id.'---order_detail_id---'.$order_detail_id);
+                    // return 'error';
                 }
             }else{ //买码失败
                 return 'buyCodeFail!';
@@ -177,10 +178,12 @@ class TaskController extends Controller
 
             //判断是否停送
             $stopLog = OrderStop::where('order_id',$orderId)
-                                    ->where('start_date','<=',$now)
-                                    ->where('end_date','>=',$now)
-                                    ->get()
-                                    ->toArray();
+                                        ->where('start_date','<=',$now)
+                                        ->where(function($query) use($now){
+                                            $query->where('end_date','>=',$now)
+                                                  ->orWhereNull('end_date');
+                                        })->get()
+                                        ->toArray();
             //判断订单 配送频率(工作日/每天)
 			if($rate){ // 工作日配送
                                 
@@ -188,6 +191,7 @@ class TaskController extends Controller
                     if(empty($stopLog)){
                         $stopOrder->order_status = 2;   
                         $stopOrder->save();  
+                        Log::debug('TaskController---stop_order---order_id-'.$stopOrder->id.' has been started!');
                     }
                     
                 }
@@ -198,6 +202,7 @@ class TaskController extends Controller
                 if(empty($stopLog)){ //没有停送申请
                     $stopOrder->order_status = 2;
                     $stopOrder->save();
+                    Log::debug('TaskController---stop_order---order_id-'.$stopOrder->id.' has been started!');
                 }
             }
 		}
@@ -222,34 +227,40 @@ class TaskController extends Controller
             $start = $sendOrder->start_date;
             $rate = $sendOrder->rate;
             $orderId = $sendOrder->id;
-            \Log::debug('sendOrders handling sendOrder returns'.json_encode($sendOrder));
-            \Log::debug('sendOrders handling orderid returns'.$orderId);
+            \Log::debug('sendOrders handling sendOrder returns:'.json_encode($sendOrder));
+            \Log::debug('sendOrders handling orderid returns:'.$orderId);
             // 计算最后一天配送日期
             // $lastSendDay = date('Y-m-d',strtotime("+".$length." day",strtotime($start))-1);
             $lastSendDay = $this->getDateAfterWeekDays($length);
 
             $stopLog = OrderStop::where('order_id',$orderId)
                                         ->where('start_date','<=',$now)
-                                        ->where('end_date','>=',$now)
-                                        ->get()
-                                        ->toArray(); 
+                                        ->where(function($query) use($now){
+                                            $query->where('end_date','>=',$now)
+                                                  ->orWhereNull('end_date');
+                                        })->get()
+                                        ->toArray();
+                                        
             // dd($stopLog);
-            // \Log::debug('sendOrders handling stopLog returns ---'.json_encode($stopLog));
+            \Log::debug('sendOrders handling stopLog returns ---'.json_encode($stopLog));
             // dd($lastSendDay);
             // 工作日配送
             if($rate){
                 if($lastSendDay < $now){ //配送完成
                     $sendOrder->order_status = 3;
                     $sendOrder->save();
+                    Log::debug('TaskController---sending_order---order_id-'.$sendOrder->id.' has been done!');
                 }else{
                     if($day == 6 || $day == 0){ // 周六周日
                         $sendOrder->order_status = 4; //暂停
                         $sendOrder->save();
+                        Log::debug('TaskController---sending_order---order_id-'.$sendOrder->id.' has been stopped!');
                     }else{ //周一到周五
                         
                         if(!empty($stopLog)){ // 有停送申请 订单状态改为暂停
                             $sendOrder->order_status = 4;
                             $sendOrder->save();
+                            Log::debug('TaskController---sending_order---order_id-'.$sendOrder->id.' has been stopped!');
                         }
                         
                     }
@@ -260,12 +271,14 @@ class TaskController extends Controller
                 if($lastSendDay < $now){ //是最后一天配送
                     $sendOrder->order_status = 3; //配送完成
                     $sendOrder->save();
+                    Log::debug('TaskController---sending_order---order_id-'.$sendOrder->id.' has been done!');
                 }else{
                    
                     
                     if(!empty($stopLog)){ //有停送申请 订单状态改为暂停
                         $sendOrder->order_status = 4;
                         $sendOrder->save();
+                        Log::debug('TaskController---sending_order---order_id-'.$sendOrder->id.' has been stopped!');
                     }
                 }
             }
@@ -279,6 +292,9 @@ class TaskController extends Controller
         return 1;
     }
 
+    public function sessionUnset(){
+        session_unset('wechat.oauth_user');
+    }
     // md5_file() 检测图片是否修改,修改则更新版本号并放置缓存
     public function updateImg(){
         $root = public_path().'/file_img/images'; //需要修改,上线时更改到指定服务器图片目录
@@ -318,6 +334,7 @@ class TaskController extends Controller
     public function getDateAfterWeekDays($count){
 
         $now = time();
+        // 获取日期下00:00:00的时间戳
         $timer = strtotime(date('Y-m-d',$now));
         for ($i=1; $i <= $count; $i++) { 
             $timer = $timer+3600*24;

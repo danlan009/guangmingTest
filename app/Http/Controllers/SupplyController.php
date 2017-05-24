@@ -1,67 +1,97 @@
 <?php
  
-namespace App\Http\Controllers; 
+namespace App\Http\Controllers;  
 
 use App\Model\SkuSupply; 
+use App\Model\SupplyLog;
 use App\Model\OrderLog; 
 use App\Model\User; 
- 
+use App\Model\Order; 
+  
 use Illuminate\Http\Request; 
 use App\Lib\Bussiness;  
- 
+  
 use App\Service\MallService; 
 use App\Service\SupplyService;
-use App\Service\OrderService;
+use App\Service\OrderService; 
 use App\Service\CouponService;
- 
+
 use EasyWeChat\Foundation\Application;
-use Log;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
     public function test(Application $app){
-        // $userService = $wechat->user;
-
-        $couponService = new CouponService();
-        session(['wxId'=>'oidFcxGkJZygk-wpjP64WakpxwkE']);
-        $cardList = $couponService->getCardList($app);
-        dd($cardList);
-        // $card = $wechat->card;
-        // $res = $card->getUserCards('oidFcxGkJZygk-wpjP64WakpxwkE');
+        // $phone = User::getPhone('qqqq');
+        // dd($phone);
+        // $mallService = new MallService();
+        // $vminfo = $mallService->getProDetail(100016,'0081008','book');
+        // $proList = $mallService->showPros('0081008','book');
+        // dd($proList);
+        // $json = json_encode($proList);
+        // return view('supply.test',['proList'=>$json]);
+        // $num = $mallService->getNumOfSale('0081008',100010);
+        // dd($num);
+        // $res = $mallService->singleBuyCode(10,20,100010,'0081008');
         // dd($res);
-        // $user = $userService->get('oidFcxGkJZygk-wpjP64WakpxwkE');
-        // echo $user->nickname;
+  
+        // $list = $mallService->getNumOfBook('0081008',100006);
+        // dd($list);
+
+        // $url = $mallService->getImg('products',100016,'l');
+        // dd($url);
+        $supplyService = new SupplyService();
+        $data = $supplyService->getDailyOrdersToSend('0081008',1);
+        dd($data);
+        // $orders = (new OrderLog)->getReservedOrders('0081008');
+        // dd($orders);
+        // $orderService = new OrderService();
+        // $data = $orderService->getDailyOrdersToSend('0081008');
+        // dd($data);
+    
+        // $data = json_decode($str,true);
+        // dd($data);
+
+       
+        // $this->finishSupply();
         
-        // return phpinfo();
-        // echo 111;
 
-    } 
+        // $this->getDateAfterWeekDays(30);
 
+        // return view('supply.startSupplyment');
+        // $now = date('Y-m-d');
+        // $orderId = 2;
+        // $stopLog = \App\Model\OrderStop::where('order_id',$orderId)
+        //                                 ->where('end_date','>=',$now)
+        //                                 ->orWhereNull('end_date')
+        //                                 ->where('start_date','<=',$now)
+        //                                 ->get()
+        //                                 ->toArray(); 
+        // dd($stopLog);
+        // $couponService = new CouponService();
+        // session(['wxId'=>'oSIrewgw5OTIz-FR00J1pzmCbhYU']); //测试
+        // $access_token = $app->access_token;
+        // $access_token = $access_token->getToken();
 
-    public function serve(Application $wechat)
-    {
-        Log::info('request arrived.');
-        $server = $wechat->server;
-        $server->setMessageHandler(function($message){
-            Log::debug('Message:'.json_encode($message));
-            if(strtolower($message['MsgType']) == 'event') {
-                switch (strtolower($message->Event)) {
-                    case 'location':
-                        $this->getLocation($message);
-                        break;
-                    case 'click':
-                        return $this->sendMsg($message);
-                        break;
-                    default:
-                        //return "Hello";
-                        break;
-                }
-            }
-        });
+        // \Log::debug('test --- get access_token:'.json_encode($access_token));
+        // dd($access_token);
+        // $list = $couponService::getCardList($access_token);
+        // \Log::debug('cardList---returns:'.json_encode($list));
+        // dd($list);
+        // $card_id = "pSIrewg7XQUyrb1fE-yLUUv_nO38";
+        // $cardDetail = $couponService::getCardDetail($app,$card_id);
+        // dd($cardDetail);
+        // $arr = [1,2,3,4];
+        // $arr = [];
+        // foreach($arr as $item){
+        //     echo $item;
+        // }
+    }
 
-        Log::info('return response.');
-        $response  = $server->serve();
-        return $response->send();
+    public function myTest(Application $app){
+        //dd("dd");
+        $supply = new SupplyService();
+        $supply->sendSuccessNotifyToUser($app);
+
     }
 
     public function startSupplyment(){
@@ -77,49 +107,44 @@ class SupplyController extends Controller
 
     public function listSkus(Request $request){
         $vmid = $request->input('vmid');
+        // var_dump($vmid);die;
+        $request->session()->put('vmid',"$vmid");
         $supplyService = new SupplyService();
         $supplyData = $supplyService->getSupplyData($vmid);
-        
+        // dd(json_encode($supplyData));
+        if(empty($supplyData)){
+            return '该售货机尚未配置货道!';
+        }
         return view('supply.listSkus',array(
-                'supplyData' => json_encode($supplyData)
+                'supplyData' => json_encode($supplyData),
+                'vmid' => $vmid
             ));
     }
 
-    
-    public function finishSupply(){
-        // $data = $request->input('data');
-        $supplyService = new SupplyService();
-        
-        
-        $supply_sku_info = $supplyService->getSupplyData('0081008');
-        $date = date('Y-m-d');
-        foreach ($supply_sku_info as $k => $sku) {
-            // 修改测试数据 
-            if($sku['default_add'] == 0){
-                $supply_sku_info[$k]['actual_add'] = 0;
-            }else{
-                $supply_sku_info[$k]['actual_add'] = $sku['default_add'];
-                
-            }
-        }
-
-        $supplyService->handleFinishData($supply_sku_info,'0081008');
-        
-    }
-
     public function ajaxReceiveData(Request $request){
-        // $data = $_POST['data'];
         $data = $request->input('data');
-        // dd($data);
-        echo "'".$data."'";
-        die;
+        $vmid = $request->input('vmid');
         $array_data = json_decode($data,true);
-        dd($array_data);
-        // 写入数据库
-        foreach ($array_data as $seq => $sku) {
-            SkuSupply::create([
+        SupplyService::handleFinishData($array_data,$vmid);
+        return 1;
+        
+    } 
 
+    public function ajaxClear(Request $request){
+        $vmid = $request->input('vmid');
+        if($vmid){
+            // sku_supplys
+            $supplyService = new SupplyService();
+            $supplyService->clearVm($vmid);
+            // supply_logs
+            \DB::table('supply_logs')->insert([
+                    'vmid' => $vmid,
+                    'operator_wx_id' => 'test',
+                    'operator_name' => 'test',
+                    'supply_date' => date('Y-m-d H:i:s'),
+                    'operation' => 2
                 ]);
+            return 1;
         }
     }
 }

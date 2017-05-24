@@ -143,8 +143,6 @@ $.fn.addToCart = function(elm){
 		if(_me.hasClass('grey_button')){
 			return false;
 		}
-		console.log('--------------')
-		console.log(plist[pid])
 
 		refreshCountOfCart({
 			pid: pid,
@@ -167,7 +165,7 @@ $.fn.addToCart = function(elm){
 	});
 };
 
-$.fn.loadMoreProducts = function(size){
+$.fn.loadMoreRecords = function(size, klass){
 	var _this = $(this),
 		startY = 0,
 		posY = 0,
@@ -192,7 +190,12 @@ $.fn.loadMoreProducts = function(size){
 
 	_this.on('touchend', function(e){
 		// 对列表的处理
-		var list = $('.pro').not('.show');
+		var list = $(klass).not('.show');
+		if(!list.length){
+			_this.find('p').text('我也是有底线的');
+			_this.removeClass('loading');
+			return false;
+		}
 		list.each(function(key, value){
 			if(key < _size){
 				$(this).addClass('show');
@@ -233,7 +236,6 @@ $.fn.accountHandler = function(){
 		html = '',
 		_this = $(this);
 	selected = JSON.parse(selected);
-	console.log(selected)
 	_this.text(selected['total']).show();
 
 };
@@ -269,30 +271,47 @@ $.fn.computerTotalPrice = function(){
 	var _this = $(this),
 		selected = window.sessionStorage['selectedProducts'],
 		total = 0, 
-		products;
+		products,
+		cardList = $('#cardList');
+	
 	if(!selected){ return false; }
+
 	selected = JSON.parse(selected);
-	console.log(selected)
 	products = selected['products'];
 	total = computerTotal(products);
-	_this.text('￥' + total);
+	console.log('计算总价')
+	console.log(selected)
+	selected['originTotal'] = total;
+	selected['retailTotal'] = total;
+	console.log(selected);
+	window.sessionStorage['selectedProducts'] = JSON.stringify(selected);
+	cardListEnable(cardList, total);
+	_this.text('￥' + (total / 100).toFixed(2));
 };
 
 $.fn.radioBox = function(tagname, type){
 	var _this = $(this);
 	_this.find(tagname).on('click', function(){
 		var _me = $(this);
+		if(_me.hasClass('disable') || _me.hasClass('on')){
+			return false;
+		}
+
 		_me.addClass('on').siblings().removeClass('on');
 
 		if(type == 'card'){
-			collectionsObj.card_id = _me.attr('data-card-id');
-			collectionsObj.card_name = _me.attr('data-card-name');
+			collectionsObj.card_id 		= _me.attr('data-card-id');
+			collectionsObj.card_name 	= _me.attr('data-card-name');
+			collectionsObj.card_code 	= _me.attr('data-card-code');
+			collectionsObj.reduce 		= parseInt(_me.attr('data-card-reduce'));
+			var selected = JSON.parse(window.sessionStorage['selectedProducts']);
+			selected['retailTotal'] = selected['originTotal'] - collectionsObj.reduce;
+			$('#totalPrice').text('￥'+(selected['retailTotal']/100).toFixed(2));
 		}else if(type == 'week'){
 			collectionsObj.rate = _me.attr('data-id');
 		}else if(type == 'days'){
 			collectionsObj['type'] = _me.attr('data-num');
 		}
-		console.log(collectionsObj);
 	});
 };
 
@@ -317,20 +336,16 @@ $.fn.checkMobilePhone = function(){
 			parent.addClass('error');
 			msg.text(msgArr.phone_error);
 		}
-		console.log(collectionsObj)
 	});
 };
 
 // 购物车控制商品数量
 $.fn.selectedCountHandler = function(){
-	console.log('-----------------');
 	var totalPrice = $('#totalPrice'),
-		cartProductsAccount = $('#cartProductsAccount');
+		cartProductsAccount = $('#cartProductsAccount'),
+		cardList = $('#cardList');
 
 	$(this).each(function(key, value){
-		console.log(key);
-		console.log(value);
-
 		var _this = $(this),
 			btn_reduce = _this.find('.btn_r'),
 			btn_add = _this.find('.btn_a'),
@@ -340,8 +355,7 @@ $.fn.selectedCountHandler = function(){
 		// 单击增加按钮
 		btn_add.on('click', function(){
 			var _me = $(this), result;
-			result = checkProductsCount(pid, 'add', null);
-			console.log(result)
+			result = checkProductsCount(pid, 'add', null, cardList);
 			text_box.val(result['count']);
 			if(result['result']){
 				// 置灰
@@ -352,7 +366,8 @@ $.fn.selectedCountHandler = function(){
 				_me.removeAttr('disabled');
 			}
 
-			totalPrice.text('￥'+result['totalPrice']);
+			totalPrice.text('￥'+(result['retailTotal'] / 100).toFixed(2));
+			cardListEnable(cardList, result['originTotal']);
 			cartProductsAccount.text(result['totalCount']);
 			buttonStyle(result['result'], {
 				'reduce': btn_reduce,
@@ -364,11 +379,9 @@ $.fn.selectedCountHandler = function(){
 		// 单击减少按钮
 		btn_reduce.on('click', function(){
 			var _me = $(this), result;
-			result = checkProductsCount(pid, 'reduce', null);
+			result = checkProductsCount(pid, 'reduce', null, cardList);
 			text_box.val(result['count']);
-			console.log(result);
 			if(result['result'] == 1 || result['result'] == 4){
-				// 置灰
 				_me.addClass('grey');
 				_me.attr('disabled', 'true');
 				if(result['result'] == 1){
@@ -379,7 +392,8 @@ $.fn.selectedCountHandler = function(){
 				_me.removeAttr('disabled');
 			}
 
-			totalPrice.text('￥'+result['totalPrice']);
+			totalPrice.text('￥'+(result['retailTotal'] / 100).toFixed(2));
+			cardListEnable(cardList, result['originTotal']);
 			cartProductsAccount.text(result['totalCount']);
 			buttonStyle(result['result'], {
 				'reduce': btn_reduce,
@@ -395,14 +409,15 @@ $.fn.selectedCountHandler = function(){
 				_me.addClass('error');
 				return false;
 			}
-			result = checkProductsCount(pid, 'text', _text);
+			result = checkProductsCount(pid, 'text', _text, cardList);
 			if(result['result'] == 3 || result['result'] == 0){
 				_me.addClass('error');
 			}else{
 				_me.removeClass('error');
 			}
 
-			totalPrice.text('￥'+result['totalPrice']);
+			totalPrice.text('￥'+(result['retailTotal'] / 100).toFixed(2));
+			cardListEnable(cardList, result['originTotal']);
 			cartProductsAccount.text(result['totalCount']);
 			buttonStyle(result['result'], {
 				'reduce': btn_reduce,
@@ -415,7 +430,8 @@ $.fn.selectedCountHandler = function(){
 };
 
 $.fn.weixinPay = function(){
-	var _this = $(this);
+	var _this = $(this),
+		process = false;
 
 	_this.on('click', function(){
 		// 检查用户的信息是否都合法
@@ -425,42 +441,92 @@ $.fn.weixinPay = function(){
 		}
 		if($('.changeCount').find('.error').length){return false;}
 
-		var data, selected;
+		var data, selected, mask = $('#mask');
 		selected = window.sessionStorage['selectedProducts'];
 		if(!selected){ return false; }
 		selected = JSON.parse(selected);
 		collectionsObj.products = selected.products;
 
-		console.log(collectionsObj);
+		if(process) { return false; }
+		process = true;
+
+		mask.show();
 
 		$.ajax({
 			url: '/wx/ajax_check_wxpay',
 			type: 'get',
 			data: collectionsObj,
 			success: function(data){
-				console.log(data);
 				var d = JSON.parse(data);
 				if(d.code === 200){
-					$.ajax({
-						url: '/wx/ajax_prepay?test=laiguangying',
-						type: 'get',
-						success: function(data){
-							var result = JSON.parse(data);
-							// 调起微信支付
-
-							// 支付完成，清空购物车
-							window.sessionStorage['selectedProducts'] = null;
-							if(result.code == 200){
-								// 跳转到预定结果页面
-								// window.location.href = '/wx/result/'+result.wxTxnId;
-							}
-						}
-					});
+					mask.hide();
+					wxPrePay();
 				}
 			}
 		});
 	});
 };
+
+// @param totalPrice 总价单位分
+function cardListEnable(cardList, totalPrice){
+	var reduce = 0,
+		least = 0;
+
+	cardList.find('li').each(function(key, value){
+		var _this = $(this);
+		
+		reduce = _this.attr('data-card-reduce');
+		least = _this.attr('data-card-least');
+		if(totalPrice >= least){
+			_this.removeClass('disable');
+		}else{
+			_this.addClass('disable');
+		}
+	});
+}
+
+function wxPrePay(){
+	$.ajax({
+		url: '/wx/ajax_prepay',
+		type: 'get',
+		success: function(data){
+			var result = JSON.parse(data);
+			if(result.code == 200){
+				var config = result.config;
+				wx.config({
+					'debug': false,
+					'appId': config.appId,
+					'timestamp': config.timestamp,
+					'nonceStr': config.nonceStr,
+					// 'signature': '',
+					'jsApiList': ['chooseWXPay']
+				});
+
+				wx.ready(function(){
+					wx.chooseWXPay({
+					    timestamp: 	config.timestamp,
+					    nonceStr: 	config.nonceStr,
+					    package: 	config.package,
+					    signType: 	config.signType,
+					    paySign: 	config.paySign,
+					    success: function (res) {
+					    	// checkWxPayStatus(result.wxTxnId, $('#mask'));
+					    	window.sessionStorage['selectedProducts'] = null;
+					    	window.location.href = '/wx/result/'+result.wxTxnId;
+					    }
+				    });
+				});
+				wx.error(function(res){
+
+				});
+			}
+		}
+	});
+}
+
+// 核销卡券
+
+
 
 // 控制增加 减少 输入框样式
 function buttonStyle(result, elmsObj){
@@ -495,16 +561,19 @@ function computerTotal(products){
 		total += products[i].count * products[i].rprice;
 	}
 
-	total = total / 100;
+	// total = total / 100;
+	// cardListEnable(cardList, total);
+
 	return total;
 }
 
 // 检查商品数量是否超出
-function checkProductsCount(pid, type, text){
+function checkProductsCount(pid, type, text, cardList){
 	var selected = window.sessionStorage['selectedProducts'],
 		products,
 		result,
-		oldCount = 0;
+		oldCount = 0,
+		reduce = 0;
 
 	selected = JSON.parse(selected);
 	products = selected['products'];
@@ -526,10 +595,8 @@ function checkProductsCount(pid, type, text){
 			break;
 	}
 
+	// 已选商品的总数量
 	selected['total'] = selected['total'] < 0 ? 0 : selected['total'];
-
-	console.log(products[pid]['count'])
-	console.log(products[pid]['left'])
 
 	if(products[pid]['count'] == 0 ){
 		result = 1;
@@ -544,19 +611,29 @@ function checkProductsCount(pid, type, text){
 		result = 0;
 	}
 
+	reduce = collectionsObj['reduce'] ? parseFloat(collectionsObj['reduce']) : 0;
+	selected['originTotal'] = computerTotal(selected['products']);
+	selected['retailTotal'] = selected['originTotal'];
+	collectionsObj.card_id = '';
+	collectionsObj.card_name = '';
+	collectionsObj.reduce = 0;
+
 	window.sessionStorage['selectedProducts'] = JSON.stringify(selected);
 
 	// 1:0
 	// 2:与left值一样
 	// 3:大于left的值
 	// 4:小于0
+	cardList.find('li').eq(0).addClass('on').siblings().removeClass('on');
 
 	return {
 		'pid': pid,
 		'type': type,
 		'count': result!=1 ? products[pid]['count'] : 0,
 		'result':  result,
-		'totalPrice': computerTotal(selected['products']),
+		'originTotal': selected['originTotal'],
+		'retailTotal': selected['retailTotal'],
+		// 'totalPrice': (selected['retailTotal']).toFixed(2),
 		'totalCount': selected['total']
 	}
 }
@@ -588,7 +665,6 @@ function refreshNumbersForDetail(selected, pid, left){
 }
 
 function refreshCountOfCart(o, selected){
-	console.log(o)
 	var pid = o.pid,
 		pname = o.pname,
 		oprice = o.oprice,
@@ -622,5 +698,62 @@ function refreshCountOfCart(o, selected){
 	}else{
 		selected['total'] = 1;
 	}
+
+	selected['originTotal'] += price;
+	selected['retailTotal'] += price;
 	return selected;
 }
+
+// 暂停配送
+$.fn.toPauseDelivery = function(){
+	var _this = $(this);
+	_this.each(function(){
+		var _me = $(this);
+		_me.on('click', function(){
+			var orderId = _me.attr('data-id');
+			console.log('暂停配送')
+			console.log(orderId);
+
+			// $.ajax({
+			// 	url: '',
+			// 	data: {orderId:orderId, startDate: ''},
+			// 	type: 'get',
+			// 	success: function(d){
+			// 		// 暂停成功
+			// 	}
+			// });
+		});
+	});
+};
+
+// 恢复配送
+$.fn.continueDelivery = function(){
+	var _this = $(this);
+	_this.each(function(){
+		var _me = $(this);
+		_me.on('click', function(){
+
+			var orderId = _me.attr('data-id');
+			console.log('恢复配送')
+			console.log('订单编号:'+orderId);
+
+			$.ajax({
+				url: '/wx/ajax_continue_delivery',
+				data: {orderId: orderId},
+				type: 'get',
+				success: function(d){
+					// 恢复完成
+					console.log(d)
+					if(d=='1'){
+						_me.parent('.btn').html('<button class="blue_button btnStopDelivery" data-id="'+orderId+'">暂停配送</button>');
+						var mask = $('#maskA');
+						mask.show();
+						setTimeout(function(){
+							mask.hide();
+						}, 2000);
+					}
+				}
+			})
+		});
+	});
+};
