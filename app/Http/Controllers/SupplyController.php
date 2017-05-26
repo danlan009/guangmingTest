@@ -20,7 +20,7 @@ use EasyWeChat\Foundation\Application;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
-    public function test(Application $app){
+    public function test(){
         // $phone = User::getPhone('qqqq');
         // dd($phone);
         // $mallService = new MallService();
@@ -47,7 +47,7 @@ class SupplyController extends Controller
         // $orderService = new OrderService();
         // $data = $orderService->getDailyOrdersToSend('0081008');
         // dd($data);
-    
+     
         // $data = json_decode($str,true);
         // dd($data);
 
@@ -86,7 +86,7 @@ class SupplyController extends Controller
         //     echo $item;
         // }
         $time = date('Y-m-d H:i:s');
-        \Log::debug('task test - I am running at '.$time);
+        // \Log::debug('task test - I am running at '.$time);
         echo 'I am running at '.$time;
     }
 
