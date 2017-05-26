@@ -87,7 +87,7 @@ class SupplyController extends Controller
         // }
         $time = date('Y-m-d H:i:s');
         \Log::debug('task test - I am running at '.$time);
-        echo 'I am running at '.$time;
+        echo 'output I am running at '.$time;
     }
 
     public function myTest(Application $app){
