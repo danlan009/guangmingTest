@@ -39,9 +39,9 @@ class SupplyController extends Controller
 
         // $url = $mallService->getImg('products',100016,'l');
         // dd($url);
-        $supplyService = new SupplyService();
-        $data = $supplyService->getDailyOrdersToSend('0081008',1);
-        dd($data);
+        // $supplyService = new SupplyService();
+        // $data = $supplyService->getDailyOrdersToSend('0081008',1);
+        // dd($data);
         // $orders = (new OrderLog)->getReservedOrders('0081008');
         // dd($orders);
         // $orderService = new OrderService();
@@ -85,6 +85,9 @@ class SupplyController extends Controller
         // foreach($arr as $item){
         //     echo $item;
         // }
+        $time = date('Y-m-d H:i:s');
+        \Log::debug('task test - I am running at '.$time);
+        echo 'I am running at '.$time;
     }
 
     public function myTest(Application $app){
