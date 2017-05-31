@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;  
 
 use App\Model\SkuSupply; 
-use App\Model\SupplyLog;
+use App\Model\SupplyLog; 
 use App\Model\OrderLog; 
 use App\Model\User; 
 use App\Model\Order; 
@@ -21,73 +21,14 @@ class SupplyController extends Controller
 { 
     // 补货控制器   
     public function test(){
-        // $phone = User::getPhone('qqqq');
-        // dd($phone);
-        // $mallService = new MallService();
-        // $vminfo = $mallService->getProDetail(100016,'0081008','book');
-        // $proList = $mallService->showPros('0081008','book');
-        // dd($proList);
-        // $json = json_encode($proList);
-        // return view('supply.test',['proList'=>$json]);
-        // $num = $mallService->getNumOfSale('0081008',100010);
-        // dd($num);
-        // $res = $mallService->singleBuyCode(10,20,100010,'0081008');
-        // dd($res);
-  
-        // $list = $mallService->getNumOfBook('0081008',100006);
-        // dd($list);
-
-        // $url = $mallService->getImg('products',100016,'l');
-        // dd($url);
-        // $supplyService = new SupplyService();
-        // $data = $supplyService->getDailyOrdersToSend('0081008',1);
-        // dd($data);
-        // $orders = (new OrderLog)->getReservedOrders('0081008');
-        // dd($orders);
-        // $orderService = new OrderService();
-        // $data = $orderService->getDailyOrdersToSend('0081008');
-        // dd($data);
-     
-        // $data = json_decode($str,true);
-        // dd($data);
-
-       
-        // $this->finishSupply();
-        
-
-        // $this->getDateAfterWeekDays(30);
-
-        // return view('supply.startSupplyment');
-        // $now = date('Y-m-d');
-        // $orderId = 2;
-        // $stopLog = \App\Model\OrderStop::where('order_id',$orderId)
-        //                                 ->where('end_date','>=',$now)
-        //                                 ->orWhereNull('end_date')
-        //                                 ->where('start_date','<=',$now)
-        //                                 ->get()
-        //                                 ->toArray(); 
-        // dd($stopLog);
-        // $couponService = new CouponService();
-        // session(['wxId'=>'oSIrewgw5OTIz-FR00J1pzmCbhYU']); //测试
-        // $access_token = $app->access_token;
-        // $access_token = $access_token->getToken();
-
-        // \Log::debug('test --- get access_token:'.json_encode($access_token));
-        // dd($access_token);
-        // $list = $couponService::getCardList($access_token);
-        // \Log::debug('cardList---returns:'.json_encode($list));
-        // dd($list);
-        // $card_id = "pSIrewg7XQUyrb1fE-yLUUv_nO38";
-        // $cardDetail = $couponService::getCardDetail($app,$card_id);
-        // dd($cardDetail);
-        // $arr = [1,2,3,4];
-        // $arr = [];
-        // foreach($arr as $item){
-        //     echo $item;
-        // }
-        $time = date('Y-m-d H:i:s');
-        \Log::debug('task test - I am running at '.$time);
-        echo 'output I am running at '.$time;
+        $fp = popen('top -b -n 2 | grep -E "^(Cpu|Mem|Tasks)"',"r");//获取某一时刻系统cpu和内存使用情况
+        $rs = "";
+        while(!feof($fp)){
+            $rs .= fread($fp,1024);
+        }
+        pclose($fp);
+        dd($fp);
+    
     }
 
     public function myTest(Application $app){
