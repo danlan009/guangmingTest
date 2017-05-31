@@ -29,7 +29,7 @@ class SupplyController extends Controller
         pclose($fp);
         $sys_info = explode("\n",$rs);
         $tast_info = explode(",",$sys_info[3]);//进程 数组
-        dd($tast_info);
+        dd($sys_info);
     
     }
 
