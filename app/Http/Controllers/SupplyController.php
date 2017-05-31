@@ -27,6 +27,7 @@ class SupplyController extends Controller
             $rs .= fread($fp,1024);
         }
         pclose($fp);
+        dd($rs);
         $sys_info = explode("\n",$rs);
         //$tast_info = explode(",",$sys_info[3]);//进程 数组
         dd($sys_info);
