@@ -2,7 +2,7 @@
 
 return [
 
-    /*
+    /* 
     |--------------------------------------------------------------------------
     | Default Cache Store
     |--------------------------------------------------------------------------
@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    'default' => env('CACHE_DRIVER', 'memcached'),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
             'driver' => 'memcached',
             'servers' => [
                 [
-                    'host' => env('MEMCACHED_HOST', '127.0.0.1'),
+                    'host' => env('MEMCACHED_HOST', '118.190.50.241'),
                     'port' => env('MEMCACHED_PORT', 11211),
                     'weight' => 100,
                 ],

@@ -14,24 +14,17 @@ use App\Lib\Bussiness;
 use App\Service\MallService; 
 use App\Service\SupplyService;
 use App\Service\OrderService; 
-use App\Service\CouponService;
+use App\Service\CouponService; 
 
 use EasyWeChat\Foundation\Application;
+use Cache;
+
 class SupplyController extends Controller 
 { 
     // 补货控制器   
     public function test(){
-        $fp = popen('top -b -n 2 | grep -E "^(Cpu|Mem|Tasks)"',"r");//获取某一时刻系统cpu和内存使用情况
-        $rs = "";
-        while(!feof($fp)){
-            $rs .= fread($fp,1024);
-        }
-        pclose($fp);
-        dd($rs);
-        $sys_info = explode("\n",$rs);
-        //$tast_info = explode(",",$sys_info[3]);//进程 数组
-        dd($sys_info);
-    
+        Cache::put('username','dongfan',60);
+        
     }
 
     public function myTest(Application $app){
