@@ -24,7 +24,9 @@ class SupplyController extends Controller
     // 补货控制器   
     public function test(){
         Cache::put('username','dongfan',60);
-        
+        $test = '';
+        $test = Cache::get('username');
+        echo $test;
     }
 
     public function myTest(Application $app){
