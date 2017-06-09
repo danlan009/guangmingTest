@@ -13,7 +13,7 @@
    
 Route::get('/', function () {
     return view('welcome');
-});
+}); 
  
 Route::get('orders/daily_buy_codes/{vmId}',		'MallController@dailyBuyCodes');
 Route::get('orders/daily_check_orders',			'MallController@dailyCheckOrders');
@@ -29,7 +29,7 @@ Route::post('supply/ajax_receive_data',			'SupplyController@ajaxReceiveData');
 Route::get('supply/ajax_clear',					'SupplyController@ajaxClear'); // 补货完成入口
 
 Route::get('qr/create',							'QrCodeController@create');
-Route::get('test',								'SupplyController@test');
+Route::get('test',								'SupplyController@test'); 
 
 Route::get('task/flush_cache',					'TaskController@flushCache');
 Route::get('task/session_unset',				'TaskController@sessionUnset');
@@ -64,3 +64,5 @@ Route::group(['middleware' =>['web','wechat.oauth', 'wxAuth'] ], function(){
 
 Route::post('wx/notify_payment',                'PaymentController@notifyPayment');
 Route::post('link/notify_vm_msg',               'GmLinkController@notifyVmMsg');
+
+Route::get('phpinfo',							'SupplyController@phpinfo');
