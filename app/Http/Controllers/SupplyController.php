@@ -22,8 +22,10 @@ use Cache;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
-    public function test(){
-        Cache::put('username','dongfan',60);
+    public function test(Request $request){
+        $name = $request->input('name');
+        echo 'input name:'.$name.'<br>';
+        Cache::put('username',$name,60);
         $test = '';
         $test = Cache::get('username');
         echo $test;
