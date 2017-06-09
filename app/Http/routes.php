@@ -28,7 +28,7 @@ Route::get('supply/list_skus',					'SupplyController@listSkus');
 Route::post('supply/ajax_receive_data',			'SupplyController@ajaxReceiveData');
 Route::get('supply/ajax_clear',					'SupplyController@ajaxClear'); // 补货完成入口
 
-Route::get('qr/create',							'qrCodeController@create');
+Route::get('qr/create',							'QrCodeController@create');
 Route::get('test',								'SupplyController@test');
 
 Route::get('task/flush_cache',					'TaskController@flushCache');
