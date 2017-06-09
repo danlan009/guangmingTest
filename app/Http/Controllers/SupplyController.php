@@ -28,7 +28,7 @@ class SupplyController extends Controller
         Cache::put('username',$name,60);
         $test = '';
         $test = Cache::get('username');
-        $exist = Cache::get('runoob');
+        $exist = Cache::get('runoob').'<br>';
         echo 'exist:'.$exist;
         echo $test;
     }
