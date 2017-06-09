@@ -26,7 +26,7 @@ class SupplyController extends Controller
         $name = $request->input('name');
         echo 'input name:'.$name.'<br>';
         Cache::put('username',$name,60);
-        Cache::store->put('password',123456,60);
+        Cache::store('memcached')->put('password',123456,60);
         $test = '';
         $test = Cache::get('username');
         $exist = Cache::get('runoob').'<br>';
@@ -34,7 +34,7 @@ class SupplyController extends Controller
         echo 'exist:'.$exist;
 
         echo $test.'<br>';
-
+        $pass = '';
         $pass = Cache::get('password');
         echo 'password:'.$pass.'<br>';
     }
