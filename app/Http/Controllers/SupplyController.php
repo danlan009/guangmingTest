@@ -39,6 +39,9 @@ class SupplyController extends Controller
         echo 'password:'.$pass.'<br>';
     }
 
+    public function phpinfo(){
+        phpinfo();
+    }
     public function myTest(Application $app){
         //dd("dd");
         $supply = new SupplyService();
