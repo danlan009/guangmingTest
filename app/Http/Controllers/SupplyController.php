@@ -23,21 +23,12 @@ class SupplyController extends Controller
 { 
     // 补货控制器   
     public function test(Request $request){
-        $name = $request->input('name');
-        echo 'input name:'.$name.'<br>';
-        Cache::put('username',$name,60);
-        Cache::store('memcached')->put('password',123456,60);
-        $test = '';
-        $test = Cache::get('username');
-        $exist = Cache::get('runoob').'<br>';
+ 	$memcached = new \Memcached();
+	$memcached->addServer('127.0.0.1',11211);
+	$memcached->set('password',123456,900);
+	$mem = $memcached->get('password');
+	echo $mem;
 
-        echo 'exist:'.$exist;
-
-        echo $test.'<br>';
-        $pass = '';
-        $pass = Cache::get('password');
-        $pass = Cache::store('memcached')->get('password');
-        echo 'password:'.$pass.'<br>';
     }
 
     public function phpinfo(){
