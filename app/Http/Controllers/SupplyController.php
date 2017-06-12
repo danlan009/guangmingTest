@@ -23,12 +23,21 @@ class SupplyController extends Controller
 { 
     // 补货控制器   
     public function test(Request $request){
- 	$memcached = new \Memcached();
-	$memcached->addServer('127.0.0.1',11211);
-	$memcached->set('password',123456,900);
-	$mem = $memcached->get('password');
-	echo $mem;
+        // 原生使用方法
+        // $memcached = new \Memcached();
+    	// $memcached->addServer('127.0.0.1',11211);
+    	// $memcached->set('password',123456,900);
+    	// $mem = $memcached->get('password');
+    	// echo $mem;
+        $arr = [
+            'name' => 'dongfan',
+            'age' => 25,
+            'sex' => 'male'
+        ];
 
+        Cache::store('memcached')->put('user',$arr);
+        $cur = Cache::store('memcached')->get('user');
+        dd($cur);
 
     }
 
