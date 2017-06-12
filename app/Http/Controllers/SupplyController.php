@@ -38,6 +38,7 @@ class SupplyController extends Controller
         $pass = Cache::get('password');
         $pass = Cache::store('memcached')->get('password');
         echo 'password:'.$pass.'<br>';
+        
     }
 
     public function phpinfo(){
