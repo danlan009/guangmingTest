@@ -34,7 +34,8 @@ class SupplyController extends Controller
             'age' => 25,
             'sex' => 'male'
         ];
-
+        $arr = json_encode($arr);
+        
         Cache::store('memcached')->put('user',$arr);
         $cur = Cache::store('memcached')->get('user');
         dd($cur);
