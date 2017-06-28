@@ -11,7 +11,7 @@ use EasyWeChat\Foundation\Application;
 use Log;
 class ServerController extends Controller
 {
-    public function index(Application $app){
+    public function index(){
     	Log::debug('Weixin message come in!');
     	$server = $app->server;
     	$server->setMessageHandler(function($message){
