@@ -14,7 +14,7 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         'supply/ajax_receive_data',
 
-    	'/wx/notify_payment'
+    	'/wx/notify_payment',
     	'/server'
     ];
 }
