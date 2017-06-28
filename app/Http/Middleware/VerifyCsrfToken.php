@@ -15,6 +15,6 @@ class VerifyCsrfToken extends BaseVerifier
         'supply/ajax_receive_data',
 
     	'/wx/notify_payment',
-    	'/server'
+    	'server'
     ];
 }
