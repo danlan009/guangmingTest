@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 }); 
  
+// 微信入口
+Route::get('server',                            'ServerController@index');
 Route::get('orders/daily_buy_codes/{vmId}',		'MallController@dailyBuyCodes');
 Route::get('orders/daily_check_orders',			'MallController@dailyCheckOrders');
  
