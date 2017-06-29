@@ -13,13 +13,13 @@ use EasyWeChat\Message\News;
 class ServerController extends Controller
 {
     public function index(Application $app){
-    	Log::debug('Weixin message come in!');
+    	// Log::debug('Weixin message come in!');
     	$server = $app->server;
     	$server->setMessageHandler(function($message){
     		switch (strtolower($message->MsgType)) {
                     case 'text':
                         if(trim($message->Content) === '开始补货'){
-                            Log::debug('case - if---');
+                            // Log::debug('case - if---');
                             // return "gm.dev.uboxol.com/supply/start_supplyment";
                             $this->answerSupply();
                             // return $news;
@@ -85,7 +85,7 @@ class ServerController extends Controller
                 'url'         => $url,
                 'image'       => $imgUrl,
             ]);
-        Log::debug('answerSupply returns:'.json_encode($news));
+        // Log::debug('answerSupply returns:'.json_encode($news));
         return $news;
     }
 }
