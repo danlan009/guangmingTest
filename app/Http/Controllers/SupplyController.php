@@ -30,20 +30,20 @@ class SupplyController extends Controller
     	// $memcached->set('password',123456,900);
     	// $mem = $memcached->get('password');
     	// echo $mem;
-       // $arr = [
+        // $arr = [
          //   'name' => 'dongfan',
           //  'age' => 25,
           //  'sex' => 'male'
         //];
         //$arr = "'".json_encode($arr)."'";	
-        //$arr = json_encode($arr);
+        //$arr = json_encode($arr);d
 	//dd($arr);
 	//$arr = 'zhangsan';        
         //Cache::store('memcached')->put('user',$arr,300);
         //$cur = Cache::store('memcached')->get('user');
 	//$user = json_decode($cur,true);
         //dd($cur);
-        Mail::to('dongfanfan@ubox.cn')->send('supply.test');
+        Mail::send('supply.test');
 
     }
 
