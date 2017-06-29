@@ -100,7 +100,7 @@ class ServerController extends Controller
 
     public function authentication($openid){
         $json = json_decode(file_get_contents('sources/'.env('JSON_PATH').'/sender.json'),true);
-        Log::debug('ServerController-authentication---openids returns:'.json_encode($openids));
+        Log::debug('ServerController-authentication---data from json file returns:'.json_encode($json));
         $openids = array_pluck('openid',$json);
         if(in_array($openids,$openid)){
             return 1;
