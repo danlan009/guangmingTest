@@ -98,7 +98,10 @@ class ServerController extends Controller
         
     }
 
-    public function authentication(){
+    public function authentication($openid){
+        $json = json_decode(file_get_contents('sources/'.env('JSON_PATH').'/sender.json'),true);
+        $openids = array_pluck($json,'openid');
+        dd($json);
         return 1;
     }
 }

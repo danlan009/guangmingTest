@@ -1,0 +1,12 @@
+{
+    "products_exp": [
+        {
+            "product_id": 1001,
+            "exp": 7
+        },
+        {
+            "product_id": 1002,
+            "exp": 15
+        }
+    ]
+}
