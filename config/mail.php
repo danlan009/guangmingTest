@@ -110,9 +110,9 @@ return [
     'sendmail' => '/usr/sbin/sendmail -bs',
 
     // user address to receive all mail 
-    'to' => [
-        'address' => 'dongfanfan@ubox.cn',
-        'name' => 'guangmingTest'
-    ],
+    // 'to' => [
+    //     'address' => 'dongfanfan@ubox.cn',
+    //     'name' => 'guangmingTest'
+    // ],
 
 ];
