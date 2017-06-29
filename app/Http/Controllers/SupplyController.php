@@ -43,7 +43,9 @@ class SupplyController extends Controller
         //$cur = Cache::store('memcached')->get('user');
 	//$user = json_decode($cur,true);
         //dd($cur);
-        Mail::send('supply.test',[]);
+        Mail::send('supply.test',['name'=>'guangming'],function(){
+            $message->to('dongfanfan.ubox.cn');
+        });
 
     }
 
