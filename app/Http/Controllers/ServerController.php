@@ -78,7 +78,7 @@ class ServerController extends Controller
     public function answerSupply(){
         $date = date('Y-m-d');
         $url = env('UBOX_TEST_HOST').'supply/start_supplyment';
-        $img = env('UBOX_TEST_HOST').''
+        // $img = env('UBOX_TEST_HOST').''
         $news = new News([
                 'title'       => '开始补货',
                 'description' => '现在可以开始 '.$date.' 的补货!',
