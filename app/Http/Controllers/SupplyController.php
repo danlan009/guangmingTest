@@ -29,16 +29,20 @@ class SupplyController extends Controller
     	// $memcached->set('password',123456,900);
     	// $mem = $memcached->get('password');
     	// echo $mem;
-        $arr = [
-            'name' => 'dongfan',
-            'age' => 25,
-            'sex' => 'male'
-        ];
-        $arr = json_encode($arr);
-        
-        Cache::store('memcached')->put('user',$arr);
-        $cur = Cache::store('memcached')->get('user');
-        dd($cur);
+       // $arr = [
+         //   'name' => 'dongfan',
+          //  'age' => 25,
+          //  'sex' => 'male'
+        //];
+        //$arr = "'".json_encode($arr)."'";	
+        //$arr = json_encode($arr);
+	//dd($arr);
+	//$arr = 'zhangsan';        
+        //Cache::store('memcached')->put('user',$arr,300);
+        //$cur = Cache::store('memcached')->get('user');
+	//$user = json_decode($cur,true);
+        //dd($cur);
+	phpinfo();
 
     }
 
