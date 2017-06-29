@@ -27,8 +27,14 @@ class ServerController extends Controller
                                 
                             }
                         }else if(trim($message->Content) === '补货员注册'){
+                            $openid = $message->FromUserName;
+                            Log::debug($openid.' wants to register become sendor!');
                             // 检测是否已经注册
-                            Log::debug('to register become sendor');
+                            if($this->authentication($openid)){
+                                return '不可重复注册!';
+                            }
+
+                            return view('supply.register');
 
                         }
 
@@ -107,4 +113,6 @@ class ServerController extends Controller
             
         }
     }
+
+    public function 
 }
