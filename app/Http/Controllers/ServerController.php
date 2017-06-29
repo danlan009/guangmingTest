@@ -19,12 +19,19 @@ class ServerController extends Controller
     		switch (strtolower($message->MsgType)) {
                     case 'text':
                         if(trim($message->Content) === '开始补货'){
-                            Log::debug('case - if---');
-                           
-                            // return "gm.dev.uboxol.com/supply/start_supplyment";
-                            return $this->answerSupply();
-                            // return $news;
+                            $openid = $message->FromUserName;
+                            Log::debug($openid.' wants to start_supplyment!');
+                            // 身份验证
+                            if($this->authentication($openid)){
+                                return $this->answerSupply();
+                                
+                            }
+                        }else if(trim($message->Content) === '补货员注册'){
+                            // 检测是否已经注册
+                            Log::debug('to register become sendor');
+
                         }
+
                         break;
                     
                     
@@ -89,5 +96,9 @@ class ServerController extends Controller
         Log::debug('answerSupply returns:'.json_encode($news));
         return $news;
         
+    }
+
+    public function authentication(){
+        return 1;
     }
 }
