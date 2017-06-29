@@ -21,7 +21,7 @@ class ServerController extends Controller
                         if(trim($message->Content) === '开始补货'){
                             Log::debug('case - if---');
                             // return "gm.dev.uboxol.com/supply/start_supplyment";
-                            return $this->answerSupply();
+                            $this->answerSupply();
                             
                         }
                         break;
