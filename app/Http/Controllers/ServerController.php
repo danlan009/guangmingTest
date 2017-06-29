@@ -23,7 +23,6 @@ class ServerController extends Controller
                             // return "gm.dev.uboxol.com/supply/start_supplyment";
                             $this->answerSupply();
                             // return $news;
-                            
                         }
                         break;
                     
@@ -34,7 +33,7 @@ class ServerController extends Controller
                 }
     	});
 
-    	Log::debug('Message has returned to Weixin!');
+    	// Log::debug('Message has returned to Weixin!');
     	$response = $server->serve();
 
     	return $response;
