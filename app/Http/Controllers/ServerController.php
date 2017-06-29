@@ -85,6 +85,7 @@ class ServerController extends Controller
                 'url'         => $url,
                 'image'       => '',
             ]);
+        Log::debug('answerSupply returns:'.json_encode($news));
         return $news;
     }
 }
