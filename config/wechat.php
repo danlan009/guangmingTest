@@ -40,7 +40,7 @@ return [
      */
     'log' => [
         'level' => env('WECHAT_LOG_LEVEL', 'debug'),
-        'file'  => storage_path('logs/wechat.log')
+        'file'  => storage_path('logs/wechat.log'),
     ],
 
     /*
@@ -69,7 +69,7 @@ return [
          // 'sub_app_id'      => env('WECHAT_PAYMENT_SUB_APP_ID', ''),
          // 'sub_merchant_id' => env('WECHAT_PAYMENT_SUB_MERCHANT_ID', ''),
          // ...
-     ],
+     // ],
 
     /*
      * 开发模式下的免授权模拟授权用户资料
