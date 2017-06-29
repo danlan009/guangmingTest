@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Log;
 
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Message\News;
-use Log;
 class ServerController extends Controller
 {
     public function index(Application $app){
