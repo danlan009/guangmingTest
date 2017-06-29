@@ -19,7 +19,7 @@ class ServerController extends Controller
                     case 'text':
                         if(trim($message->Content) === '开始补货'){
                             Log::debug('case - if---');
-                            return 'gm.dev.uboxol.com/supply/start_supplyment';
+                            return "gm.dev.uboxol.com/supply/start_supplyment";
                             
                         }
                         break;
