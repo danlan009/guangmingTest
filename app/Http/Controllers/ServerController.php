@@ -82,9 +82,9 @@ class ServerController extends Controller
                 'title'       => '开始补货',
                 'description' => '现在可以开始 '.$date.' 的补货!',
                 'url'         => $url,
-                'image'       => $imgUrl,
+                'image'       => $imgUrl
             ]);
-        // Log::debug('answerSupply returns:'.json_encode($news));
+        Log::debug('answerSupply returns:'.json_encode($news));
         return $news;
     }
 }
