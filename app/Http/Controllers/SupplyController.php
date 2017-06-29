@@ -19,6 +19,7 @@ use App\Service\CouponService;
 use EasyWeChat\Foundation\Application;
 use Cache;
 
+use Mail;
 class SupplyController extends Controller 
 { 
     // 补货控制器   
@@ -42,7 +43,7 @@ class SupplyController extends Controller
         //$cur = Cache::store('memcached')->get('user');
 	//$user = json_decode($cur,true);
         //dd($cur);
-	phpinfo();
+        Mail::to('dongfanfan@ubox.cn')->send('supply.test');
 
     }
 
