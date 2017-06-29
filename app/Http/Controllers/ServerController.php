@@ -22,6 +22,7 @@ class ServerController extends Controller
                             Log::debug('case - if---');
                             // return "gm.dev.uboxol.com/supply/start_supplyment";
                             $this->answerSupply();
+                            // return $news;
                             
                         }
                         break;
