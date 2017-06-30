@@ -29,7 +29,6 @@ return [
     |
     */
 
-    // 'host' => env('MAIL_HOST', 'smtp.163.com'),
     'host' => env('MAIL_HOST', 'smtp.exmail.qq.com'),
 
     /*
@@ -56,8 +55,7 @@ return [
     |
     */
 
-    // 'from' => ['address' => '13315478388@163.com', 'name' => 'Guangming'],
-    'from' => ['address' => 'dongfanfan@ubox.cn', 'name' => 'Guangming'],
+    'from' => ['address' => '13315478388@163.com', 'name' => 'guangming'],
 
     /*
     |--------------------------------------------------------------------------
@@ -83,8 +81,7 @@ return [
     |
     */
 
-    // 'username' => '13315478388@163.com',
-    'username' => 'dongfanfan@ubox.cn',
+    'username' => env('MAIL_USERNAME'),
 
     /*
     |--------------------------------------------------------------------------
@@ -97,8 +94,7 @@ return [
     |
     */
 
-    // 'password' => '879598707DONGFAN',
-    'password' => '879598707Dff',
+    'password' => env('MAIL_PASSWORD'),
 
     /*
     |--------------------------------------------------------------------------
@@ -113,10 +109,5 @@ return [
 
     'sendmail' => '/usr/sbin/sendmail -bs',
 
-    // user address to receive all mail 
-    // 'to' => [
-    //     'address' => 'dongfanfan@ubox.cn',
-    //     'name' => 'guangmingTest'
-    // ],
-
+    'pretend' => false,
 ];

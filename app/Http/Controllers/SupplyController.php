@@ -44,7 +44,7 @@ class SupplyController extends Controller
 	//$user = json_decode($cur,true);
         //dd($cur);
         Mail::send('supply.test',['name'=>'guangming'],function($message){
-            $message->to('13315478388@163.com');
+            $message->to('dongfanfan@ubox.cn');
         });
 
     }
