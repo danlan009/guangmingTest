@@ -59,6 +59,33 @@ class SupplyController extends Controller
 
     }
 
+    public function register(Request $request){
+        $encrypt = $request->input('auth');
+        
+        $cdn_url = env('CDN_URL');
+        return view('supply.register',[
+                'cdn_url' => $cdn_url,
+                'encrypt' => $encrypt
+            ]);
+    }
+
+    public function registerResolve(Request $request){
+        $name = $request->input('name');
+        $phone = $request->input('phone');
+        $encrypt = $request->input('encrypt');
+        $openid = base64_decode($encrypt);
+        if($name && $phone && $encrypt){
+            Mail::send('supply.mail',[
+                                        'name'=>$name,
+                                        'phone'=>$phone,
+                                        'openid'=>$openid
+                                     ],function($message){
+                                            $message->to('dongfanfan@ubox.cn')
+                                                    ->subject($name.'发送的配送员申请邮件');
+            });
+        }
+    }
+
     public function startSupplyment(){
         $mode = 1; // 正常补货
         $mallService = new MallService();

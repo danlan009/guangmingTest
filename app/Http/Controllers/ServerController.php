@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use Log;
 
 use EasyWeChat\Foundation\Application;
 use EasyWeChat\Message\News;
 use EasyWeChat\Message\Text;
+use Log;
 class ServerController extends Controller
 {
     public function index(Application $app){
@@ -34,7 +34,7 @@ class ServerController extends Controller
                             if($this->authentication($openid)){
                                 return '不可重复注册!';
                             }else{
-                                return $this->answerRegister();
+                                return $this->answerRegister($openid);
                                 
                             }
 
@@ -106,9 +106,11 @@ class ServerController extends Controller
         
     }
 
-    public function answerRegister(){
+    public function answerRegister($openid){
+        // 对openid简单加密(base64_encode())
+        $encrypt = base64_encode($openid);
         $date = date('Y-m-d');
-        $url = env('UBOX_TEST_HOST').'supply/register';
+        $url = env('UBOX_TEST_HOST').'supply/register?auth='.$encrypt;
         // $imgUrl = '';
         $news = new News([
                 'title'       => '注册成为补货员!',
@@ -122,7 +124,7 @@ class ServerController extends Controller
     }
 
     public function authentication($openid){
-        $json = json_decode(file_get_contents('sources/'.env('JSON_PATH').'/sender.json'),true);
+        $json = json_decode(file_get_contents('sources/'.env('SENDER_JSON_FILE').'/sender.json'),true);
         Log::debug('ServerController-authentication---data from json file returns:'.json_encode($json));
         $openids = array_pluck($json,'openid');
         if(in_array($openid,$openids)){
@@ -130,6 +132,8 @@ class ServerController extends Controller
             
         }
     }
+
+    
 
     // public function 
 }

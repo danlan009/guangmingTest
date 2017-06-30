@@ -21,6 +21,7 @@ Route::get('orders/daily_buy_codes/{vmId}',		'MallController@dailyBuyCodes');
 Route::get('orders/daily_check_orders',			'MallController@dailyCheckOrders');
 
 Route::get('supply/register',                   'SupplyController@register');
+Route::post('supply/register_resolve',           'SupplyController@registerResolve');
 Route::get('supply/get_supply_data',			'SupplyController@getSupplyData');
 Route::get('supply/add',						'SupplyController@add');
 Route::get('supply/get_daily_orders_to_send',	'SupplyController@getDailyOrdersToSend');

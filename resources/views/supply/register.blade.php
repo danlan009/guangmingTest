@@ -7,14 +7,14 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="pragma" content="no-cache" />
 	<title>填写注册个人信息</title>
-	<link href="<?php echo $cdn_url ?>/style/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<link href="<?php echo $cdn_url ?>style/bootstrap.min.css" type="text/css" rel="stylesheet" />
 	<style>
 		body{
 			background: #EEEEEE;
 		}
 		.container{
 			padding: 40px;
-			width:600px;
+			width:60%;
 			position:relative;
 			top:200px;
 			background: white;
@@ -34,13 +34,17 @@
 		  <div class="form-group">
 		    <label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
 		    <div class="col-sm-10">
-		      <input type="email" class="form-control" id="inputEmail3" placeholder="">
+		      <input type="text" class="form-control" id="" placeholder="" name="name">
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <label for="inputPassword3" class="col-sm-2 control-label">手机号</label>
 		    <div class="col-sm-10">
-		      <input type="text" class="form-control" id="" placeholder="">
+		      <input type="text" class="form-control" id="" placeholder="" name="phone">
+		      <!-- 加密openid 字符串-->
+		      <input type="hidden" name="encrypt" value="{{$encrypt}}">
+		      <!-- csrf 验证 -->
+		      <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 		    </div>
 		  </div>
 		  
