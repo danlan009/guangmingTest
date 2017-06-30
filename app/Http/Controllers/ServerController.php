@@ -33,8 +33,7 @@ class ServerController extends Controller
                             if($this->authentication($openid)){
                                 return '不可重复注册!';
                             }
-
-                            return view('supply.register');
+                            return $this->answerRegister();
 
                         }
 
@@ -100,6 +99,21 @@ class ServerController extends Controller
                 'image'       => ''
             ]);
         Log::debug('answerSupply returns:'.json_encode($news));
+        return $news;
+        
+    }
+
+    public function answerRegister(){
+        $date = date('Y-m-d');
+        $url = env('UBOX_TEST_HOST').'supply/register';
+        // $imgUrl = '';
+        $news = new News([
+                'title'       => '注册成为补货员!',
+                'description' => '请点击进入注册申请页面!',
+                'url'         => $url,
+                'image'       => ''
+            ]);
+        Log::debug('answerRegister returns:'.json_encode($news));
         return $news;
         
     }

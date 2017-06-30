@@ -19,7 +19,8 @@ Route::get('/', function () {
 Route::any('server',                            'ServerController@index');
 Route::get('orders/daily_buy_codes/{vmId}',		'MallController@dailyBuyCodes');
 Route::get('orders/daily_check_orders',			'MallController@dailyCheckOrders');
- 
+
+Route::get('supply/register',                   'SupplyController@register');
 Route::get('supply/get_supply_data',			'SupplyController@getSupplyData');
 Route::get('supply/add',						'SupplyController@add');
 Route::get('supply/get_daily_orders_to_send',	'SupplyController@getDailyOrdersToSend');
