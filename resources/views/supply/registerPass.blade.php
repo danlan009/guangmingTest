@@ -7,7 +7,7 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="pragma" content="no-cache" />
 	<title>注册申请提交成功</title>
-	<link href="<?php echo $cdn_url ?>/style/bootstrap.min.css" type="text/css" rel="stylesheet" />
+	<link href="/sources/style/bootstrap.min.css" type="text/css" rel="stylesheet" />
 	<style>
 		body{
 			background: #EEEEEE;
