@@ -84,6 +84,7 @@ class SupplyController extends Controller
                                                     ->subject('配送员申请邮件');
             });
         }
+        return view('supply.registerPass');
     }
 
     public function startSupplyment(){
