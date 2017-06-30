@@ -16,6 +16,7 @@ class ServerController extends Controller
     	Log::debug('Weixin message come in!');
     	$server = $app->server;
     	$server->setMessageHandler(function($message){
+            Log::debug('message type is:'.$message->MsgType);
     		switch (strtolower($message->MsgType)) {
                     case 'text':
                         if(trim($message->Content) === '开始补货'){
