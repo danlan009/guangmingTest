@@ -32,8 +32,10 @@ class ServerController extends Controller
                             // 检测是否已经注册
                             if($this->authentication($openid)){
                                 return '不可重复注册!';
+                            }else{
+                                return $this->answerRegister();
+                                
                             }
-                            return $this->answerRegister();
 
                         }
 
