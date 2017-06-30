@@ -79,9 +79,9 @@ class SupplyController extends Controller
                                         'name'=>$name,
                                         'phone'=>$phone,
                                         'openid'=>$openid
-                                     ],function($message){
+                                     ],function($message){ 
                                             $message->to('dongfanfan@ubox.cn')
-                                                    ->subject($name.'发送的配送员申请邮件');
+                                                    ->subject('配送员申请邮件');
             });
         }
     }

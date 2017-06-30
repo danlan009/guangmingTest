@@ -30,7 +30,7 @@
 </head>
 <body>
 	<div class="container">
-		<form class="form-horizontal" method="post" action="{{url('supply/register')}}">
+		<form class="form-horizontal" method="post" action="{{url('supply/register_resolve')}}">
 		  <div class="form-group">
 		    <label for="inputEmail3" class="col-sm-2 control-label">姓名</label>
 		    <div class="col-sm-10">
