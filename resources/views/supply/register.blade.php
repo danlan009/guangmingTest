@@ -50,7 +50,6 @@
 		  
 		  <div class="form-group sub-button">
 		    <div class="col-sm-offset-2 col-sm-10 btn_sub" >
-		      <button type="submit" class="btn btn-default" style="margin-right:50px">取消</button>
 		      <button type="submit" class="btn btn-primary">确定</button>
 		    </div>
 		  </div>
